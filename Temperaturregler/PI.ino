@@ -140,7 +140,7 @@ float controlVoltage()
   Kpr = KprKps / getKps();
   Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r);
   T = 0.1 * n * Tm;
-  //T = 1;
+  T = 1;
   //Serial.print("1.0/3.0");
   Serial.print("alpha10 = ");
   Serial.println(alpha10);

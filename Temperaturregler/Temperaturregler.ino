@@ -72,7 +72,7 @@ void secCounter()
       //Serial.print("TEMP: ");
       //  printTemperature("Inside : ", sensor1);
       requestTemp();
-      if(PIisOn == true)
+     /* if(PIisOn == true)
       {
         
         if(gotT == false)
@@ -92,7 +92,7 @@ void secCounter()
         
         
         //controlVoltage();        
-      }
+      }*/
 
       
       printSensorVals();
@@ -183,6 +183,7 @@ void loop()
     case PI_on_Main:
     secCounter();
      PIisOn = true;
+     controlVoltage();
   }
 
 

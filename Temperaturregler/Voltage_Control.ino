@@ -17,12 +17,12 @@ void initVoltageControll() {
 
 void setOnTime(float voltage)
 {
-  if(onTimeHasBeenSet == 0)
-  {
+  //if(onTimeHasBeenSet == 0)
+  //{
   onTime = ((sq(voltage)/35.0) * 20000)/1511.0;
-  onTimeHasBeenSet = 1;
+  //onTimeHasBeenSet = 1;
   
-  }
+  //}
 }
 
 void turnOffHeating()
