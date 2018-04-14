@@ -9,7 +9,7 @@ float newError = 0.0;
 float Kpr = 0.0;
 float Tn = 0.0;
 float Tm = 0.0;
-float Sollwert = 80.0;
+float Sollwert =80;
 float alpha10,alpha50,alpha90,TnTm,KprKps;
 float t10r;
 float t50r;
@@ -22,7 +22,7 @@ float T = 0.0;
 int n = 0;
 float voltageP = 0.0;
 float voltageI = 0.0;
-float voltageIold = 0.0; // gerade geändert
+float voltageIold = 182.857; // gerade geändert
 bool newCalc = false;
 
 
@@ -172,6 +172,7 @@ float controlVoltage()
   {
    //Serial.print("newVoltage = ");
    //Serial.println(newVoltage);
+   requestTemp();
   newError = Sollwert - getValSens2();
   voltageP = Kpr * newError;
   voltageI = voltageIold + (Kpr/Tn) * (T/2) * newError + (Kpr/Tn) * (T/2) * oldError;
@@ -185,17 +186,22 @@ float controlVoltage()
   setDonewCalc();
   }
   
-  if(newVoltage > 230)
+  if(newVoltage > 1511.43)
   {
-    newVoltage = 230;
-    voltageIold = 230;
+    newVoltage = 1511.43;
+    voltageIold = 1511.43;
     
   }
   else if(newVoltage <= 0)
   {
     newVoltage = 0;
-    voltageIold = 0; // damit es nicht noch einen zyklus länger dauert
+    //voltageIold = 0; // damit es nicht noch einen zyklus länger dauert
+    turnOffHeating();
    
+  }
+  else if(newError <= 0)
+  {
+    newVoltage = 0;
   }
   else
   {

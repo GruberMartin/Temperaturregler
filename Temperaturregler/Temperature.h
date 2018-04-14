@@ -6,4 +6,5 @@ void requestTemp();
 void printSensorVals();
 float getValSens2();
 float getStartTemp();
+float getValSens1();
 #endif

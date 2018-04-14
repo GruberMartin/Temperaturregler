@@ -180,7 +180,7 @@ void loop()
     current_main_state = getParameter;
     break;
     case getParameter:
-    setStartVoltage(80.0);    
+    setStartVoltage(182.857);    
     calculateFinalValue();
     setVoltage(getStartVoltage());
     //requestTemp();
@@ -192,7 +192,8 @@ void loop()
     //turnOffHeating();
     printParameter();
     setCurrentState(start_PI);
-    current_main_state = PI_on_Main;    
+    current_main_state = PI_on_Main; 
+    Serial.println("PI Regler ist jetzt aktiv");   
     break;
     case PI_on_Main:
     secCounter();

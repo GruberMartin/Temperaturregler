@@ -19,7 +19,7 @@ void setOnTime(float voltage)
 {
   //if(onTimeHasBeenSet == 0)
   //{
-  onTime = ((sq(voltage)/35.0) * 20000)/1511.43;
+  onTime = (voltage * 20000)/1511.43;
   //onTimeHasBeenSet = 1;
   
   //}
@@ -35,6 +35,11 @@ void setVoltage(float voltage) {
 setOnTime(voltage);
 //Serial.print(getFinalValue());
   //secCounter();
+
+  if(voltage <= 0)
+  {
+    onTime = 0;
+  }
   
 if (millis() >= (previousTimeNew))
     {

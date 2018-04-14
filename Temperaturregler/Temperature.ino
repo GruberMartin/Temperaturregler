@@ -70,3 +70,8 @@ float getValSens2()
   return sensors.getTempC(sensor2);
 }
 
+float getValSens1()
+{
+  return sensors.getTempC(sensor1);
+}
+

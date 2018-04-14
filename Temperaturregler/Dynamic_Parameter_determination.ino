@@ -35,7 +35,7 @@ void calculateFinalValue()
 {
   if(finalValueHasBeenCalculated == 0)
   {
-  finalValue = 0.608204 * getStartVoltage() + 23.0;
+  finalValue = 0.2625 * getStartVoltage() +  getValSens1();
   if((finalValue - (int) finalValue)> 0.25)
   {
     finalValue = ((int) finalValue);
@@ -103,27 +103,27 @@ void printParameter()
 
         }
       }
-      Serial.print("Array Index: ");
+      /*Serial.print("Array Index: ");
       Serial.println(arrayIndex);
       Serial.print("Anfangstemperatur: ");
       Serial.println(tempVal[0]);
       Serial.print("Spannung: ");
       Serial.println(getStartVoltage());
       Serial.print("Maximale Temperatur: ");
-      Serial.println(tmpMax, 2);
-      Kp = (tmpMax - tempVal[0]) / (getStartVoltage());
-      Serial.print("Kp :");
-      Serial.println(Kp, 4);
+      Serial.println(tmpMax, 2);*/
+      Kp = (tmpMax - getValSens1()) / (getStartVoltage());
+      /*Serial.print("Kp :");
+      Serial.println(Kp, 4);*/
 
       Vt10 = 0.1 * (tmpMax - tempVal[0]);
       Vt50 = 0.5 * (tmpMax - tempVal[0]);
       Vt90 = 0.9 * (tmpMax - tempVal[0]);
-      Serial.print("Vt10 ist: ");
+      /*Serial.print("Vt10 ist: ");
       Serial.println(Vt10);
       Serial.print("Vt50 ist: ");
       Serial.println(Vt50);
       Serial.print("Vt90 ist: ");
-      Serial.println(Vt90);
+      Serial.println(Vt90);*/
 
       it10 = 0;
       it50 = 0;
@@ -140,8 +140,8 @@ void printParameter()
           it10 = i;
         }
       }
-      Serial.print("t1 = (7 *) ");
-      Serial.println(it10);
+      /*Serial.print("t1 = (7 *) ");
+      Serial.println(it10);*/
 
       for (int i = 1; i < arrayIndex; i++)
       {
@@ -153,8 +153,8 @@ void printParameter()
         }
       }
 
-      Serial.print("t50 = (7 *) ");
-      Serial.println(it50);
+      /*Serial.print("t50 = (7 *) ");
+      Serial.println(it50);*/
 
 
       for (int i = 1; i < arrayIndex; i++)
@@ -166,11 +166,11 @@ void printParameter()
           it90 = i;
         }
       }
-      Serial.print("t90 = (7 *) ");
-      Serial.println(it90);
+      /*Serial.print("t90 = (7 *) ");
+      Serial.println(it90);*/
       T1 = (1.0 / 3.0) * ((it10 * 7 / 0.531812) + (it50 * 7 / 1.678347) + (it90 * 7 / 3.889720));
-      Serial.print("T1: ");
-      Serial.println(T1);
+     /* Serial.print("T1: ");
+      Serial.println(T1);*/
       for (int i = 0; i < arrayIndex; i++)
       {
         tempVal[i] = 0;
