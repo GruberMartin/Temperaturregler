@@ -196,19 +196,22 @@ float controlVoltage()
   {
     newVoltage = 0;
     //voltageIold = 0; // damit es nicht noch einen zyklus länger dauert
-    turnOffHeating();
+    //turnOffHeating();
+    //voltageIold = 0;
    
   }
   else if(newError <= 0)
   {
     newVoltage = 0;
+    //voltageIold = 0;
   }
   else
   {
-    newVoltage = newVoltage;
+    
+    voltageIold = newVoltage;
   }
  // oldVoltage = newVoltage;
-  voltageIold = newVoltage;
+  
   oldError = newError;
   setVoltage(newVoltage);
   /*Serial.println("");

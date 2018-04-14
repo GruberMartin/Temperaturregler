@@ -36,10 +36,11 @@ setOnTime(voltage);
 //Serial.print(getFinalValue());
   //secCounter();
 
-  if(voltage <= 0)
-  {
-    onTime = 0;
-  }
+  
+if(onTime < 20)
+{
+  onTime = 0;
+}
   
 if (millis() >= (previousTimeNew))
     {
@@ -48,7 +49,7 @@ if (millis() >= (previousTimeNew))
     
     
     }
-   if(onTime >= counter)
+   if(onTime >= counter %% onTime != 0)
    {
     digitalWrite(heatPin,HIGH);
     //Serial.println(counter);
