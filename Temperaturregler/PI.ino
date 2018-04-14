@@ -188,11 +188,13 @@ float controlVoltage()
   if(newVoltage > 230)
   {
     newVoltage = 230;
+    voltageIold = 230;
     
   }
-  else if(newVoltage < 0)
+  else if(newVoltage <= 0)
   {
     newVoltage = 0;
+    voltageIold = 0; // damit es nicht noch einen zyklus länger dauert
    
   }
   else
