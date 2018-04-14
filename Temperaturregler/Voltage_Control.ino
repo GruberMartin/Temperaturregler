@@ -49,7 +49,7 @@ if (millis() >= (previousTimeNew))
     
     
     }
-   if(onTime >= counter %% onTime != 0)
+   if(onTime >= counter && onTime != 0)
    {
     digitalWrite(heatPin,HIGH);
     //Serial.println(counter);

@@ -2,6 +2,7 @@
 //#include <Serial.h>
 #include "Temperature.h"
 
+
 float tempVal [1601];
 int arrayIndex = 0;
 float tmpMax = 0;

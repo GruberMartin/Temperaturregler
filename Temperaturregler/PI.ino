@@ -2,6 +2,11 @@
 #include <Arduino.h>
 #include "Temperature.h"
 #include "PI.h"
+#include <SPI.h>
+#include <SD.h>
+
+File myFile;
+
 float oldVoltage = 0.0;
 float newVoltage = 0.0;
 float oldError = 0.0;
@@ -24,7 +29,7 @@ float voltageP = 0.0;
 float voltageI = 0.0;
 float voltageIold = 182.857; // gerade geändert
 bool newCalc = false;
-
+//const int chipSelect = 10;
 
 /*typedef enum {
   notStarted_PI,
@@ -68,6 +73,11 @@ PIstate getCurrentState()
 {
   return currentState;
 }
+
+
+
+
+
 
 float controlVoltage()
 {
@@ -134,6 +144,7 @@ float controlVoltage()
     KprKps =0.598;
     n = 4;
   }
+ 
   /*Serial.println(t10r);
   Serial.println(t50r);
   Serial.println(t90r);*/
@@ -151,7 +162,7 @@ float controlVoltage()
   Serial.println(alpha90);*/
   
   Tn = TnTm*Tm;
-  setCurrentState(running_PI);
+  //setCurrentState(running_PI);
   /*Serial.println("PI läuft mit folgenden Parametern");
   Serial.print("Kpr = ");
   Serial.println(Kpr);
@@ -164,7 +175,39 @@ float controlVoltage()
   Serial.print("T = ");
   Serial.println(T);*/
   //Serial.println("Achtuuuuuuuuuuuung Parameter statisch gesetzt !!");
+  currentState = savePI_Parameter;
+  break;
+
+  case savePI_Parameter:
+  pinMode(SS, OUTPUT);
+  if (!SD.begin(chipSelect)) {
+    Serial.println("Schreiben auf SD-Karte fehlgeschlagen");
+    currentState = running_PI;
+  }
+
+  if(!SD.exists("1.txt"))
+  {
+     myFile = SD.open("1.txt", FILE_WRITE);
+    if (myFile) {
+    myFile.print("Kpr = ");
+  myFile.println(Kpr);
+  myFile.print("Tn = ");
+  myFile.println(Tn);
+  myFile.print("Tm = ");
+  myFile.println(Tm);  
+  myFile.print("T = ");
+  myFile.println(T);
+  myFile.print("n = ");
+  myFile.println(n);
+ // close the file:
+    myFile.close();
+    
+  } else {
+    // if the file didn't open, print an error:
+    Serial.println("error opening test.txt");
+  }
   currentState = running_PI;
+  }
   break;
 
   case running_PI:

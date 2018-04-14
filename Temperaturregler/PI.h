@@ -5,6 +5,7 @@ float controlVoltage();
 typedef enum {
   notStarted_PI,
   start_PI,
+  savePI_Parameter,
   running_PI,
   stop_PI,
   idle_PI
