@@ -84,8 +84,8 @@ float controlVoltage()
  t50r = getT50(); // 924;
  t90r = getT90();// 1820;
  mu = t10r/t90r*1.0;
- Serial.print("mu = ");
- Serial.println(mu);
+ /*Serial.print("mu = ");
+ Serial.println(mu);*/
  
   for(int i = 0;i<4;i++)
   {
@@ -95,8 +95,8 @@ float controlVoltage()
       order = i;
     }
   }
-  Serial.print("order = ");
- Serial.println(order);
+ /* Serial.print("order = ");
+ Serial.println(order);*/
   
   if(order == 0)
   {
@@ -134,26 +134,25 @@ float controlVoltage()
     KprKps =0.598;
     n = 4;
   }
-  Serial.println(t10r);
+  /*Serial.println(t10r);
   Serial.println(t50r);
-  Serial.println(t90r);
-  n = 2;
-  Serial.print("Achtung n manuel gesetzt");
-  Kpr = 1.64;//KprKps / getKps();
-  Tm = 327.61;//(1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r);
+  Serial.println(t90r);*/
+  //Serial.print("Achtung n manuel gesetzt");
+  Kpr = KprKps / getKps();
+  Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r);
   T = 0.1 * n * Tm;
   //T = 1.0;
   //Serial.print("1.0/3.0");
-  Serial.print("alpha10 = ");
+  /*Serial.print("alpha10 = ");
   Serial.println(alpha10);
    Serial.print("alpha50 = ");
   Serial.println(alpha50);
    Serial.print("alpha90 = ");
-  Serial.println(alpha90);
+  Serial.println(alpha90);*/
   
-  Tn = 579.88;//TnTm*Tm;
+  Tn = TnTm*Tm;
   setCurrentState(running_PI);
-  Serial.println("PI läuft mit folgenden Parametern");
+  /*Serial.println("PI läuft mit folgenden Parametern");
   Serial.print("Kpr = ");
   Serial.println(Kpr);
   Serial.print("Tn = ");
@@ -163,7 +162,7 @@ float controlVoltage()
   Serial.print("n = ");
   Serial.println(n);
   Serial.print("T = ");
-  Serial.println(T);
+  Serial.println(T);*/
   //Serial.println("Achtuuuuuuuuuuuung Parameter statisch gesetzt !!");
   currentState = running_PI;
   break;
@@ -171,7 +170,8 @@ float controlVoltage()
   case running_PI:
   if(calcVoltage())
   {
-   
+   //Serial.print("newVoltage = ");
+   //Serial.println(newVoltage);
   newError = Sollwert - getValSens2();
   voltageP = Kpr * newError;
   voltageI = voltageIold + (Kpr/Tn) * (T/2) * newError + (Kpr/Tn) * (T/2) * oldError;

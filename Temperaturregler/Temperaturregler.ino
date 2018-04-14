@@ -36,7 +36,7 @@ typedef enum {
   
 } main_states;
 
-main_states current_main_state = gotParameter;
+main_states current_main_state = notStarted_Main;
 
 void setup()
 {
@@ -81,8 +81,8 @@ void secCounter()
           sampleTime = (int)getT();
           sampleCounter = 0;
           gotT = true;
-          Serial.print("smapleTime = ");
-          Serial.println(sampleTime);
+          /*Serial.print("smapleTime = ");
+          Serial.println(sampleTime);*/
         }
 
         if(sampleCounter == sampleTime)
@@ -189,7 +189,7 @@ void loop()
     break;
     case gotParameter:
     secCounter();
-    turnOffHeating();
+    //turnOffHeating();
     printParameter();
     setCurrentState(start_PI);
     current_main_state = PI_on_Main;    
