@@ -19,7 +19,7 @@ void setOnTime(float voltage)
 {
   //if(onTimeHasBeenSet == 0)
   //{
-  onTime = ((sq(voltage)/35.0) * 20000)/1511.0;
+  onTime = ((sq(voltage)/35.0) * 20000)/1511.43;
   //onTimeHasBeenSet = 1;
   
   //}
@@ -40,7 +40,7 @@ if (millis() >= (previousTimeNew))
     {
       previousTimeNew = previousTimeNew + 1;  // use 100000 for uS    
       counter = counter + 1;
-     
+    
     
     }
    if(onTime >= counter)

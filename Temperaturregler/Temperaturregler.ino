@@ -25,6 +25,7 @@ int sampleTime = 0;
 int sampleCounter = 0;
 float voltageSetNow = 0.0;
 boolean gotVoltage = false;
+boolean doNewCalc = false;
 
 typedef enum {
   notStarted_Main,
@@ -72,27 +73,30 @@ void secCounter()
       //Serial.print("TEMP: ");
       //  printTemperature("Inside : ", sensor1);
       requestTemp();
-     /* if(PIisOn == true)
+      if(PIisOn == true)
       {
         
         if(gotT == false)
         {
-          sampleTime = getT();
+          sampleTime = (int)getT();
           sampleCounter = 0;
           gotT = true;
+          Serial.print("smapleTime = ");
+          Serial.println(sampleTime);
         }
 
         if(sampleCounter == sampleTime)
         {
         gotVoltage = false;
         //TimedAction doVoltageControll = TimedAction(sampleTime,myCotroller);
-        controlVoltage();
+        doNewCalc = true;
         sampleCounter = 0;
         }
         
         
+        
         //controlVoltage();        
-      }*/
+      }
 
       
       printSensorVals();
@@ -105,12 +109,22 @@ void secCounter()
     }
 }
 
+boolean calcVoltage()
+{
+  return doNewCalc;
+}
+
+void setDonewCalc()
+{
+  doNewCalc = false;
+}
+
 int getSeconds()
 {
   return seconds;
 }
 
-void myCotroller()
+/*void myCotroller()
 {
   if(gotVoltage == false)
   {
@@ -118,7 +132,7 @@ void myCotroller()
   gotVoltage = true;
   }
   setVoltage(voltageSetNow);
-}
+}*/
 
 void setMainState(main_states newState)
 {

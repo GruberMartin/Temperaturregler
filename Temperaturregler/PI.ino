@@ -22,7 +22,8 @@ float T = 0.0;
 int n = 0;
 float voltageP = 0.0;
 float voltageI = 0.0;
-float voltageIold = 80.0;
+float voltageIold = 0.0; // gerade geändert
+bool newCalc = false;
 
 
 /*typedef enum {
@@ -136,11 +137,12 @@ float controlVoltage()
   Serial.println(t10r);
   Serial.println(t50r);
   Serial.println(t90r);
-  
-  Kpr = KprKps / getKps();
-  Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r);
+  n = 2;
+  Serial.print("Achtung n manuel gesetzt");
+  Kpr = 1.64;//KprKps / getKps();
+  Tm = 327.61;//(1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r);
   T = 0.1 * n * Tm;
-  T = 1.0;
+  //T = 1.0;
   //Serial.print("1.0/3.0");
   Serial.print("alpha10 = ");
   Serial.println(alpha10);
@@ -149,7 +151,7 @@ float controlVoltage()
    Serial.print("alpha90 = ");
   Serial.println(alpha90);
   
-  Tn = TnTm*Tm;
+  Tn = 579.88;//TnTm*Tm;
   setCurrentState(running_PI);
   Serial.println("PI läuft mit folgenden Parametern");
   Serial.print("Kpr = ");
@@ -167,30 +169,45 @@ float controlVoltage()
   break;
 
   case running_PI:
-  
+  if(calcVoltage())
+  {
+   
   newError = Sollwert - getValSens2();
-  //Serial.print("newError: ");
-  //Serial.println(newError);
-  //newVoltage = oldVoltage + (Kpr * (1/Tn)) * newError - Kpr * oldError;
-
   voltageP = Kpr * newError;
   voltageI = voltageIold + (Kpr/Tn) * (T/2) * newError + (Kpr/Tn) * (T/2) * oldError;
    
   newVoltage = voltageP + voltageI;
+  /*Serial.println("");
+  Serial.print("newVoltage = ");
+  Serial.println(newVoltage);
+  Serial.print("error = ");
+  Serial.println(newError);*/
+  setDonewCalc();
+  }
   
   if(newVoltage > 230)
   {
     newVoltage = 230;
+    
   }
   else if(newVoltage < 0)
   {
     newVoltage = 0;
+   
+  }
+  else
+  {
+    newVoltage = newVoltage;
   }
  // oldVoltage = newVoltage;
-  voltageIold = voltageI;
+  voltageIold = newVoltage;
   oldError = newError;
   setVoltage(newVoltage);
-  
+  /*Serial.println("");
+  Serial.print("newVoltage = ");
+  Serial.println(newVoltage);
+  Serial.print("error = ");
+  Serial.println(newError);*/
   /*Serial.println("PI ok");
   Serial.print("voltage: ");
   Serial.println(newVoltage);*/
