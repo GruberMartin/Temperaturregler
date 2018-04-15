@@ -36,7 +36,7 @@ typedef enum {
   
 } main_states;
 
-main_states current_main_state = notStarted_Main;
+main_states current_main_state = gotParameter;
 
 void setup()
 {
@@ -69,7 +69,7 @@ void secCounter()
       seconds = seconds + 1;
 
       //doVoltageControll.check();
-
+      
       //Serial.print("TEMP: ");
       //  printTemperature("Inside : ", sensor1);
       requestTemp();
@@ -92,6 +92,13 @@ void secCounter()
         doNewCalc = true;
         sampleCounter = 0;
         }
+       
+
+
+        if(getError() < 0.5)
+      {
+         doNewCalc = true;
+      }
         
         
         

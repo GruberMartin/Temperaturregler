@@ -13,5 +13,7 @@ typedef enum {
 void setCurrentState(PIstate stateToSet);
 float getT();
 float getCurrentVoltage();
+boolean hardStop();
+float getError();
 
 #endif

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "Temperature.h"
+#include "PI.h"
 #include "Dynamic_Parameter_determination.h"
 #define heatPin  10
 unsigned long time;       //Startzeit
@@ -46,10 +47,15 @@ if (millis() >= (previousTimeNew))
     {
       previousTimeNew = previousTimeNew + 1;  // use 100000 for uS    
       counter = counter + 1;
+      /*if(hardStop() == true)
+      {
+        //Serial.println("Stopppppppppppppppppppp !!!!!!");
+        onTime = 0;
+      }*/
     
     
     }
-   if(onTime >= counter && onTime != 0)
+   if(onTime >= counter && onTime != 0 && false == hardStop())
    {
     digitalWrite(heatPin,HIGH);
     //Serial.println(counter);
@@ -59,6 +65,11 @@ if (millis() >= (previousTimeNew))
    digitalWrite(heatPin,LOW);
    //Serial.println("Hiezung aus");
    }
+   /*else if(hardStop())
+   {
+    
+   digitalWrite(heatPin,LOW);
+   }*/
    else
    {
     counter = 0;

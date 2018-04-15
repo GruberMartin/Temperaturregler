@@ -28,7 +28,8 @@ int n = 0;
 float voltageP = 0.0;
 float voltageI = 0.0;
 float voltageIold = 182.857; // gerade geändert
-bool newCalc = false;
+boolean newCalc = false;
+boolean fastStopRequested = false;
 //const int chipSelect = 10;
 
 /*typedef enum {
@@ -45,6 +46,11 @@ void initPID() {
   //oldVoltage = getVoltage();
   newVoltage = oldVoltage;
   
+}
+
+boolean hardStop()
+{
+  return fastStopRequested;
 }
 
 float getT()
@@ -74,6 +80,10 @@ PIstate getCurrentState()
   return currentState;
 }
 
+float getError()
+{
+  return (Sollwert - getValSens2());
+}
 
 
 
@@ -149,9 +159,9 @@ float controlVoltage()
   Serial.println(t50r);
   Serial.println(t90r);*/
   //Serial.print("Achtung n manuel gesetzt");
-  Kpr = KprKps / getKps();
-  Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r);
-  T = 0.1 * Tm; // analog zu buch seite 290
+  Kpr = 4.09;//KprKps / getKps();
+  Tm = 388.87;//(1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r);
+  T = 33.0;//0.085 * Tm; // analog zu buch seite 290
   //T = 1.0;
   //Serial.print("1.0/3.0");
   /*Serial.print("alpha10 = ");
@@ -161,7 +171,7 @@ float controlVoltage()
    Serial.print("alpha90 = ");
   Serial.println(alpha90);*/
   
-  Tn = TnTm*Tm;
+  Tn = 688.29;//TnTm*Tm;
   //setCurrentState(running_PI);
   /*Serial.println("PI läuft mit folgenden Parametern");
   Serial.print("Kpr = ");
@@ -202,12 +212,32 @@ float controlVoltage()
  // close the file:
     myFile.close();
     
-  } else {
+    
+    }} 
+    if(!SD.exists("2.txt"))
+  {
+     myFile = SD.open("2.txt", FILE_WRITE);
+    if (myFile) {
+    myFile.print("Kpr = ");
+  myFile.println(Kpr);
+  myFile.print("Tn = ");
+  myFile.println(Tn);
+  myFile.print("Tm = ");
+  myFile.println(Tm);  
+  myFile.print("T = ");
+  myFile.println(T);
+  myFile.print("n = ");
+  myFile.println(n);
+ // close the file:
+    myFile.close();
+  }}
+  
+  else {
     // if the file didn't open, print an error:
     Serial.println("error opening test.txt");
   }
   currentState = running_PI;
-  }
+  
   break;
 
   case running_PI:
@@ -243,15 +273,17 @@ float controlVoltage()
     //voltageIold = 0;
    
   }
-  else if(newError <= 0)
+  else if(newError <= 0.5)
   {
     newVoltage = 0;
+    fastStopRequested = true;
     //voltageIold = 0;
   }
   else
   {
     
     voltageIold = newVoltage;
+    fastStopRequested = false;
   }
  // oldVoltage = newVoltage;
   
