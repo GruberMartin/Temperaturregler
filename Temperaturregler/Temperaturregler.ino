@@ -36,7 +36,7 @@ typedef enum {
   
 } main_states;
 
-main_states current_main_state = gotParameter;
+main_states current_main_state = notStarted_Main;
 
 void setup()
 {
