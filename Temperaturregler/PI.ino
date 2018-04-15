@@ -28,7 +28,7 @@ float T = 0.0;
 int n = 0;
 float voltageP = 0.0;
 float voltageI = 0.0;
-float voltageIold = 182.857; // gerade geändert
+float voltageIold = 52.8286; // gerade geändert
 boolean newCalc = false;
 boolean fastStopRequested = false;
 //const int chipSelect = 10;
@@ -261,7 +261,7 @@ float controlVoltage()
         //voltageIold = 0;
 
       }
-      else if (newError <= 0.5)
+      else if (newError <= 0.0)
       {
         newVoltage = 0;
         fastStopRequested = true;

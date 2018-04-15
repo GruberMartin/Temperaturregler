@@ -36,15 +36,28 @@ void calculateFinalValue()
 {
   if(finalValueHasBeenCalculated == 0)
   {
-  finalValue = 0.2625 * getStartVoltage() +  getValSens1();
-  if((finalValue - (int) finalValue)> 0.25)
+  finalValue = 0.511087 * getStartVoltage() +  getValSens1();
+   if((finalValue - (int) finalValue)< 0.25)
   {
     finalValue = ((int) finalValue);
     
     }
-    else if((finalValue - (int) finalValue)> 0.5)
+  if((finalValue - (int) finalValue)>= 0.25)
+  {
+    finalValue = ((int) finalValue) + 0.25;
+    
+    }
+    else if((finalValue - (int) finalValue)>= 0.5)
     {
       finalValue = ((int) finalValue) + 0.5;
+    }
+    else if((finalValue - (int) finalValue)>= 0.75)
+    {
+      finalValue = ((int) finalValue) + 0.75;
+    }
+    else
+    {
+      finalValue = ((int) finalValue) +1.0;
     }
     //Serial.println(finalValue);
   finalValueHasBeenCalculated = 1;

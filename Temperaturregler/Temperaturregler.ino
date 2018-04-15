@@ -95,7 +95,7 @@ void secCounter()
        
 
 
-        if(getError() < 0.5)
+        if(getError() <= 0.0)
       {
          doNewCalc = true;
       }
@@ -187,7 +187,7 @@ void loop()
     current_main_state = getParameter;
     break;
     case getParameter:
-    setStartVoltage(182.857);    
+    setStartVoltage(52.8286);    
     calculateFinalValue();
     setVoltage(getStartVoltage());
     //requestTemp();
