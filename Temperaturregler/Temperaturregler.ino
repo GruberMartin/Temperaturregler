@@ -187,7 +187,7 @@ void loop()
     current_main_state = getParameter;
     break;
     case getParameter:
-    setStartVoltage(52.8286);    
+    setStartVoltage(54.2407);    
     calculateFinalValue();
     setVoltage(getStartVoltage());
     //requestTemp();
