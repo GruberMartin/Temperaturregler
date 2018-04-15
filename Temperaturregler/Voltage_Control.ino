@@ -4,7 +4,7 @@
 #include "Dynamic_Parameter_determination.h"
 #define heatPin  10
 unsigned long time;       //Startzeit
-int maxCount = 20000;
+int maxCount = 10000;
 unsigned long previousTimeNew = 0;
 float onTime = 0.0;
 int counter = 0;
@@ -20,7 +20,7 @@ void setOnTime(float voltage)
 {
   //if(onTimeHasBeenSet == 0)
   //{
-  onTime = (voltage * 20000)/1511.43;
+  onTime = (voltage * maxCount)/1511.43;
   //onTimeHasBeenSet = 1;
   
   //}
