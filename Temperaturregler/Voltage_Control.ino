@@ -4,7 +4,7 @@
 #include "Dynamic_Parameter_determination.h"
 #define heatPin  10
 unsigned long time;       //Startzeit
-int maxCount = 10000;
+int maxCount = 20000;
 unsigned long previousTimeNew = 0;
 float onTime = 0.0;
 int counter = 0;

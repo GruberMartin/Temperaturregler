@@ -28,7 +28,7 @@ float T = 0.0;
 int n = 0;
 float voltageP = 0.0;
 float voltageI = 0.0;
-float voltageIold = 54.2407; // gerade geändert
+float voltageIold = 49.0; // gerade geändert
 boolean newCalc = false;
 boolean fastStopRequested = false;
 //const int chipSelect = 10;
@@ -163,7 +163,7 @@ float controlVoltage()
       //Serial.print("Achtung n manuel gesetzt");
       Kpr = KprKps / getKps();
       Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r);
-      T = 0.075 * Tm; // analog zu buch seite 290
+      T = 0.1 * Tm; // analog zu buch seite 290
       //T = 1.0;
       //Serial.print("1.0/3.0");
       /*Serial.print("alpha10 = ");
@@ -270,11 +270,11 @@ float controlVoltage()
       else
       {
 
-        voltageIold = newVoltage;
+        
         fastStopRequested = false;
       }
       // oldVoltage = newVoltage;
-
+      voltageIold = newVoltage;
       oldError = newError;
       setVoltage(newVoltage);
       /*Serial.println("");

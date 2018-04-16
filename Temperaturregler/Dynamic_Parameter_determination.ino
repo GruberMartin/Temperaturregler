@@ -36,7 +36,7 @@ void calculateFinalValue()
 {
   if(finalValueHasBeenCalculated == 0)
   {
-  finalValue = 0.511087 * getStartVoltage() +  getValSens1();
+  finalValue = 0.562154 * getStartVoltage() +  getValSens1();
    if((finalValue - (int) finalValue)< 0.25)
   {
     finalValue = ((int) finalValue);
@@ -55,12 +55,10 @@ void calculateFinalValue()
     {
       finalValue = ((int) finalValue) + 0.75;
     }
-    else
-    {
-      finalValue = ((int) finalValue) +1.0;
-    }
+    
     //Serial.println(finalValue);
   finalValueHasBeenCalculated = 1;
+  
   
   //Serial.println(finalValue);
   }
@@ -74,7 +72,7 @@ float getFinalValue()
 boolean finish()
 {
   requestTemp();
-  if(getValSens2() >= finalValue)
+  if(getValSens2() >= finalValue -0.5)
   {
     return true;
   }
@@ -89,7 +87,7 @@ boolean finish()
 void writeTemperature(float val)
 {
   
-  if((finalValue-0.75) <= getValSens2())
+  if((finalValue) <= getValSens2())
   {
     setMainState(gotParameter);
   }

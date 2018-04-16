@@ -26,6 +26,11 @@ int sampleCounter = 0;
 float voltageSetNow = 0.0;
 boolean gotVoltage = false;
 boolean doNewCalc = false;
+float tempMaxTemp = 0.0;
+float maxTemp = 0.0;
+boolean antiDeadLockActivated = false;
+int deadLockCounter = 0;
+boolean deadLockHasReachedCriticalValue = false;
 
 typedef enum {
   notStarted_Main,
@@ -49,7 +54,11 @@ void setup()
   initVoltageControll();
 }
 
-
+void setMaxTemp()
+{
+  maxTemp = 0.8 * getFinalValue();
+  
+}
 
 
 void writeTemppToArray()
@@ -59,6 +68,16 @@ void writeTemppToArray()
         sevenSecCounter = 0;
         writeTemperature(getValSens2());
       }
+}
+
+void antiDeadLock()
+{
+  if(antiDeadLockActivated == false)
+  {
+  setMaxTemp();
+  antiDeadLockActivated = true;
+  }
+    
 }
 
 void secCounter()
@@ -73,6 +92,34 @@ void secCounter()
       //Serial.print("TEMP: ");
       //  printTemperature("Inside : ", sensor1);
       requestTemp();
+
+      
+      if(antiDeadLockActivated == true && PIisOn == false)
+      {
+          
+        
+          if( maxTemp < getValSens2())
+          {
+            deadLockHasReachedCriticalValue = true;
+            deadLockCounter = 0;
+            maxTemp =  getValSens2();
+          }
+          else
+          {
+            if(deadLockHasReachedCriticalValue == true)
+            {
+            deadLockCounter = deadLockCounter + 1;
+            }
+          }
+      }
+
+      
+      if(deadLockCounter >= 360 && PIisOn == false)
+      {
+        antiDeadLockActivated = false;
+        setMainState(gotParameter);
+      }
+      
       if(PIisOn == true)
       {
         
@@ -187,12 +234,14 @@ void loop()
     current_main_state = getParameter;
     break;
     case getParameter:
-    setStartVoltage(54.2407);    
+    setStartVoltage(49.0);    
     calculateFinalValue();
+    
     setVoltage(getStartVoltage());
     //requestTemp();
     secCounter();
     writeTemppToArray();
+    antiDeadLock();
     break;
     case gotParameter:
     secCounter();
@@ -203,6 +252,7 @@ void loop()
     Serial.println("PI Regler ist jetzt aktiv");   
     break;
     case PI_on_Main:
+    //Serial.println("PI läuft");
     secCounter();
      PIisOn = true;
      controlVoltage();
