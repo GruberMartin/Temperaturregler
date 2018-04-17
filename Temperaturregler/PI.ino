@@ -161,9 +161,9 @@ float controlVoltage()
         Serial.println(t50r);
         Serial.println(t90r);*/
       //Serial.print("Achtung n manuel gesetzt");
-      Kpr = KprKps / getKps();
-      Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r);
-      T = 0.1 * Tm; // analog zu buch seite 290
+      Kpr = KprKps / getKps(); // 2.91;//
+      Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r); //624.01;
+      T = 0.075 * Tm; // analog zu buch seite 290 46.8;
       //T = 1.0;
       //Serial.print("1.0/3.0");
       /*Serial.print("alpha10 = ");
@@ -173,7 +173,7 @@ float controlVoltage()
         Serial.print("alpha90 = ");
         Serial.println(alpha90);*/
 
-      Tn = TnTm*Tm;
+      Tn = TnTm*Tm;//967.21;
       //setCurrentState(running_PI);
       /*Serial.println("PI läuft mit folgenden Parametern");
         Serial.print("Kpr = ");
@@ -186,7 +186,7 @@ float controlVoltage()
         Serial.println(n);
         Serial.print("T = ");
         Serial.println(T);*/
-      //Serial.println("Achtuuuuuuuuuuuung Parameter statisch gesetzt !!");
+     // Serial.println("Achtuuuuuuuuuuuung Parameter statisch gesetzt !!");
       currentState = savePI_Parameter;
       break;
 
@@ -270,11 +270,11 @@ float controlVoltage()
       else
       {
 
-        
+        voltageIold = newVoltage;
         fastStopRequested = false;
       }
       // oldVoltage = newVoltage;
-      voltageIold = newVoltage;
+      
       oldError = newError;
       setVoltage(newVoltage);
       /*Serial.println("");
