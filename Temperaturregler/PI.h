@@ -17,5 +17,6 @@ boolean hardStop();
 float getError();
 float setSetPoint(float setPoint);
 float getSetPoint();
+void setStartVoltageIPart(float IpartOffset);
 
 #endif

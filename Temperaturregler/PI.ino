@@ -97,7 +97,10 @@ float setSetPoint(float setPoint)
   Sollwert = setPoint;
 }
 
-
+void setStartVoltageIPart(float IpartOffset)
+{
+  voltageIold = IpartOffset;
+}
 
 float controlVoltage()
 {

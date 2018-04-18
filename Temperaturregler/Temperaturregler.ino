@@ -248,6 +248,7 @@ void loop()
     //turnOffHeating();
     printParameter();
     setCurrentState(start_PI);
+    setStartVoltageIPart(getStartVoltage());
     current_main_state = PI_on_Main; 
     Serial.println("PI Regler ist jetzt aktiv");   
     break;
