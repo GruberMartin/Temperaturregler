@@ -61,6 +61,7 @@ void setMaxTemp()
 }
 
 
+
 void writeTemppToArray()
 {
   if (sevenSecCounter == 7)
@@ -193,13 +194,13 @@ void setMainState(main_states newState)
   current_main_state = newState;
 }
 
-void setStartVoltage(float startVoltageEnter)
+void setStartVoltage()
 {
   if(voltageHasBeenSet == 0)
   {
-  setVoltage(startVoltageEnter);
+  setVoltage(calculateStartVoltage());
   voltageHasBeenSet = 1;
-  setVarStartVoltage(startVoltageEnter);
+  setVarStartVoltage(calculateStartVoltage());
   }
   
 }
@@ -234,9 +235,8 @@ void loop()
     current_main_state = getParameter;
     break;
     case getParameter:
-    setStartVoltage(49.0);    
-    calculateFinalValue();
-    
+    setStartVoltage();    
+    calculateFinalValue();    
     setVoltage(getStartVoltage());
     //requestTemp();
     secCounter();

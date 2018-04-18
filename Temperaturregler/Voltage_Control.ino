@@ -20,7 +20,7 @@ void setOnTime(float voltage)
 {
   //if(onTimeHasBeenSet == 0)
   //{
-  onTime = (voltage * maxCount)/1511.43;
+  onTime = ((sq(voltage)/35.0) * maxCount)/1511.43;
   //onTimeHasBeenSet = 1;
   
   //}

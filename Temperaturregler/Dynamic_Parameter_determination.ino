@@ -1,7 +1,7 @@
 #include <Arduino.h>
 //#include <Serial.h>
 #include "Temperature.h"
-
+#include "PI.h"
 
 float tempVal [1601];
 int arrayIndex = 0;
@@ -22,7 +22,7 @@ int hasPrinted = 0;
 float finalValue = 0.0;
 int finalValueHasBeenCalculated = 0;
 float lastDigits = 0.0;
-
+float voltageToSet = 0.0;
 
 
 void initParameterDetermination()
@@ -32,11 +32,19 @@ void initParameterDetermination()
 }
 
 
+float calculateStartVoltage()
+{
+  voltageToSet = ((getSetPoint()- getValSens1()) / 0.6646) * 0.8;
+  //Serial.print("Start voltage set to: ");
+  //Serial.println(voltageToSet);
+  return voltageToSet;
+}
+
 void calculateFinalValue()
 {
   if(finalValueHasBeenCalculated == 0)
   {
-  finalValue = 0.562154 * getStartVoltage() +  getValSens1();
+  finalValue = 0.6646 * getStartVoltage() +  getValSens1();
    if((finalValue - (int) finalValue)< 0.25)
   {
     finalValue = ((int) finalValue);
@@ -87,20 +95,20 @@ boolean finish()
 void writeTemperature(float val)
 {
   
-  if((finalValue) <= getValSens2())
+  /*if((finalValue) <= getValSens2())
   {
     setMainState(gotParameter);
   }
-  else if (arrayIndex <= 1600)
+  else*/ if (arrayIndex <= 1600)
         {
           tempVal[arrayIndex] = val;
           arrayIndex = arrayIndex + 1;
           
         }
-        else
+       /* else
         {
           setMainState(gotParameter);
-        }
+        }*/
 }
 
 void printParameter()

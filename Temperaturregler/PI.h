@@ -15,5 +15,7 @@ float getT();
 float getCurrentVoltage();
 boolean hardStop();
 float getError();
+float setSetPoint(float setPoint);
+float getSetPoint();
 
 #endif
