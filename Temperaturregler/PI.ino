@@ -172,7 +172,7 @@ float controlVoltage()
         Serial.println(t50r);
         Serial.println(t90r);*/
       //Serial.print("Achtung n manuel gesetzt");
-      Kpr = (KprKps / getKps())*0.8; // 2.91;//
+      Kpr = (KprKps / getKps())*0.7; // 2.91;//
       Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r); //624.01;
       T = 0.085 * Tm * n; // analog zu buch seite 290 46.8;
       //T = 1.0;
