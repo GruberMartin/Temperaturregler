@@ -34,13 +34,7 @@ boolean fastStopRequested = false;
 //const int chipSelect = 10;
 String filename;
 boolean writingSuccessfully = false;
-/*typedef enum {
-  notStarted_PI,
-  start_PI,
-  running_PI,
-  stop_PI,
-  idle_PI
-  } PIstate;*/
+
 
 PIstate currentState = notStarted_PI;
 
@@ -117,9 +111,6 @@ float controlVoltage()
       t50r = getT50(); // 924;
       t90r = getT90();// 1820;
       mu = t10r / t90r * 1.0;
-      /*Serial.print("mu = ");
-        Serial.println(mu);*/
-
       for (int i = 0; i < 4; i++)
       {
         if (muTemp > abs(muC[i] - mu))
@@ -128,9 +119,6 @@ float controlVoltage()
           order = i;
         }
       }
-      /* Serial.print("order = ");
-        Serial.println(order);*/
-
       if (order == 0)
       {
         alpha10 = 1.880;
@@ -168,36 +156,11 @@ float controlVoltage()
         n = 4;
       }
 
-      /*Serial.println(t10r);
-        Serial.println(t50r);
-        Serial.println(t90r);*/
-      //Serial.print("Achtung n manuel gesetzt");
       Kpr = (KprKps / getKps())*0.7; // 2.91;//
       Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r); //624.01;
       T = 0.085 * Tm * n; // analog zu buch seite 290 46.8;
-      //T = 1.0;
-      //Serial.print("1.0/3.0");
-      /*Serial.print("alpha10 = ");
-        Serial.println(alpha10);
-        Serial.print("alpha50 = ");
-        Serial.println(alpha50);
-        Serial.print("alpha90 = ");
-        Serial.println(alpha90);*/
-
+     
       Tn = TnTm*Tm;//967.21;
-      //setCurrentState(running_PI);
-      /*Serial.println("PI läuft mit folgenden Parametern");
-        Serial.print("Kpr = ");
-        Serial.println(Kpr);
-        Serial.print("Tn = ");
-        Serial.println(Tn);
-        Serial.print("Tm = ");
-        Serial.println(Tm);
-        Serial.print("n = ");
-        Serial.println(n);
-        Serial.print("T = ");
-        Serial.println(T);*/
-     // Serial.println("Achtuuuuuuuuuuuung Parameter statisch gesetzt !!");
       currentState = savePI_Parameter;
       break;
 
@@ -242,19 +205,14 @@ float controlVoltage()
     case running_PI:
       if (calcVoltage())
       {
-        //Serial.print("newVoltage = ");
-        //Serial.println(newVoltage);
+
         requestTemp();
         newError = Sollwert - getValSens2();
         voltageP = Kpr * newError;
         voltageI = voltageIold + (Kpr / Tn) * (T / 2) * newError + (Kpr / Tn) * (T / 2) * oldError;
 
         newVoltage = voltageP + voltageI;
-        /*Serial.println("");
-          Serial.print("newVoltage = ");
-          Serial.println(newVoltage);
-          Serial.print("error = ");
-          Serial.println(newError);*/
+
         setDonewCalc();
       }
 
@@ -267,16 +225,14 @@ float controlVoltage()
       else if (newVoltage <= 0)
       {
         newVoltage = 0;
-        //voltageIold = 0; // damit es nicht noch einen zyklus länger dauert
-        //turnOffHeating();
-        //voltageIold = 0;
+
 
       }
       else if (newError <= 0.0)
       {
         newVoltage = 0;
         fastStopRequested = true;
-        //voltageIold = 0;
+
       }
       else
       {
@@ -284,18 +240,9 @@ float controlVoltage()
         voltageIold = newVoltage;
         fastStopRequested = false;
       }
-      // oldVoltage = newVoltage;
       
       oldError = newError;
       setVoltage(newVoltage);
-      /*Serial.println("");
-        Serial.print("newVoltage = ");
-        Serial.println(newVoltage);
-        Serial.print("error = ");
-        Serial.println(newError);*/
-      /*Serial.println("PI ok");
-        Serial.print("voltage: ");
-        Serial.println(newVoltage);*/
       break;
   }
 }

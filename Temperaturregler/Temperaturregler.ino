@@ -129,14 +129,11 @@ void secCounter()
           sampleTime = (int)getT();
           sampleCounter = 0;
           gotT = true;
-          /*Serial.print("smapleTime = ");
-          Serial.println(sampleTime);*/
         }
 
         if(sampleCounter == sampleTime)
         {
         gotVoltage = false;
-        //TimedAction doVoltageControll = TimedAction(sampleTime,myCotroller);
         doNewCalc = true;
         sampleCounter = 0;
         }
@@ -146,11 +143,7 @@ void secCounter()
         if(getError() <= 0.0)
       {
          doNewCalc = true;
-      }
-        
-        
-        
-        //controlVoltage();        
+      }   
       }
 
       
@@ -179,15 +172,6 @@ int getSeconds()
   return seconds;
 }
 
-/*void myCotroller()
-{
-  if(gotVoltage == false)
-  {
-  voltageSetNow = getCurrentVoltage();
-  gotVoltage = true;
-  }
-  setVoltage(voltageSetNow);
-}*/
 
 void setMainState(main_states newState)
 {
@@ -230,7 +214,6 @@ void loop()
   switch(current_main_state)
   {
     case notStarted_Main: 
-    //requestTemp();
     secCounter();
     current_main_state = getParameter;
     break;
@@ -238,14 +221,12 @@ void loop()
     setStartVoltage();    
     calculateFinalValue();    
     setVoltage(getStartVoltage());
-    //requestTemp();
     secCounter();
     writeTemppToArray();
     antiDeadLock();
     break;
     case gotParameter:
     secCounter();
-    //turnOffHeating();
     printParameter();
     setCurrentState(start_PI);
     setStartVoltageIPart(getStartVoltage());
@@ -253,7 +234,6 @@ void loop()
     Serial.println("PI Regler ist jetzt aktiv");   
     break;
     case PI_on_Main:
-    //Serial.println("PI läuft");
     secCounter();
      PIisOn = true;
      controlVoltage();
