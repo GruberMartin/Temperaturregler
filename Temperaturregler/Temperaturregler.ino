@@ -1,6 +1,6 @@
 #include <DallasTemperature.h>
 #include <TimedAction.h>
-
+#include "Display.h"
 
 //For more information visit: http://aeq-web.com/?ref=arduinoide
 
@@ -31,8 +31,40 @@ float maxTemp = 0.0;
 boolean antiDeadLockActivated = false;
 int deadLockCounter = 0;
 boolean deadLockHasReachedCriticalValue = false;
+boolean temperatureIsStable = false; 
+int stabCounter = 0;
+boolean rechedFinalState = false;
+boolean fastTempControll = false;
+
+
+
+#define BLUE 0x4
+#define WHITE 0x7
+boolean waitForUserImput = false;
+uint8_t buttons;
+boolean hoursSelected = false;
+boolean minutesSelected = false;
+unsigned long previousMillis = 0;        // will store last time LED was updated
+int hours = 0;
+int minutes = 0;
+String hoursString = "00";
+String minutesString = "00";
+// constants won't change:
+const long interval = 1000;
+boolean changingHours = true;
+boolean changingMinutes = false;
+boolean changeRequested = false;
+boolean textSet = false;
+int temp = 23; 
+boolean changingTemp = true;
+int pointTemp = 0.0;
+String pointTempString = "";
+String tempString = "";
+float secsToSet = 0.0;
+float tempUserSet = 0.0;
 
 typedef enum {
+  getUserInput,
   notStarted_Main,
   started_Main,
   PI_on_Main,
@@ -41,10 +73,15 @@ typedef enum {
   
 } main_states;
 
-main_states current_main_state = notStarted_Main;
+main_states current_main_state = getUserInput;
+
+
 
 void setup()
 {
+  //Serial.clear();
+  initDisplay();
+  
   pinMode(schalter, INPUT);
   pinMode(myPin, OUTPUT);  
   digitalWrite(myPin, HIGH);
@@ -59,6 +96,8 @@ void setMaxTemp()
   maxTemp = 0.8 * getFinalValue();
   
 }
+
+
 
 
 
@@ -87,13 +126,32 @@ void secCounter()
     {
       previousTime = previousTime + 1000;  // use 100000 for uS
       seconds = seconds + 1;
-
-      //doVoltageControll.check();
-      
-      //Serial.print("TEMP: ");
-      //  printTemperature("Inside : ", sensor1);
       requestTemp();
 
+      if(temperatureIsStable == false && PIisOn == true)
+      {
+        if(hasRechedFinalValue() && getError() == 0)
+        {
+          stabCounter = stabCounter + 1;
+        }
+        if(stabCounter > 10)
+        {
+          temperatureIsStable = true;
+          rechedFinalState = true;
+        }
+        
+      }
+
+      if(temperatureIsStable == true && rechedFinalState == true || fastTempControll == true)
+      {
+        rechedFinalState = false;
+        fastTempControll = true;
+        stabCounter = 0;
+         if(getError() > 0.5)
+      {
+         doNewCalc = true;
+      }   
+      }
       
       if(antiDeadLockActivated == true && PIisOn == false)
       {
@@ -162,6 +220,11 @@ boolean calcVoltage()
   return doNewCalc;
 }
 
+void imediateCalcVoltage()
+{
+  doNewCalc = true;
+}
+
 void setDonewCalc()
 {
   doNewCalc = false;
@@ -213,6 +276,10 @@ void loop()
     
   switch(current_main_state)
   {
+    case getUserInput:
+    StartMenu();
+    delay(100);
+    break;
     case notStarted_Main: 
     secCounter();
     current_main_state = getParameter;

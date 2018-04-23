@@ -18,5 +18,7 @@ float getError();
 float setSetPoint(float setPoint);
 float getSetPoint();
 void setStartVoltageIPart(float IpartOffset);
+void setT(float sampletime);
+boolean hasRechedFinalValue();
 
 #endif

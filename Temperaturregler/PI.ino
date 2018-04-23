@@ -34,6 +34,7 @@ boolean fastStopRequested = false;
 //const int chipSelect = 10;
 String filename;
 boolean writingSuccessfully = false;
+boolean reachedFinalTemperature = false;
 
 
 PIstate currentState = notStarted_PI;
@@ -56,14 +57,24 @@ float getT()
 
 }
 
+void setT(float sampletime)
+{
+  T = sampletime;
+}
+
 void setCurrentState(PIstate stateToSet)
 {
   currentState = stateToSet;
 }
 
-void getCurrentState(PIstate stateToSet)
+/*void getCurrentState(PIstate stateToSet)
 {
   currentState = stateToSet;
+}*/
+
+boolean hasRechedFinalValue()
+{
+  return reachedFinalTemperature;
 }
 
 float getCurrentVoltage()
@@ -95,6 +106,8 @@ void setStartVoltageIPart(float IpartOffset)
 {
   voltageIold = IpartOffset;
 }
+
+
 
 float controlVoltage()
 {
@@ -156,7 +169,7 @@ float controlVoltage()
         n = 4;
       }
 
-      Kpr = (KprKps / getKps())*0.7; // 2.91;//
+      Kpr = (KprKps / getKps())*0.45; // 2.91;//
       Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r); //624.01;
       T = 0.085 * Tm * n; // analog zu buch seite 290 46.8;
      
@@ -191,14 +204,15 @@ float controlVoltage()
             // close the file:
             myFile.close();
             writingSuccessfully = true;
-
+            currentState = running_PI;
           }
         }
 
       }
 
 
-      currentState = running_PI;
+      
+      imediateCalcVoltage();
 
       break;
 
@@ -232,7 +246,7 @@ float controlVoltage()
       {
         newVoltage = 0;
         fastStopRequested = true;
-
+        reachedFinalTemperature = true;
       }
       else
       {
