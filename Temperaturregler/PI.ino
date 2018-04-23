@@ -184,7 +184,7 @@ float controlVoltage()
         currentState = running_PI;
       }
 
-      for (int i = 0; i < 40 && writingSuccessfully == false; i++)
+      for (int i = 0; (i < 40) && (writingSuccessfully == false); i++)
       {
         filename = String(String(i) + ".txt");
         if (!SD.exists(filename))
@@ -208,6 +208,11 @@ float controlVoltage()
           }
         }
 
+      }
+
+      if(writingSuccessfully == false)
+      {
+        currentState = running_PI;
       }
 
 
