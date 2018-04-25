@@ -18,8 +18,8 @@
 
 unsigned long previousTime = 0;
 unsigned long actualTime = 0;
-int seconds ;
-int sevenSecCounter = 0;
+unsigned long seconds ;
+int tenSecCounter = 0;
 int fiveSecCounter = 0;
 int started = 0;
 int voltageHasBeenSet = 0;
@@ -50,6 +50,7 @@ int tempUserDot = 0;
 boolean setTempUser = true;
 boolean setHours = true;
 unsigned long endTime = 0;
+boolean endtimeHasBeenSet = false;
 
 
 
@@ -169,9 +170,9 @@ void disPrintTemp()
 
 void writeTemppToArray()
 {
-  if (sevenSecCounter == 7)
+  if (tenSecCounter == 10)
   {
-    sevenSecCounter = 0;
+    tenSecCounter = 0;
     writeTemperature(getValSens2());
   }
 }
@@ -204,7 +205,7 @@ void secCounter()
     previousTime = previousTime + 1000;  // use 100000 for uS
     seconds = seconds + 1;
     requestTemp();
-    if (seconds >= endTime)
+    if ((seconds >= endTime) && endtimeHasBeenSet == true)
     {
       current_main_state = globalShutDown;
     }
@@ -224,6 +225,11 @@ void secCounter()
 
     if (temperatureIsStable == true && rechedFinalState == true || fastTempControll == true)
     {
+      if(endtimeHasBeenSet == false)
+      {
+      setEndTime(endTime + getSeconds());
+      endtimeHasBeenSet = true;
+      }
       rechedFinalState = false;
       fastTempControll = true;
       stabCounter = 0;
@@ -253,7 +259,7 @@ void secCounter()
     }
 
 
-    if (deadLockCounter >= 360 && PIisOn == false)
+    if (deadLockCounter >= 340 && PIisOn == false)
     {
       antiDeadLockActivated = false;
       setMainState(gotParameter);
@@ -287,7 +293,7 @@ void secCounter()
 
     printSensorVals();
     Serial.println(seconds, DEC);
-    sevenSecCounter = sevenSecCounter + 1;
+    tenSecCounter = tenSecCounter + 1;
     fiveSecCounter = fiveSecCounter + 1;
     sampleCounter = sampleCounter + 1;
 
@@ -312,7 +318,7 @@ void setDonewCalc()
   doNewCalc = false;
 }
 
-int getSeconds()
+unsigned long getSeconds()
 {
   return seconds;
 }
@@ -521,7 +527,7 @@ void loop()
     case notStarted_Main:
       setSetPoint(((float)tempUserDot / 100) + tempUser);
       endTime = hours * 60 * 60 + minutes * 60;
-      setEndTime(endTime);
+      
       secCounter();
       current_main_state = getParameter;
       break;
@@ -545,8 +551,9 @@ void loop()
       secCounter();
       PIisOn = true;
       controlVoltage();
-    case globalShutDown:
-      turnOffHeating();
+      break;
+     case globalShutDown:
+     turnOffHeating();
       break;
   }
 

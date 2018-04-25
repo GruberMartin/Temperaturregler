@@ -169,10 +169,10 @@ float controlVoltage()
         n = 4;
       }
 
-      Kpr = (KprKps / getKps())*0.45; // 2.91;//
+      // 2.91;//
       Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r); //624.01;
-      T = 0.085 * Tm * n; // analog zu buch seite 290 46.8;
-     
+      T = 0.1 * Tm ; // analog zu buch seite 290 46.8;
+      Kpr = (KprKps / getKps())*(2/T); 
       Tn = TnTm*Tm;//967.21;
       currentState = savePI_Parameter;
       break;
@@ -227,7 +227,7 @@ float controlVoltage()
 
         requestTemp();
         newError = Sollwert - getValSens2();
-        voltageP = Kpr * newError;
+        voltageP = Kpr* (T/2) * newError;
         voltageI = voltageIold + (Kpr / Tn) * (T / 2) * newError + (Kpr / Tn) * (T / 2) * oldError;
 
         newVoltage = voltageP + voltageI;
