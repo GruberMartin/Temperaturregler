@@ -50,7 +50,9 @@ int tempUserDot = 0;
 boolean setTempUser = true;
 boolean setHours = true;
 unsigned long endTime = 0;
+float tempTemp = 0.0;
 boolean endtimeHasBeenSet = false;
+boolean startLcdTempPrinting = false;
 
 
 
@@ -168,6 +170,17 @@ void disPrintTemp()
   lcd.setCursor(0, 0);
 }
 
+void disPrintActualTemp(float actualTemp)
+{
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Temp. now: ");
+  lcd.setCursor(0, 1);
+  timeString = ((String)actualTemp) + " deg.";
+  lcd.print(timeString);
+  lcd.setCursor(0, 0);
+}
+
 void writeTemppToArray()
 {
   if (tenSecCounter == 10)
@@ -233,10 +246,10 @@ void secCounter()
       rechedFinalState = false;
       fastTempControll = true;
       stabCounter = 0;
-      if (getError() > 0.5)
+      /*if (getError() > 0.5)
       {
         doNewCalc = true;
-      }
+      }*/
     }
 
     if (antiDeadLockActivated == true && PIisOn == false)
@@ -290,7 +303,11 @@ void secCounter()
       }
     }
 
-
+   if((tempTemp != getValSens2()) && startLcdTempPrinting == true)
+   {
+    tempTemp = getValSens2();
+    disPrintActualTemp(tempTemp);
+   }
     printSensorVals();
     Serial.println(seconds, DEC);
     tenSecCounter = tenSecCounter + 1;
@@ -519,6 +536,7 @@ void loop()
         isStillPressing = true;
 
         requestGlobalStart();
+        startLcdTempPrinting = true;
 
       }
 
@@ -527,7 +545,6 @@ void loop()
     case notStarted_Main:
       setSetPoint(((float)tempUserDot / 100) + tempUser);
       endTime = hours * 60 * 60 + minutes * 60;
-      
       secCounter();
       current_main_state = getParameter;
       break;
