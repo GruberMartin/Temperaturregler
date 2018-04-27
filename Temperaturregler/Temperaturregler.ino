@@ -594,10 +594,10 @@ void loop()
     case startWithGivenParameters:
     secCounter();
     setVoltage(0.0);
-    setParameterProgrammatically(0.56, 1821.41, 1175.10, 235.02, 2);
-    setCurrentState(start_PI);
+    setParameterProgrammatically(0.448, 1821.41, 1175.10, 235.02, 2);    
     setStartVoltageIPart(getStartVoltage());
-    checkParameters(0.56, 1821.41, 1175.10, 235.02, 2);
+    checkParameters(0.448, 1821.41, 1175.10, 235.02, 2);
+    setCurrentState(running_PI);
     current_main_state = PI_on_Main;
     Serial.println("PI Regler ist jetzt aktiv");
     break;

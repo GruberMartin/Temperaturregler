@@ -68,7 +68,7 @@ void setParameterProgrammatically(float K, float Tr, float T1, float Ta, int ord
 
 boolean checkParameters(float K, float Tr, float T1, float Ta, int orderSet)
 {
-    Serial.print("Kpr = ");
+    /*Serial.print("Kpr = ");
     Serial.println(Kpr);
     Serial.print("Tn = ");
     Serial.println(Tn);
@@ -81,7 +81,7 @@ boolean checkParameters(float K, float Tr, float T1, float Ta, int orderSet)
     Serial.print("StartVoltage: ");
     Serial.println(voltageIold);
     Serial.print("SetPoint: ");
-    Serial.println(Sollwert);
+    Serial.println(Sollwert);*/
     if(K == Kpr && Tr == Tn && T1 == Tm && Ta == T && orderSet == n && voltageIold == 0)
     {
       return true;
@@ -208,7 +208,7 @@ float controlVoltage()
       // 2.91;//
       Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r); //624.01;
       T = 0.1 *n* Tm ; // analog zu buch seite 290 46.8;
-      Kpr = (KprKps / getKps())*(1.0/4.0); 
+      Kpr = (KprKps / getKps())*(1.0/5.0); 
       Tn = TnTm*Tm;//967.21;
       currentState = savePI_Parameter;
       break;
@@ -285,7 +285,7 @@ float controlVoltage()
 
 
       }
-      else if (newError <= 0.0)
+      /*else if (newError <= 0.0)
       {
         newVoltage = 0;
         fastStopRequested = true;
@@ -296,7 +296,7 @@ float controlVoltage()
 
         voltageIold = newVoltage;
         fastStopRequested = false;
-      }
+      }*/
       
       oldError = newError;
       setVoltage(newVoltage);
