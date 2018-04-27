@@ -57,6 +57,42 @@ float getT()
 
 }
 
+void setParameterProgrammatically(float K, float Tr, float T1, float Ta, int orderSet)
+{
+  Kpr = K;
+  Tn = Tr;
+  T1 = Tm;
+  T = Ta;
+  n = orderSet;
+}
+
+boolean checkParameters(float K, float Tr, float T1, float Ta, int orderSet)
+{
+    Serial.print("Kpr = ");
+    Serial.println(Kpr);
+    Serial.print("Tn = ");
+    Serial.println(Tn);
+    Serial.print("Tm = ");
+    Serial.println(Tm);
+    Serial.print("T = ");
+    Serial.println(T);
+    Serial.print("n = ");
+    Serial.println(n);
+    Serial.print("StartVoltage: ");
+    Serial.println(voltageIold);
+    Serial.print("SetPoint: ");
+    Serial.println(Sollwert);
+    if(K == Kpr && Tr == Tn && T1 == Tm && Ta == T && orderSet == n && voltageIold == 0)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  
+}
+
 void setT(float sampletime)
 {
   T = sampletime;
@@ -201,6 +237,8 @@ float controlVoltage()
             myFile.println(T);
             myFile.print("n = ");
             myFile.println(n);
+            myFile.print("Activated = ");
+            myFile.println(getSeconds());
             // close the file:
             myFile.close();
             writingSuccessfully = true;

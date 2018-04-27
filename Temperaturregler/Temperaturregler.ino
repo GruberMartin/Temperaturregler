@@ -53,6 +53,7 @@ unsigned long endTime = 0;
 float tempTemp = 0.0;
 boolean endtimeHasBeenSet = false;
 boolean startLcdTempPrinting = false;
+boolean startWithGivenParametersRequest = true;
 
 
 
@@ -76,6 +77,7 @@ typedef enum {
   PI_on_Main,
   getParameter,
   gotParameter,
+  startWithGivenParameters,
   globalShutDown
 
 } main_states;
@@ -181,6 +183,17 @@ void disPrintActualTemp(float actualTemp)
   lcd.setCursor(0, 0);
 }
 
+void disPrintRegualtorActivated(float actualTemp)
+{
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Reg. activated: ");
+  lcd.setCursor(0, 1);
+  timeString = ((String)actualTemp) + " deg.";
+  lcd.print(timeString);
+  lcd.setCursor(0, 0);
+}
+
 void writeTemppToArray()
 {
   if (tenSecCounter == 10)
@@ -272,7 +285,7 @@ void secCounter()
     }
 
 
-    if (deadLockCounter >= 340 && PIisOn == false)
+    if (deadLockCounter >= 300 && PIisOn == false)
     {
       antiDeadLockActivated = false;
       setMainState(gotParameter);
@@ -306,7 +319,14 @@ void secCounter()
    if((tempTemp != getValSens2()) && startLcdTempPrinting == true)
    {
     tempTemp = getValSens2();
+    if(PIisOn == false)
+    {
     disPrintActualTemp(tempTemp);
+    }
+    else
+    {
+      disPrintRegualtorActivated(tempTemp);
+    }
    }
     printSensorVals();
     Serial.println(seconds, DEC);
@@ -546,7 +566,14 @@ void loop()
       setSetPoint(((float)tempUserDot / 100) + tempUser);
       endTime = hours * 60 * 60 + minutes * 60;
       secCounter();
+      if(startWithGivenParametersRequest == false)
+      {
       current_main_state = getParameter;
+      }
+      else
+      {
+        current_main_state = startWithGivenParameters;
+      }
       break;
     case getParameter:
       setStartVoltage();
@@ -564,6 +591,16 @@ void loop()
       current_main_state = PI_on_Main;
       Serial.println("PI Regler ist jetzt aktiv");
       break;
+    case startWithGivenParameters:
+    secCounter();
+    setVoltage(0.0);
+    setParameterProgrammatically(0.56, 1821.41, 1175.10, 235.02, 2);
+    setCurrentState(start_PI);
+    setStartVoltageIPart(getStartVoltage());
+    checkParameters(0.56, 1821.41, 1175.10, 235.02, 2);
+    current_main_state = PI_on_Main;
+    Serial.println("PI Regler ist jetzt aktiv");
+    break;
     case PI_on_Main:
       secCounter();
       PIisOn = true;
