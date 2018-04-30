@@ -232,7 +232,7 @@ float controlVoltage()
       // 2.91;//
       Tm = (1.0 / 3.0) * (alpha10 * t10r + alpha50 * t50r + alpha90 * t90r); //624.01;
       T = 0.1 * n * Tm ; // analog zu buch seite 290 46.8;
-      Kpr = (KprKps / getKps()) * 1.2;
+      Kpr = (KprKps / getKps());
       Tn = TnTm * Tm; //967.21;
       currentState = savePI_Parameter;
       break;
@@ -332,6 +332,18 @@ float controlVoltage()
         newVoltage = 0.0;
 
 
+      }
+
+      if(requestRegulatorChange() == true)
+      {
+        if(newError >=  0.25)
+        {
+           newVoltage = 1511.43;
+        }
+        else if(newError <= 0.0)
+        {
+           newVoltage = 0;
+        }
       }
 
       /*if (fastTempControll == true && newError <= 0.0)

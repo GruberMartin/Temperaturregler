@@ -53,7 +53,7 @@ unsigned long endTime = 0;
 float tempTemp = 0.0;
 boolean endtimeHasBeenSet = false;
 boolean startLcdTempPrinting = false;
-boolean startWithGivenParametersRequest = false;
+boolean startWithGivenParametersRequest = true;
 boolean changeRegulator = false;
 
 
@@ -268,6 +268,7 @@ void secCounter()
       fastTempControll = true;
       stabCounter = 0;
       changeRegulator = true;
+      imediateCalcVoltage();
       //Serial.println("Error");
       /*if (getError() > 0.5)
       {
@@ -604,7 +605,7 @@ void loop()
     case startWithGivenParameters:
     secCounter();
     setStartVoltage();
-    setParameterProgrammatically(2.3*1.2 , 1594.45, 1028.68,60, 2);    
+    setParameterProgrammatically(2.3 , 1594.45, 1028.68,195.26, 2);    
     setStartVoltageIPart(getStartVoltage());
     //if(true == checkParameters(2.3, 1594.45, 1028.68, 205.74, 2))
     //{
