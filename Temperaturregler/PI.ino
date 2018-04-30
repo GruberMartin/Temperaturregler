@@ -35,7 +35,9 @@ boolean fastStopRequested = false;
 String filename;
 boolean writingSuccessfully = false;
 boolean reachedFinalTemperature = false;
-
+float minIpart = 0.0;
+boolean minIpartHasBeenSet = false;
+boolean shutdownPI = false;
 
 PIstate currentState = notStarted_PI;
 
@@ -68,7 +70,7 @@ void setParameterProgrammatically(float K, float Tr, float T1, float Ta, int ord
 
 boolean checkParameters(float K, float Tr, float T1, float Ta, int orderSet)
 {
-    /*Serial.print("Kpr = ");
+  /*Serial.print("Kpr = ");
     Serial.println(Kpr);
     Serial.print("Tn = ");
     Serial.println(Tn);
@@ -82,15 +84,15 @@ boolean checkParameters(float K, float Tr, float T1, float Ta, int orderSet)
     Serial.println(voltageIold);
     Serial.print("SetPoint: ");
     Serial.println(Sollwert);*/
-    if(K == Kpr && Tr == Tn && T1 == Tm && Ta == T && orderSet == n && voltageIold == 0)
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  
+  if (K == Kpr && Tr == Tn && T1 == Tm && Ta == T && orderSet == n )
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+
 }
 
 void setT(float sampletime)
@@ -104,9 +106,31 @@ void setCurrentState(PIstate stateToSet)
 }
 
 /*void getCurrentState(PIstate stateToSet)
-{
+  {
   currentState = stateToSet;
-}*/
+  }*/
+
+void printPIParams()
+{
+  Serial.print("Kpr = ");
+  Serial.println(Kpr);
+  Serial.print("Tn = ");
+  Serial.println(Tn);
+  Serial.print("Tm = ");
+  Serial.println(Tm);
+  Serial.print("T = ");
+  Serial.println(T);
+  Serial.print("n = ");
+  Serial.println(n);
+  Serial.print("Activated = ");
+  Serial.println(getSeconds());
+  Serial.print("Start Voltage= ");
+  Serial.println(getStartVoltage());
+  Serial.print("Kp = ");
+  Serial.println(getKps());
+  Serial.print("SetPoint: ");
+  Serial.println(getSetPoint());
+}
 
 boolean hasRechedFinalValue()
 {
@@ -206,10 +230,10 @@ float controlVoltage()
       }
 
       // 2.91;//
-      Tm = (1.0/3.0)*(alpha10*t10r + alpha50*t50r + alpha90 * t90r); //624.01;
-      T = 0.1 *n* Tm ; // analog zu buch seite 290 46.8;
-      Kpr = (KprKps / getKps())*(1.0/5.0); 
-      Tn = TnTm*Tm;//967.21;
+      Tm = (1.0 / 3.0) * (alpha10 * t10r + alpha50 * t50r + alpha90 * t90r); //624.01;
+      T = 0.1 * n * Tm ; // analog zu buch seite 290 46.8;
+      Kpr = (KprKps / getKps()) * 1.2;
+      Tn = TnTm * Tm; //967.21;
       currentState = savePI_Parameter;
       break;
 
@@ -239,6 +263,12 @@ float controlVoltage()
             myFile.println(n);
             myFile.print("Activated = ");
             myFile.println(getSeconds());
+            myFile.print("Start Voltage= ");
+            myFile.println(getStartVoltage());
+            myFile.print("Kp = ");
+            myFile.println(getKps());
+            myFile.print("SetPoint: ");
+            myFile.println(getSetPoint());
             // close the file:
             myFile.close();
             writingSuccessfully = true;
@@ -248,13 +278,13 @@ float controlVoltage()
 
       }
 
-      if(writingSuccessfully == false)
+      if (writingSuccessfully == false)
       {
         currentState = running_PI;
       }
 
 
-      
+
       imediateCalcVoltage();
 
       break;
@@ -266,12 +296,30 @@ float controlVoltage()
         requestTemp();
         newError = Sollwert - getValSens2();
         voltageP = Kpr * newError;
-        voltageI = voltageIold + (Kpr / Tn) * (T / 2) * newError + (Kpr / Tn) * (T / 2) * oldError;
+        voltageI = voltageIold + (Kpr / Tn) * (T/2) * newError + (Kpr / Tn) * (T/2) * oldError;
 
         newVoltage = voltageP + voltageI;
 
         setDonewCalc();
       }
+
+      
+     /* else
+      {
+        newError = Sollwert - getValSens2();
+        if (newError > 0.5)
+        {
+          newVoltage = 1511.43;
+        }
+        else if (newError <= 0.0)
+        {
+          newVoltage = 0.0;
+        }
+      }*/
+
+
+
+      
 
       if (newVoltage > 1511.43)
       {
@@ -279,25 +327,33 @@ float controlVoltage()
         voltageIold = 1511.43;
 
       }
-      else if (newVoltage <= 0)
+      else if (newVoltage <= 0.0)
       {
-        newVoltage = 0;
+        newVoltage = 0.0;
 
 
       }
-      /*else if (newError <= 0.0)
+
+      /*if (fastTempControll == true && newError <= 0.0)
       {
+        shutdownPI = true;
+        // Serial.println("error!!!!!");
+      }*/
+
+
+      /*else if (newError <= 0.0)
+        {
         newVoltage = 0;
         fastStopRequested = true;
         reachedFinalTemperature = true;
-      }
-      else
-      {
+        }
+        else
+        {
 
         voltageIold = newVoltage;
         fastStopRequested = false;
-      }*/
-      
+        }*/
+
       oldError = newError;
       setVoltage(newVoltage);
       break;

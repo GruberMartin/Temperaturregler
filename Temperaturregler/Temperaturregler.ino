@@ -53,7 +53,8 @@ unsigned long endTime = 0;
 float tempTemp = 0.0;
 boolean endtimeHasBeenSet = false;
 boolean startLcdTempPrinting = false;
-boolean startWithGivenParametersRequest = true;
+boolean startWithGivenParametersRequest = false;
+boolean changeRegulator = false;
 
 
 
@@ -151,6 +152,11 @@ void disPrint(String firstLine, String secondLine)
   lcd.setCursor(0, 0);
 }
 
+boolean requestRegulatorChange()
+{
+  return changeRegulator;
+}
+
 void disPrintTime()
 {
   lcd.clear();
@@ -171,6 +177,8 @@ void disPrintTemp()
   lcd.print(timeString);
   lcd.setCursor(0, 0);
 }
+
+
 
 void disPrintActualTemp(float actualTemp)
 {
@@ -237,11 +245,11 @@ void secCounter()
     }
     if (temperatureIsStable == false && PIisOn == true)
     {
-      if (hasRechedFinalValue() && getError() == 0)
+      if (getError() == 0.0)
       {
         stabCounter = stabCounter + 1;
       }
-      if (stabCounter > 10)
+      if (stabCounter >= 1)
       {
         temperatureIsStable = true;
         rechedFinalState = true;
@@ -259,6 +267,8 @@ void secCounter()
       rechedFinalState = false;
       fastTempControll = true;
       stabCounter = 0;
+      changeRegulator = true;
+      //Serial.println("Error");
       /*if (getError() > 0.5)
       {
         doNewCalc = true;
@@ -310,10 +320,10 @@ void secCounter()
 
 
 
-      if (getError() <= 0.0)
+      /*if (getError() <= 0.0)
       {
         doNewCalc = true;
-      }
+      }*/ 
     }
 
    if((tempTemp != getValSens2()) && startLcdTempPrinting == true)
@@ -474,26 +484,26 @@ void loop()
       {
         hours = hours + 1;
         disPrintTime();
-        isStillPressing = true;
+        //isStillPressing = true;
 
       }
       else if (setHours == false && getButtonUp() && isStillPressing == false && minutes < 60)
       {
         minutes = minutes + 1;
         disPrintTime();
-        isStillPressing = true;
+        //isStillPressing = true;
       }
       else if (setHours == true && getButtonDown() && isStillPressing == false && hours > 0)
       {
         hours = hours - 1;
         disPrintTime();
-        isStillPressing = true;
+        //isStillPressing = true;
       }
       else if (setHours == false && getButtonDown() && isStillPressing == false && minutes > 0)
       {
         minutes = minutes - 1;
         disPrintTime();
-        isStillPressing = true;
+        //isStillPressing = true;
       }
       else if (getButtonSelect() && isStillPressing == false)
       {
@@ -529,7 +539,7 @@ void loop()
       {
         tempUser = tempUser + 1;
         disPrintTemp();
-        isStillPressing = true;
+        //isStillPressing = true;
       }
       else if (setTempUser == false && getButtonUp() && isStillPressing == false && tempUserDot < 75)
       {
@@ -541,7 +551,7 @@ void loop()
       {
         tempUser = tempUser - 1;
         disPrintTemp();
-        isStillPressing = true;
+        //isStillPressing = true;
       }
       else if (setTempUser == false && getButtonDown() && isStillPressing == false && tempUserDot >= 25)
       {
@@ -589,17 +599,25 @@ void loop()
       setCurrentState(start_PI);
       setStartVoltageIPart(getStartVoltage());
       current_main_state = PI_on_Main;
-      Serial.println("PI Regler ist jetzt aktiv");
+      //Serial.println("PI Regler ist jetzt aktiv");
       break;
     case startWithGivenParameters:
     secCounter();
-    setVoltage(0.0);
-    setParameterProgrammatically(0.448, 1821.41, 1175.10, 235.02, 2);    
+    setStartVoltage();
+    setParameterProgrammatically(2.3*1.2 , 1594.45, 1028.68,60, 2);    
     setStartVoltageIPart(getStartVoltage());
-    checkParameters(0.448, 1821.41, 1175.10, 235.02, 2);
+    //if(true == checkParameters(2.3, 1594.45, 1028.68, 205.74, 2))
+    //{
     setCurrentState(running_PI);
+    imediateCalcVoltage();
     current_main_state = PI_on_Main;
-    Serial.println("PI Regler ist jetzt aktiv");
+    /*}
+    else
+    {
+            printPIParams();
+            while(1){}
+    }*/
+    //Serial.println("PI Regler ist jetzt aktiv");
     break;
     case PI_on_Main:
       secCounter();
@@ -608,6 +626,7 @@ void loop()
       break;
      case globalShutDown:
      turnOffHeating();
+     //Serial.println("error!!!!!");
       break;
   }
 
