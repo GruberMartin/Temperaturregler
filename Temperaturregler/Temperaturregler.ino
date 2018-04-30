@@ -606,7 +606,7 @@ void loop()
     secCounter();
     setStartVoltage();
     setParameterProgrammatically(2.3 , 1594.45, 1028.68,195.26, 2);    
-    setStartVoltageIPart(getStartVoltage());
+    setStartVoltageIPart(getStartVoltage()/0.8);
     //if(true == checkParameters(2.3, 1594.45, 1028.68, 205.74, 2))
     //{
     setCurrentState(running_PI);
