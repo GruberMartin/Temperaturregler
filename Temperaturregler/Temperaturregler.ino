@@ -53,7 +53,7 @@ unsigned long endTime = 0;
 float tempTemp = 0.0;
 boolean endtimeHasBeenSet = false;
 boolean startLcdTempPrinting = false;
-boolean startWithGivenParametersRequest = true;
+boolean startWithGivenParametersRequest = false;
 boolean changeRegulator = false;
 
 
@@ -434,7 +434,7 @@ void loop()
       buttons = lcd.readButtons();
       if (displayedStartMessgae == false)
       {
-        disPrint("<- Only 1 Temp.", "-> Spec. Config.");
+        disPrint("<- No Param.", "-> Given Param.");
         displayedStartMessgae = true;
       }
       else
@@ -448,7 +448,9 @@ void loop()
         }
         else if (getButtonRight() && isStillPressing == false)
         {
-          Serial.println("Button Right pressed");
+          //Serial.println("Button Right pressed");
+          current_main_state = fastCookingModeTime;
+          startWithGivenParametersRequest = true;
           isStillPressing = true;
           displayedStartMessgae = false;
         }
@@ -598,15 +600,15 @@ void loop()
       secCounter();
       printParameter();
       setCurrentState(start_PI);
-      setStartVoltageIPart(getStartVoltage());
+      setStartVoltageIPart((getStartVoltage()/0.8));
       current_main_state = PI_on_Main;
       //Serial.println("PI Regler ist jetzt aktiv");
       break;
     case startWithGivenParameters:
     secCounter();
     setStartVoltage();
-    setParameterProgrammatically(2.3 , 1594.45, 1028.68,195.26, 2);    
-    setStartVoltageIPart(getStartVoltage()/0.8);
+    setParameterProgrammatically(2.15 , 1660.25, 1071.13,214.23, 2);    
+    setStartVoltageIPart(getStartVoltage());
     //if(true == checkParameters(2.3, 1594.45, 1028.68, 205.74, 2))
     //{
     setCurrentState(running_PI);
