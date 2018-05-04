@@ -261,13 +261,13 @@ float controlVoltage()
             myFile.print(",");
             myFile.print(n);
             /*myFile.print(",");
-            myFile.print(getSeconds());
-            myFile.print(",");
-            myFile.print(getStartVoltage());
-            myFile.print(",");
-            myFile.print(getKps());
-            myFile.print(",");
-            myFile.print(getSetPoint());*/
+              myFile.print(getSeconds());
+              myFile.print(",");
+              myFile.print(getStartVoltage());
+              myFile.print(",");
+              myFile.print(getKps());
+              myFile.print(",");
+              myFile.print(getSetPoint());*/
             // close the file:
             myFile.close();
             writingSuccessfully = true;
@@ -295,30 +295,14 @@ float controlVoltage()
         requestTemp();
         newError = Sollwert - getValSens2();
         voltageP = Kpr * newError;
-        voltageI = voltageIold + (Kpr / Tn) * (T/2) * newError + (Kpr / Tn) * (T/2) * oldError;
+        voltageI = voltageIold + (Kpr / Tn) * (T / 2) * newError + (Kpr / Tn) * (T / 2) * oldError;
 
         newVoltage = voltageP + voltageI;
 
         setDonewCalc();
       }
 
-      
-     /* else
-      {
-        newError = Sollwert - getValSens2();
-        if (newError > 0.5)
-        {
-          newVoltage = 1511.43;
-        }
-        else if (newError <= 0.0)
-        {
-          newVoltage = 0.0;
-        }
-      }*/
 
-
-
-      
 
       if (newVoltage > 1511.43)
       {
@@ -333,37 +317,19 @@ float controlVoltage()
 
       }
 
-      if(requestRegulatorChange() == true)
+      if (requestRegulatorChange() == true)
       {
-        if(newError >=  0.25)
+        if (newError >=  0.25)
         {
-           newVoltage = 1511.43;
+          newVoltage = 1511.43;
         }
-        else if(newError <= 0.0)
+        else if (newError <= 0.0)
         {
-           newVoltage = 0;
+          newVoltage = 0;
         }
       }
 
-      /*if (fastTempControll == true && newError <= 0.0)
-      {
-        shutdownPI = true;
-        // Serial.println("error!!!!!");
-      }*/
 
-
-      /*else if (newError <= 0.0)
-        {
-        newVoltage = 0;
-        fastStopRequested = true;
-        reachedFinalTemperature = true;
-        }
-        else
-        {
-
-        voltageIold = newVoltage;
-        fastStopRequested = false;
-        }*/
 
       oldError = newError;
       setVoltage(newVoltage);

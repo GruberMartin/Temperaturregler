@@ -13,15 +13,13 @@
 #include "PI.h"
 #include "Voltage_Control.h"
 #include "Temperature.h"
+#include "Display.h"
 #define schalter 8
 #define myPin 7
 
 unsigned long previousTime = 0;
-unsigned long actualTime = 0;
 unsigned long seconds ;
 int tenSecCounter = 0;
-int fiveSecCounter = 0;
-int started = 0;
 int voltageHasBeenSet = 0;
 float startVoltage = 0.0;
 boolean PIisOn = false;
@@ -41,14 +39,13 @@ int stabCounter = 0;
 boolean rechedFinalState = false;
 boolean fastTempControll = false;
 boolean globalStart = false;
-boolean isStillPressing = false;
+
 String timeString = "";
 int hours = 0;
 int minutes = 0;
 int tempUser = 0;
 int tempUserDot = 0;
-boolean setTempUser = true;
-boolean setHours = true;
+
 unsigned long endTime = 0;
 float tempTemp = 0.0;
 boolean endtimeHasBeenSet = false;
@@ -90,10 +87,7 @@ main_states current_main_state = getUserInput;
 void setup()
 {
 
-  lcd.begin(16, 2);
-
-  //lcd.print("Drücken Sie RESET um zum vorigen Menu zurückzukehren.");
-  lcd.setBacklight(WHITE);
+  initDisplay();
   pinMode(schalter, INPUT);
   pinMode(myPin, OUTPUT);
   digitalWrite(myPin, HIGH);
@@ -102,8 +96,7 @@ void setup()
   initTemperature();
   initVoltageControll();
   requestTemp();
-  tempUser = ((int)getValSens1());
-  tempUserDot = ((getValSens1() * 100) - (tempUser * 100));
+
 }
 
 void setMaxTemp()
@@ -112,95 +105,14 @@ void setMaxTemp()
 
 }
 
-boolean getButtonRight()
-{
-  buttons = lcd.readButtons();
-  return (buttons & BUTTON_RIGHT);
-}
-boolean getButtonLeft()
-{
-  buttons = lcd.readButtons();
-  return (buttons & BUTTON_LEFT);
-}
-boolean getButtonUp()
-{
-  buttons = lcd.readButtons();
-  return (buttons & BUTTON_UP);
-}
-boolean getButtonDown()
-{
-  buttons = lcd.readButtons();
-  return (buttons & BUTTON_DOWN);
-}
-boolean getButtonSelect()
-{
-  buttons = lcd.readButtons();
-  return (buttons & BUTTON_SELECT);
-}
-boolean getButtonNoone()
-{
-  buttons = lcd.readButtons();
-  return (buttons == 0);
-}
-void disPrint(String firstLine, String secondLine)
-{
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print(firstLine);
-  lcd.setCursor(0, 1);
-  lcd.print(secondLine);
-  lcd.setCursor(0, 0);
-}
+
 
 boolean requestRegulatorChange()
 {
   return changeRegulator;
 }
 
-void disPrintTime()
-{
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Time to hold: ");
-  lcd.setCursor(0, 1);
-  timeString = ((String)hours) + " h : " + ((String)minutes) + " min";
-  lcd.print(timeString);
-  lcd.setCursor(0, 0);
-}
-void disPrintTemp()
-{
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Temp. to hold: ");
-  lcd.setCursor(0, 1);
-  timeString = ((String)tempUser) + "." + ((String)tempUserDot) + " deg.";
-  lcd.print(timeString);
-  lcd.setCursor(0, 0);
-}
 
-
-
-void disPrintActualTemp(float actualTemp)
-{
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Temp. now: ");
-  lcd.setCursor(0, 1);
-  timeString = ((String)actualTemp) + " deg.";
-  lcd.print(timeString);
-  lcd.setCursor(0, 0);
-}
-
-void disPrintRegualtorActivated(float actualTemp)
-{
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Reg. activated: ");
-  lcd.setCursor(0, 1);
-  timeString = ((String)actualTemp) + " deg.";
-  lcd.print(timeString);
-  lcd.setCursor(0, 0);
-}
 
 void writeTemppToArray()
 {
@@ -259,21 +171,16 @@ void secCounter()
 
     if (temperatureIsStable == true && rechedFinalState == true || fastTempControll == true)
     {
-      if(endtimeHasBeenSet == false)
+      if (endtimeHasBeenSet == false)
       {
-      setEndTime(endTime + getSeconds());
-      endtimeHasBeenSet = true;
+        setEndTime(endTime + getSeconds());
+        endtimeHasBeenSet = true;
       }
       rechedFinalState = false;
       fastTempControll = true;
       stabCounter = 0;
       changeRegulator = true;
       imediateCalcVoltage();
-      //Serial.println("Error");
-      /*if (getError() > 0.5)
-      {
-        doNewCalc = true;
-      }*/
     }
 
     if (antiDeadLockActivated == true && PIisOn == false)
@@ -319,30 +226,23 @@ void secCounter()
         sampleCounter = 0;
       }
 
+    }
 
-
-      /*if (getError() <= 0.0)
+    if ((tempTemp != getValSens2()) && startLcdTempPrinting == true)
+    {
+      tempTemp = getValSens2();
+      if (PIisOn == false)
       {
-        doNewCalc = true;
-      }*/ 
+        disPrintActualTemp(tempTemp);
+      }
+      else
+      {
+        disPrintRegualtorActivated(tempTemp);
+      }
     }
-
-   if((tempTemp != getValSens2()) && startLcdTempPrinting == true)
-   {
-    tempTemp = getValSens2();
-    if(PIisOn == false)
-    {
-    disPrintActualTemp(tempTemp);
-    }
-    else
-    {
-      disPrintRegualtorActivated(tempTemp);
-    }
-   }
     printSensorVals();
     Serial.println(seconds, DEC);
     tenSecCounter = tenSecCounter + 1;
-    fiveSecCounter = fiveSecCounter + 1;
     sampleCounter = sampleCounter + 1;
 
 
@@ -414,175 +314,28 @@ void loop()
   switch (current_main_state)
   {
     case getUserInput:
-      buttons = lcd.readButtons();
-      if (!(buttons & BUTTON_SELECT))
-      {
-        if (displayedStartMessgae == false)
-        {
-          disPrint("Press Select", "");
-          displayedStartMessgae = true;
-        }
-      }
-      else {
-        current_main_state = getCookingMode;
-
-        displayedStartMessgae = false;
-      }
+      waitForStartSignal();
       break;
 
     case getCookingMode:
-      buttons = lcd.readButtons();
-      if (displayedStartMessgae == false)
-      {
-        disPrint("<- No Param.", "-> Given Param.");
-        displayedStartMessgae = true;
-      }
-      else
-      {
-        if (getButtonLeft() && isStillPressing == false)
-        {
-          //Serial.println("Button Left pressed");
-          current_main_state = fastCookingModeTime;
-          isStillPressing = true;
-          displayedStartMessgae = false;
-        }
-        else if (getButtonRight() && isStillPressing == false)
-        {
-          //Serial.println("Button Right pressed");
-          current_main_state = fastCookingModeTime;
-          startWithGivenParametersRequest = true;
-          isStillPressing = true;
-          displayedStartMessgae = false;
-        }
-        else if (buttons == 0)
-        {
+      waitForCookingMode();
 
-          isStillPressing = false;
-        }
 
-      }
       break;
     case fastCookingModeTime:
-      if (displayedStartMessgae == false)
-      {
-        displayedStartMessgae = true;
-        disPrintTime();
-      }
-      if (getButtonLeft() && isStillPressing == false)
-      {
-        setHours = true;
-        isStillPressing = true;
-      }
-      else if (getButtonRight() && isStillPressing == false)
-      {
-        setHours = false;
-        isStillPressing = true;
-      }
-      else if (getButtonNoone())
-      {
-        isStillPressing = false;
-      }
-
-      if (setHours == true && getButtonUp() && isStillPressing == false)
-      {
-        hours = hours + 1;
-        disPrintTime();
-        //isStillPressing = true;
-
-      }
-      else if (setHours == false && getButtonUp() && isStillPressing == false && minutes < 60)
-      {
-        minutes = minutes + 1;
-        disPrintTime();
-        //isStillPressing = true;
-      }
-      else if (setHours == true && getButtonDown() && isStillPressing == false && hours > 0)
-      {
-        hours = hours - 1;
-        disPrintTime();
-        //isStillPressing = true;
-      }
-      else if (setHours == false && getButtonDown() && isStillPressing == false && minutes > 0)
-      {
-        minutes = minutes - 1;
-        disPrintTime();
-        //isStillPressing = true;
-      }
-      else if (getButtonSelect() && isStillPressing == false)
-      {
-
-        current_main_state = fastCookingModeTemp;
-        isStillPressing = true;
-        displayedStartMessgae = false;
-      }
+      getCookingTime();
       break;
     case fastCookingModeTemp :
-      // ----------------------------------------------------------------------------------------------------------------
-      if (displayedStartMessgae == false)
-      {
-        displayedStartMessgae = true;
-        disPrintTemp();
-      }
-      if (getButtonLeft() && isStillPressing == false)
-      {
-        setTempUser = true;
-        isStillPressing = true;
-      }
-      else if (getButtonRight() && isStillPressing == false)
-      {
-        setTempUser = false;
-        isStillPressing = true;
-      }
-      else if (getButtonNoone())
-      {
-        isStillPressing = false;
-      }
-
-      if (setTempUser == true && getButtonUp() && isStillPressing == false)
-      {
-        tempUser = tempUser + 1;
-        disPrintTemp();
-        //isStillPressing = true;
-      }
-      else if (setTempUser == false && getButtonUp() && isStillPressing == false && tempUserDot < 75)
-      {
-        tempUserDot = tempUserDot + 25;
-        disPrintTemp();
-        isStillPressing = true;
-      }
-      else if (setTempUser == true && getButtonDown() && isStillPressing == false)
-      {
-        tempUser = tempUser - 1;
-        disPrintTemp();
-        //isStillPressing = true;
-      }
-      else if (setTempUser == false && getButtonDown() && isStillPressing == false && tempUserDot >= 25)
-      {
-        tempUserDot = tempUserDot - 25;
-        disPrintTemp();
-        isStillPressing = true;
-      }
-      else if (getButtonSelect() && isStillPressing == false)
-      {
-        //requestGlobalStart();
-        current_main_state = notStarted_Main;
-        isStillPressing = true;
-
-        requestGlobalStart();
-        startLcdTempPrinting = true;
-
-      }
-
+      getCookingTemp();
       break;
-
     case notStarted_Main:
       setSetPoint(((float)tempUserDot / 100) + tempUser);
       endTime = hours * 60 * 60 + minutes * 60;
       secCounter();
-      if(startWithGivenParametersRequest == false)
+      if (startWithGivenParametersRequest == false)
       {
-      current_main_state = getParameter;
-      
+        current_main_state = getParameter;
+
       }
       else
       {
@@ -601,37 +354,28 @@ void loop()
       secCounter();
       printParameter();
       setCurrentState(start_PI);
-      setStartVoltageIPart((getStartVoltage()/0.8));
-      printPIParams();
+      setStartVoltageIPart((getStartVoltage() / 0.8));
+      //printPIParams();
       current_main_state = PI_on_Main;
       //Serial.println("PI Regler ist jetzt aktiv");
       break;
     case startWithGivenParameters:
-    secCounter();
-    setStartVoltage();
-    setParameterProgrammatically(2.15 , 1660.25, 1071.13,214.23, 2);    
-    setStartVoltageIPart((getStartVoltage()/0.8));
-    //if(true == checkParameters(2.3, 1594.45, 1028.68, 205.74, 2))
-    //{
-    setCurrentState(running_PI);
-    imediateCalcVoltage();
-    current_main_state = PI_on_Main;
-    /*}
-    else
-    {
-            printPIParams();
-            while(1){}
-    }*/
-    //Serial.println("PI Regler ist jetzt aktiv");
-    break;
+      secCounter();
+      setStartVoltage();
+      setParameterProgrammatically(2.15 , 1660.25, 1071.13, 214.23, 2);
+      setStartVoltageIPart((getStartVoltage() / 0.8));
+      setCurrentState(running_PI);
+      imediateCalcVoltage();
+      current_main_state = PI_on_Main;
+      //Serial.println("PI Regler ist jetzt aktiv");
+      break;
     case PI_on_Main:
       secCounter();
       PIisOn = true;
       controlVoltage();
       break;
-     case globalShutDown:
-     turnOffHeating();
-     //Serial.println("error!!!!!");
+    case globalShutDown:
+      turnOffHeating();
       break;
   }
 

@@ -17,7 +17,7 @@ DeviceAddress sensor2 = { 0x28,  0xE5,  0x19,  0xFC,  0x9,  0x0,  0x0,  0xBE };/
 
 void initTemperature()
 {
-   if (!sensors.getAddress(sensor1, 0)) Serial.println("Sensor 1 nicht richtig verbunden");
+  if (!sensors.getAddress(sensor1, 0)) Serial.println("Sensor 1 nicht richtig verbunden");
   if (!sensors.getAddress(sensor2, 1)) Serial.println("Sensor 2 nicht richtig verbunden");
 
   // set the resolution to 9 bit per device
@@ -51,17 +51,17 @@ void requestTemp()
 
 float getStartTemp()
 {
-   return getValSens2();
-   
+  return getValSens2();
+
 }
 
 void printSensorVals()
 {
   Serial.print(" ");
-      printTemperature("Wassertemperatur : ", sensor2);
-      Serial.print(" ");
-      printTemperature("Umgebungstemperatur : ", sensor1);
-      Serial.print(" ");
+  printTemperature("Wassertemperatur : ", sensor2);
+  Serial.print(" ");
+  printTemperature("Umgebungstemperatur : ", sensor1);
+  Serial.print(" ");
 }
 
 float getValSens2()

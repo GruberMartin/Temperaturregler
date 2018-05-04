@@ -28,42 +28,42 @@ float voltageToSet = 0.0;
 void initParameterDetermination()
 {
   Serial.begin(250000);
-  
+
 }
 
 
 float calculateStartVoltage()
 {
-  voltageToSet = ((getSetPoint()- getValSens1()) / 0.6646) * 0.8;
+  voltageToSet = ((getSetPoint() - getValSens1()) / 0.6646) * 0.8;
   return voltageToSet;
 }
 
 void calculateFinalValue()
 {
-  if(finalValueHasBeenCalculated == 0)
+  if (finalValueHasBeenCalculated == 0)
   {
-  finalValue = 0.6646 * getStartVoltage() +  getValSens1();
-   if((finalValue - (int) finalValue)< 0.25)
-  {
-    finalValue = ((int) finalValue);
-    
+    finalValue = 0.6646 * getStartVoltage() +  getValSens1();
+    if ((finalValue - (int) finalValue) < 0.25)
+    {
+      finalValue = ((int) finalValue);
+
     }
-  if((finalValue - (int) finalValue)>= 0.25)
-  {
-    finalValue = ((int) finalValue) + 0.25;
-    
+    if ((finalValue - (int) finalValue) >= 0.25)
+    {
+      finalValue = ((int) finalValue) + 0.25;
+
     }
-    else if((finalValue - (int) finalValue)>= 0.5)
+    else if ((finalValue - (int) finalValue) >= 0.5)
     {
       finalValue = ((int) finalValue) + 0.5;
     }
-    else if((finalValue - (int) finalValue)>= 0.75)
+    else if ((finalValue - (int) finalValue) >= 0.75)
     {
       finalValue = ((int) finalValue) + 0.75;
     }
 
-  finalValueHasBeenCalculated = 1;
-  
+    finalValueHasBeenCalculated = 1;
+
   }
 }
 
@@ -75,93 +75,93 @@ float getFinalValue()
 boolean finish()
 {
   requestTemp();
-  if(getValSens2() >= finalValue -0.5)
+  if (getValSens2() >= finalValue - 0.5)
   {
     return true;
   }
   else
   {
     return false;
-    }
-  
+  }
+
 }
 
 
 void writeTemperature(float val)
 {
-  
+
   if (arrayIndex <= 900)
-        {
-          tempVal[arrayIndex] = val;
-          arrayIndex = arrayIndex + 1;
-          
-        }
+  {
+    tempVal[arrayIndex] = val;
+    arrayIndex = arrayIndex + 1;
+
+  }
 
 }
 
 void printParameter()
 {
   if (hasPrinted == 0)
+  {
+    for (int i = 0; i <= arrayIndex ; i++)
     {
-      for (int i = 0; i <= arrayIndex ; i++)
+      if (tempVal[i] > tmpMax)
       {
-        if (tempVal[i] > tmpMax)
-        {
-          tmpMax = tempVal[i];
-
-        }
-      }
-
-      Kp = (tmpMax - getValSens1()) / (getStartVoltage());
-      Vt10 = 0.1 * (tmpMax - tempVal[0]);
-      Vt50 = 0.5 * (tmpMax - tempVal[0]);
-      Vt90 = 0.9 * (tmpMax - tempVal[0]);
-      it10 = 0;
-      it50 = 0;
-      it90 = 0;
-      for (int i = 1; i < arrayIndex; i++)
-      {
-
-
-        if (abs(tempVal[i] - tempVal[0] - Vt10) < t10tmp)
-        {
-
-          t10tmp = abs(tempVal[i] - tempVal[0] - Vt10);
-          //Serial.println(t10tmp);
-          it10 = i;
-        }
-      }
-
-      for (int i = 1; i < arrayIndex; i++)
-      {
-        if (abs(tempVal[i] - tempVal[0] - Vt50) < t50tmp)
-        {
-          t50tmp = abs(tempVal[i] - tempVal[0] - Vt50);
-          //Serial.println(t50tmp);
-          it50 = i;
-        }
-      }
-
-      for (int i = 1; i < arrayIndex; i++)
-      {
-        if (abs(tempVal[i] - tempVal[0] - Vt90) < t90tmp)
-        {
-          t90tmp = abs(tempVal[i] - tempVal[0] - Vt90);
-          //Serial.println(t90tmp);
-          it90 = i;
-        }
-      }
-     
-      T1 = (1.0 / 3.0) * ((it10 * 7 / 0.531812) + (it50 * 7 / 1.678347) + (it90 * 7 / 3.889720));
-     for (int i = 0; i < arrayIndex; i++)
-      {
-        tempVal[i] = 0;
-
+        tmpMax = tempVal[i];
 
       }
-
-      hasPrinted = 1;
     }
+
+    Kp = (tmpMax - getValSens1()) / (getStartVoltage());
+    Vt10 = 0.1 * (tmpMax - tempVal[0]);
+    Vt50 = 0.5 * (tmpMax - tempVal[0]);
+    Vt90 = 0.9 * (tmpMax - tempVal[0]);
+    it10 = 0;
+    it50 = 0;
+    it90 = 0;
+    for (int i = 1; i < arrayIndex; i++)
+    {
+
+
+      if (abs(tempVal[i] - tempVal[0] - Vt10) < t10tmp)
+      {
+
+        t10tmp = abs(tempVal[i] - tempVal[0] - Vt10);
+        //Serial.println(t10tmp);
+        it10 = i;
+      }
+    }
+
+    for (int i = 1; i < arrayIndex; i++)
+    {
+      if (abs(tempVal[i] - tempVal[0] - Vt50) < t50tmp)
+      {
+        t50tmp = abs(tempVal[i] - tempVal[0] - Vt50);
+        //Serial.println(t50tmp);
+        it50 = i;
+      }
+    }
+
+    for (int i = 1; i < arrayIndex; i++)
+    {
+      if (abs(tempVal[i] - tempVal[0] - Vt90) < t90tmp)
+      {
+        t90tmp = abs(tempVal[i] - tempVal[0] - Vt90);
+        //Serial.println(t90tmp);
+        it90 = i;
+      }
+    }
+
+    T1 = (1.0 / 3.0) * ((it10 * 7 / 0.531812) + (it50 * 7 / 1.678347) + (it90 * 7 / 3.889720));
+    for (int i = 0; i < arrayIndex; i++)
+    {
+      tempVal[i] = 0;
+
+
+    }
+
+    hasPrinted = 1;
+  }
 }
 
 float getT10()

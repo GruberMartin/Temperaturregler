@@ -11,60 +11,60 @@ int counter = 0;
 int onTimeHasBeenSet = 0;
 
 void initVoltageControll() {
-  pinMode(heatPin,OUTPUT);
-  digitalWrite(heatPin,LOW);
- 
+  pinMode(heatPin, OUTPUT);
+  digitalWrite(heatPin, LOW);
+
 }
 
 void setOnTime(float voltage)
 {
   //if(onTimeHasBeenSet == 0)
   //{
-  onTime = ((sq(voltage)/35.0) * maxCount)/1511.43;
+  onTime = ((sq(voltage) / 35.0) * maxCount) / 1511.43;
   //onTimeHasBeenSet = 1;
-  
+
   //}
 }
 
 void turnOffHeating()
 {
-   digitalWrite(heatPin,LOW);
+  digitalWrite(heatPin, LOW);
 }
 
 void setVoltage(float voltage) {
-// genearte PWM 1% = 20ms  100% = 20'000ms = 230V
-setOnTime(voltage);
-//Serial.print(getFinalValue());
+  // genearte PWM 1% = 20ms  100% = 20'000ms = 230V
+  setOnTime(voltage);
+  //Serial.print(getFinalValue());
   //secCounter();
 
-  
-if(onTime < 20)
-{
-  onTime = 0;
-}
-  
-if (millis() >= (previousTimeNew))
-    {
-      previousTimeNew = previousTimeNew + 1;  // use 100000 for uS    
-      counter = counter + 1;
 
-    
-    }
-   if(onTime >= counter && onTime != 0 && false == hardStop())
-   {
-    digitalWrite(heatPin,HIGH);
+  if (onTime < 20)
+  {
+    onTime = 0;
+  }
+
+  if (millis() >= (previousTimeNew))
+  {
+    previousTimeNew = previousTimeNew + 1;  // use 100000 for uS
+    counter = counter + 1;
+
+
+  }
+  if (onTime >= counter && onTime != 0 && false == hardStop())
+  {
+    digitalWrite(heatPin, HIGH);
     //Serial.println(counter);
-   }
-   else if(counter < maxCount)
-   {
-   digitalWrite(heatPin,LOW);
-   //Serial.println("Hiezung aus");
-   }
+  }
+  else if (counter < maxCount)
+  {
+    digitalWrite(heatPin, LOW);
+    //Serial.println("Hiezung aus");
+  }
 
-   else
-   {
+  else
+  {
     counter = 0;
-   }
-  
-   
+  }
+
+
 }
