@@ -108,7 +108,7 @@ void setup()
 
 void setMaxTemp()
 {
-  maxTemp = 0.8 * getFinalValue();
+  maxTemp = 0.6 * getFinalValue();
 
 }
 
@@ -582,6 +582,7 @@ void loop()
       if(startWithGivenParametersRequest == false)
       {
       current_main_state = getParameter;
+      
       }
       else
       {
@@ -601,6 +602,7 @@ void loop()
       printParameter();
       setCurrentState(start_PI);
       setStartVoltageIPart((getStartVoltage()/0.8));
+      printPIParams();
       current_main_state = PI_on_Main;
       //Serial.println("PI Regler ist jetzt aktiv");
       break;

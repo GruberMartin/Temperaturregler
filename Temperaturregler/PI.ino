@@ -251,24 +251,23 @@ float controlVoltage()
         {
           myFile = SD.open(filename, FILE_WRITE);
           if (myFile) {
-            myFile.print("Kpr = ");
-            myFile.println(Kpr);
-            myFile.print("Tn = ");
-            myFile.println(Tn);
-            myFile.print("Tm = ");
-            myFile.println(Tm);
-            myFile.print("T = ");
-            myFile.println(T);
-            myFile.print("n = ");
-            myFile.println(n);
-            myFile.print("Activated = ");
-            myFile.println(getSeconds());
-            myFile.print("Start Voltage= ");
-            myFile.println(getStartVoltage());
-            myFile.print("Kp = ");
-            myFile.println(getKps());
-            myFile.print("SetPoint: ");
-            myFile.println(getSetPoint());
+            myFile.print(Kpr);
+            myFile.print(",");
+            myFile.print(Tn);
+            myFile.print(",");
+            myFile.print(Tm);
+            myFile.print(",");
+            myFile.print(T);
+            myFile.print(",");
+            myFile.print(n);
+            /*myFile.print(",");
+            myFile.print(getSeconds());
+            myFile.print(",");
+            myFile.print(getStartVoltage());
+            myFile.print(",");
+            myFile.print(getKps());
+            myFile.print(",");
+            myFile.print(getSetPoint());*/
             // close the file:
             myFile.close();
             writingSuccessfully = true;
