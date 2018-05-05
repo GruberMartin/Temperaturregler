@@ -71,6 +71,7 @@ typedef enum {
   getCookingMode,
   fastCookingModeTime,
   fastCookingModeTemp,
+  selectParamFiles,
   notStarted_Main,
   started_Main,
   PI_on_Main,
@@ -320,8 +321,11 @@ void loop()
 
     case getCookingMode:
       waitForCookingMode();
+    
 
-
+      break;
+      case selectParamFiles:
+      chooseParameters();
       break;
     case fastCookingModeTime:
       getCookingTime();

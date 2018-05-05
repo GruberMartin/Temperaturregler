@@ -157,14 +157,11 @@ void printPIParams()
   Serial.println(T);
   Serial.print("n = ");
   Serial.println(getN());
-  Serial.print("Activated = ");
-  Serial.println(getSeconds());
   Serial.print("Start Voltage= ");
   Serial.println(getStartVoltage());
   Serial.print("Kp = ");
   Serial.println(getKps());
-  Serial.print("SetPoint: ");
-  Serial.println(getSetPoint());
+
 }
 
 boolean hasRechedFinalValue()

@@ -15,10 +15,14 @@ String fileContent;
 String tmp;
 int stringCounter = 1;
 int numberOfFiles = 0;
+
 //const int chipSelect = 53; // Braucht es das ? ----------------------------------------------------------------------------
 
 
-
+int getNumberOfFiles()
+{
+  return numberOfFiles;
+}
 
 void savePIParameters()
 {
@@ -86,8 +90,8 @@ int countNumberOfFiles()
       
     }
   }
-  Serial.print(numberOfFiles);
-  Serial.println(" Files verfuegbar");
+//  Serial.print(numberOfFiles);
+//  Serial.println(" Files verfuegbar");
   return numberOfFiles;
 
 }
