@@ -82,7 +82,7 @@ int countNumberOfFiles()
     }
   }
   Serial.print(numberOfFiles);
-  Serial.println(" Files verfuegbar")
+  Serial.println(" Files verfuegbar");
   return numberOfFiles;
 
 }
