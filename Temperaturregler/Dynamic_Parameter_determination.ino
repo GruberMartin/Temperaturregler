@@ -38,6 +38,12 @@ float calculateStartVoltage()
   return voltageToSet;
 }
 
+float calculateStartVoltageForIpart()
+{
+  voltageToSet = ((getSetPoint() - getValSens1()) / getKps());
+  return voltageToSet;
+}
+
 void calculateFinalValue()
 {
   if (finalValueHasBeenCalculated == 0)

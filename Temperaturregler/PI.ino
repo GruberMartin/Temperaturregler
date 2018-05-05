@@ -260,14 +260,14 @@ float controlVoltage()
             myFile.print(T);
             myFile.print(",");
             myFile.print(n);
-            /*myFile.print(",");
-              myFile.print(getSeconds());
-              myFile.print(",");
-              myFile.print(getStartVoltage());
-              myFile.print(",");
-              myFile.print(getKps());
-              myFile.print(",");
-              myFile.print(getSetPoint());*/
+            myFile.print(",");
+            /*  myFile.print(getSeconds());
+              myFile.print(",");*/
+            myFile.print(getKps());
+            myFile.print(",");
+            myFile.print(getStartVoltage());
+            /*myFile.print(",");            
+            myFile.print(getSetPoint());*/
             // close the file:
             myFile.close();
             writingSuccessfully = true;

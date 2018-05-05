@@ -10,4 +10,5 @@ float getT50();
 float getT90();
 float getKps();
 float calculateStartVoltage();
+float calculateStartVoltageForIpart();
 #endif

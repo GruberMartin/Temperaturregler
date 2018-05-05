@@ -354,7 +354,7 @@ void loop()
       secCounter();
       printParameter();
       setCurrentState(start_PI);
-      setStartVoltageIPart((getStartVoltage() / 0.8));
+      setStartVoltageIPart(calculateStartVoltageForIpart());
       //printPIParams();
       current_main_state = PI_on_Main;
       //Serial.println("PI Regler ist jetzt aktiv");
@@ -363,7 +363,7 @@ void loop()
       secCounter();
       setStartVoltage();
       setParameterProgrammatically(2.15 , 1660.25, 1071.13, 214.23, 2);
-      setStartVoltageIPart((getStartVoltage() / 0.8));
+      setStartVoltageIPart(calculateStartVoltageForIpart());
       setCurrentState(running_PI);
       imediateCalcVoltage();
       current_main_state = PI_on_Main;
