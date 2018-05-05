@@ -9,6 +9,7 @@ float getT10();
 float getT50();
 float getT90();
 float getKps();
+void setKps(float tmpKp);
 float calculateStartVoltage();
 float calculateStartVoltageForIpart();
 #endif

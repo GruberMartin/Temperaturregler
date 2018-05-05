@@ -192,3 +192,8 @@ float getKps()
   return Kp;
 }
 
+void setKps(float tmpKp)
+{
+  Kp = tmpKp;
+}
+

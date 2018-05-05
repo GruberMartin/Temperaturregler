@@ -2,10 +2,8 @@
 #include <Arduino.h>
 #include "Temperature.h"
 #include "PI.h"
-#include <SPI.h>
-#include <SD.h>
+#include "SD.h"
 
-File myFile;
 
 
 float oldVoltage = 0.0;
@@ -32,8 +30,7 @@ float voltageIold = 0.0; // gerade geändert
 boolean newCalc = false;
 boolean fastStopRequested = false;
 //const int chipSelect = 10;
-String filename;
-boolean writingSuccessfully = false;
+
 boolean reachedFinalTemperature = false;
 float minIpart = 0.0;
 boolean minIpartHasBeenSet = false;
@@ -54,9 +51,47 @@ boolean hardStop()
 
 float getT()
 {
-
   return T;
+}
 
+float getKpr()
+{
+  return Kpr;
+}
+
+void setKpr(float tmpKpr)
+{
+  Kpr = tmpKpr;
+}
+
+float getTn()
+{
+  return Tn;
+}
+
+void setTn(float tmpTn)
+{
+  Tn = tmpTn;
+}
+
+float getTm()
+{
+  return Tm;
+}
+
+void setTm(float tmpTm)
+{
+  Tm = tmpTm;
+}
+
+int getN()
+{
+  return n;
+}
+
+void setN(int tmpN)
+{
+  n = tmpN;
 }
 
 void setParameterProgrammatically(float K, float Tr, float T1, float Ta, int orderSet)
@@ -238,52 +273,8 @@ float controlVoltage()
       break;
 
     case savePI_Parameter:
-      pinMode(SS, OUTPUT);
-      if (!SD.begin(chipSelect)) {
-        Serial.println("Schreiben auf SD-Karte fehlgeschlagen");
-        currentState = running_PI;
-      }
 
-      for (int i = 0; (i < 40) && (writingSuccessfully == false); i++)
-      {
-        filename = String(String(i) + ".txt");
-        if (!SD.exists(filename))
-        {
-          myFile = SD.open(filename, FILE_WRITE);
-          if (myFile) {
-            myFile.print(Kpr);
-            myFile.print(",");
-            myFile.print(Tn);
-            myFile.print(",");
-            myFile.print(Tm);
-            myFile.print(",");
-            myFile.print(T);
-            myFile.print(",");
-            myFile.print(n);
-            myFile.print(",");
-            /*  myFile.print(getSeconds());
-              myFile.print(",");*/
-            myFile.print(getKps());
-            myFile.print(",");
-            myFile.print(getStartVoltage());
-            /*myFile.print(",");            
-            myFile.print(getSetPoint());*/
-            // close the file:
-            myFile.close();
-            writingSuccessfully = true;
-            currentState = running_PI;
-          }
-        }
-
-      }
-
-      if (writingSuccessfully == false)
-      {
-        currentState = running_PI;
-      }
-
-
-
+      savePIParameters();
       imediateCalcVoltage();
 
       break;

@@ -14,6 +14,7 @@
 #include "Voltage_Control.h"
 #include "Temperature.h"
 #include "Display.h"
+#include "SD.h"
 #define schalter 8
 #define myPin 7
 

@@ -12,6 +12,14 @@ typedef enum {
 } PIstate;
 void setCurrentState(PIstate stateToSet);
 float getT();
+float getKpr();
+void setKpr(float tmpKpr);
+float getTn();
+void setTn(float tmpTn);
+float getTm();
+void setTm(float tmpTm);
+int getN();
+void setN(int tmpN);
 float getCurrentVoltage();
 boolean hardStop();
 float getError();
@@ -23,5 +31,6 @@ boolean hasRechedFinalValue();
 void setParameterProgrammatically(float K, float Tr, float T1, float Ta, int orderSet);
 boolean checkParameters(float K, float Tr, float T1, float Ta, int orderSet);
 void printPIParams();
+
 
 #endif
