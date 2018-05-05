@@ -156,7 +156,7 @@ void printPIParams()
   Serial.print("T = ");
   Serial.println(T);
   Serial.print("n = ");
-  Serial.println(n);
+  Serial.println(getN());
   Serial.print("Activated = ");
   Serial.println(getSeconds());
   Serial.print("Start Voltage= ");

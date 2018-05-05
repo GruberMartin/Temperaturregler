@@ -1,6 +1,6 @@
 #include <Adafruit_RGBLCDShield.h>
 #include <utility/Adafruit_MCP23017.h>
-
+#include "SD.h"
 boolean isStillPressing = false;
 boolean setTempUser = true;
 boolean setHours = true;
@@ -137,9 +137,15 @@ void waitForCookingMode()
         }
         else if (getButtonRight() && isStillPressing == false)
         {
-          //Serial.println("Button Right pressed");
+          /*
           current_main_state = fastCookingModeTime;
-          startWithGivenParametersRequest = true;
+          startWithGivenParametersRequest = true;*/
+          readFile(countNumberOfFiles()-1);
+          printPIParams();
+          while(1)
+          {
+            
+          }
           isStillPressing = true;
           displayedStartMessgae = false;
         }

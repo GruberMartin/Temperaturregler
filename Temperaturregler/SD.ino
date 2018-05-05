@@ -15,7 +15,10 @@ String fileContent;
 String tmp;
 int stringCounter = 1;
 int numberOfFiles = 0;
-//const int chipSelect = 10; // Braucht es das ? ----------------------------------------------------------------------------
+//const int chipSelect = 53; // Braucht es das ? ----------------------------------------------------------------------------
+
+
+
 
 void savePIParameters()
 {
@@ -47,6 +50,7 @@ void savePIParameters()
         myFile.print(getKps());
         myFile.print(",");
         myFile.print(getStartVoltage());
+        myFile.print(",");
         /*myFile.print(",");
           myFile.print(getSetPoint());*/
         // close the file:
@@ -66,6 +70,7 @@ void savePIParameters()
 
 int countNumberOfFiles()
 {
+  
   pinMode(SS, OUTPUT);
   if (!SD.begin(chipSelect)) {
     Serial.println("Keine SD-Karte erkannt, countNumberOfFiles");
@@ -93,7 +98,7 @@ void readFile(int fileNumber)
 {
   pinMode(SS, OUTPUT);
   if (!SD.begin(chipSelect)) {
-    Serial.println("Lesen von SD-Karte fehlgeschlagen");
+    //Serial.println("Lesen von SD-Karte fehlgeschlagen");
 
   }
 
