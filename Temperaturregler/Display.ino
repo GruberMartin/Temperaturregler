@@ -7,9 +7,12 @@ boolean setHours = true;
 String paramFileNames[6] = {"pan 1", "pan 2", "pan 3", "pan 4", "pan 5", "pan 6"};
 int noOfFiles = 0;
 boolean filesAvailableForSelct = false;
-boolean disableSelect = false;
+boolean disableSelect = true;
 boolean numberOfFilesCounted = false;
 boolean printErrorMsg = false;
+int numberOfSteps = 0;
+int stepTime [6] =  {0,0,0,0,0,0};
+float stepemp [6] =  {40.0,40.0,40.0,40.0,40.0,40.0};
 void initDisplay()
 {
   lcd.begin(16, 2);
@@ -47,6 +50,20 @@ boolean getButtonNoone()
 {
   buttons = lcd.readButtons();
   return (buttons == 0);
+}
+
+
+
+boolean requestFurtherSteps()
+{
+  if(numberOfSteps < 6)
+  {
+    numberOfSteps = numberOfSteps + 1;
+  }
+  else
+  {
+    
+  }
 }
 
 
@@ -211,6 +228,9 @@ void chooseParameters()
      
       if (filesAvailableForSelct)
       {
+        Serial.print("File ");
+        Serial.print(noOfFiles);
+        Serial.println(" selected");
         displayedStartMessgae = false;
         readFile(noOfFiles);
         printPIParams();

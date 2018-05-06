@@ -158,7 +158,7 @@ void printPIParams()
   Serial.print("n = ");
   Serial.println(getN());
   Serial.print("Start Voltage= ");
-  Serial.println(getStartVoltage());
+  Serial.println(getStartVoltageIPart());
   Serial.print("Kp = ");
   Serial.println(getKps());
 
@@ -199,6 +199,10 @@ void setStartVoltageIPart(float IpartOffset)
   voltageIold = IpartOffset;
 }
 
+float getStartVoltageIPart()
+{
+  return voltageIold;
+}
 
 
 float controlVoltage()
