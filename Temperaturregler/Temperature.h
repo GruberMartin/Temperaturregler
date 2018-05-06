@@ -8,4 +8,5 @@ float getValSens2();
 float getStartTemp();
 float getValSens1();
 const int chipSelect = 10;
+float getstartWaterTemp();
 #endif

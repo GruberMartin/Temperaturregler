@@ -34,13 +34,13 @@ void initParameterDetermination()
 
 float calculateStartVoltage()
 {
-  voltageToSet = ((getSetPoint() - getValSens1()) / 0.6646) * 0.8;
+  voltageToSet = ((getSetPoint() - getstartWaterTemp()) / 0.6646) * 0.8;
   return voltageToSet;
 }
 
 float calculateStartVoltageForIpart()
 {
-  voltageToSet = ((getSetPoint() - getValSens1()) / getKps());
+  voltageToSet = ((getSetPoint() - getstartWaterTemp()) / getKps());
   return voltageToSet;
 }
 
@@ -48,7 +48,7 @@ void calculateFinalValue()
 {
   if (finalValueHasBeenCalculated == 0)
   {
-    finalValue = 0.6646 * getStartVoltage() +  getValSens1();
+    finalValue = 0.6646 * getStartVoltage() +  getstartWaterTemp();
     if ((finalValue - (int) finalValue) < 0.25)
     {
       finalValue = ((int) finalValue);

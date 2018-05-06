@@ -8,17 +8,26 @@ String paramFileNames[6] = {"pan 1", "pan 2", "pan 3", "pan 4", "pan 5", "pan 6"
 int noOfFiles = 0;
 boolean filesAvailableForSelct = false;
 boolean disableSelect = true;
+boolean firstPress = true;
 boolean numberOfFilesCounted = false;
 boolean printErrorMsg = false;
 int numberOfSteps = 0;
-int stepTime [6] =  {0,0,0,0,0,0};
-float stepemp [6] =  {40.0,40.0,40.0,40.0,40.0,40.0};
+long stepTime [6] =  {0,0,0,0,0,0};
+float stepTemp [6] =  {40.0,40.0,40.0,40.0,40.0,40.0};
+String timeString = "";
+int hours = 0;
+int minutes = 0;
+int tempUser = 0;
+int tempUserDot = 0;
 void initDisplay()
 {
   lcd.begin(16, 2);
   lcd.setBacklight(WHITE);
-  tempUser = ((int)getValSens1());
-  tempUserDot = ((getValSens1() * 100) - (tempUser * 100));
+  tempUser = 40;//((int)getValSens1());
+  tempUserDot = 0;//((getValSens1() * 100) - (tempUser * 100));
+ 
+  
+  
 }
 
 boolean getButtonRight()
@@ -54,16 +63,49 @@ boolean getButtonNoone()
 
 
 
-boolean requestFurtherSteps()
+void requestFurtherStepsTime(long timeCurrentStep)
 {
   if(numberOfSteps < 6)
   {
-    numberOfSteps = numberOfSteps + 1;
-  }
-  else
-  {
+    if(numberOfSteps == 0)
+    {
+    stepTime[numberOfSteps] = timeCurrentStep;
     
+    }
+    else
+    {
+    stepTime[numberOfSteps] = stepTime[numberOfSteps-1] + timeCurrentStep;
+    
+    }
   }
+ 
+}
+
+void requestFurtherStepsTemp(float tempCurrentStep)
+{
+  if(numberOfSteps < 6)
+  {    
+    stepTemp[numberOfSteps] = tempCurrentStep;
+    current_main_state = fastCookingModeTime;  
+    numberOfSteps = numberOfSteps + 1;  
+  }
+
+  if(numberOfSteps == 6)
+  {
+    for(int z = 0; z<6;z++)
+    {      
+      Serial.println("Time " + (String)z + " : " + (String)stepTime[z]);
+      Serial.println("Temp " + (String)z + " : " + (String)stepTemp[z]);
+    }
+    while(1)
+    {
+      
+    }
+    current_main_state = notStarted_Main;
+    requestGlobalStart();
+    startLcdTempPrinting = true;
+  }
+ 
 }
 
 
@@ -155,12 +197,14 @@ void chooseParameters()
   {
     if (getNumberOfFiles() > 0)
     {
+      //Serial.println((String)getNumberOfFiles() + " Files to choose");
       disPrint("Choose a pan:", "Press down");
       filesAvailableForSelct = true;
       displayedStartMessgae = true;
     }
     else
     {
+      
       disPrint("No files", "Press Select");
       filesAvailableForSelct = false;
       displayedStartMessgae = true;
@@ -170,10 +214,17 @@ void chooseParameters()
   {
     if (getButtonDown() && isStillPressing == false)
     {
-     
-      if (noOfFiles < getNumberOfFiles())
+      
+      if (noOfFiles < getNumberOfFiles()-1)
       {
-        noOfFiles = noOfFiles + 1;
+
+        if(firstPress == false && printErrorMsg == false)
+        {
+        noOfFiles = noOfFiles + 1;   
+         //Serial.println("noOfFiles wird um 1 erhoeht"); 
+        }    
+        
+        firstPress = false;
         printErrorMsg = false;
       }
       else
@@ -183,7 +234,7 @@ void chooseParameters()
       if (printErrorMsg == false)
       {
         
-        disPrint("Choose a pan:", paramFileNames[noOfFiles - 1]);
+        disPrint("Choose a pan:", paramFileNames[noOfFiles]);
         disableSelect = false;
         
       }
@@ -194,19 +245,23 @@ void chooseParameters()
         disableSelect = true;
       }
       isStillPressing = true;
-      
+      //Serial.println("File " + (String)noOfFiles + " selcted");
     }
-    else if (getButtonUp() && isStillPressing == false)
+    else if (getButtonUp() && isStillPressing == false )
     {
       
       if (noOfFiles > 0)
       {
+        if(printErrorMsg == false)
+        {
         noOfFiles = noOfFiles - 1;
+        //Serial.println("noOfFiles wird um 1 verkleinert");
+        }
+        
         printErrorMsg = false;
       }
-      else if (noOfFiles == 0)
+      else
       {
-       
         printErrorMsg = true;
       }
       if (printErrorMsg == false)
@@ -220,7 +275,7 @@ void chooseParameters()
         disableSelect = true;
       }
       isStillPressing = true;
-      
+      //Serial.println("File " + (String)noOfFiles + " selcted");
 
     }
     else if (getButtonSelect() && isStillPressing == false && disableSelect == false)
@@ -338,7 +393,9 @@ void getCookingTime()
   }
   else if (getButtonSelect() && isStillPressing == false)
   {
-
+    requestFurtherStepsTime(hours * 60.0 * 60.0 + minutes * 60.0);
+    hours = 0;
+    minutes = 0;
     current_main_state = fastCookingModeTemp;
     isStillPressing = true;
     displayedStartMessgae = false;
@@ -393,12 +450,16 @@ void getCookingTemp()
   }
   else if (getButtonSelect() && isStillPressing == false)
   {
-    //requestGlobalStart();
-    current_main_state = notStarted_Main;
+    
+    
     isStillPressing = true;
-
-    requestGlobalStart();
-    startLcdTempPrinting = true;
+    displayedStartMessgae = false;
+    requestFurtherStepsTemp(((float)tempUserDot / 100.0) + tempUser);
+    tempUserDot = 0;
+    tempUser = 40;
+//    current_main_state = notStarted_Main;
+//    requestGlobalStart();
+//    startLcdTempPrinting = true;
 
   }
 }

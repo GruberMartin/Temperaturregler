@@ -100,7 +100,7 @@ int countNumberOfFiles()
 
 void readFile(int fileNumber)
 {
-  fileNumber -= 1;
+  
   pinMode(SS, OUTPUT);
   if (!SD.begin(chipSelect)) {
     //Serial.println("Lesen von SD-Karte fehlgeschlagen");

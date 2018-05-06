@@ -41,11 +41,7 @@ boolean rechedFinalState = false;
 boolean fastTempControll = false;
 boolean globalStart = false;
 
-String timeString = "";
-int hours = 0;
-int minutes = 0;
-int tempUser = 0;
-int tempUserDot = 0;
+
 
 unsigned long endTime = 0;
 float tempTemp = 0.0;
@@ -88,7 +84,7 @@ main_states current_main_state = getUserInput;
 
 void setup()
 {
-
+  Serial.begin(250000);
   initDisplay();
   pinMode(schalter, INPUT);
   pinMode(myPin, OUTPUT);
@@ -334,8 +330,8 @@ void loop()
       getCookingTemp();
       break;
     case notStarted_Main:
-      setSetPoint(((float)tempUserDot / 100) + tempUser);
-      endTime = hours * 60 * 60 + minutes * 60;
+      //setSetPoint(((float)tempUserDot / 100) + tempUser); ------------------------------------------------------------------------Hier müsssen dann die neue endzeit und der neue Sollwert eingegeben werden
+      //endTime = hours * 60 * 60 + minutes * 60;
       secCounter();
       if (startWithGivenParametersRequest == false)
       {

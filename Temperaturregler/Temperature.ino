@@ -8,7 +8,8 @@
 
 #define ONE_WIRE_BUS 2
 #define TEMPERATURE_PRECISION 10
-
+float minTemp = 0.0;
+float startWaterTemp = 0.0;
 float tempC = 0.0;
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
@@ -27,6 +28,8 @@ void initTemperature()
   Serial.begin(250000);
   sensors.begin();
   Serial.println("Wassertemperatur Umgebungstemperatur Zeit");
+  minTemp = getValSens1();
+  startWaterTemp = getValSens2();  
 }
 
 
@@ -42,6 +45,11 @@ void printTemperature(String label, DeviceAddress deviceAddress) {
 
   }
 
+}
+
+float getstartWaterTemp()
+{
+  return startWaterTemp;
 }
 
 void requestTemp()

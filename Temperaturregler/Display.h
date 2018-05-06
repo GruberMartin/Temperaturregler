@@ -16,4 +16,5 @@ void disPrintTemp();
 void disPrintActualTemp(float actualTemp);
 void disPrintRegualtorActivated(float actualTemp);
 void initDisplay();
+void requestFurtherStepsTime(long timeCurrentStep);
 #endif
