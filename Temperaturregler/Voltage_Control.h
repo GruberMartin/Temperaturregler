@@ -3,4 +3,6 @@
 void setVoltage(float voltage);
 void initVoltageControll();
 void turnOffHeating();
+
+boolean getHeatPinState();
 #endif

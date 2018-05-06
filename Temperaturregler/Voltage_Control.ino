@@ -16,6 +16,18 @@ void initVoltageControll() {
 
 }
 
+boolean getHeatPinState()
+{
+  if(digitalRead(heatPin)== LOW)
+  {
+    return false;
+  }
+  else
+  {
+    return true;
+  }
+}
+
 void setOnTime(float voltage)
 {
   //if(onTimeHasBeenSet == 0)

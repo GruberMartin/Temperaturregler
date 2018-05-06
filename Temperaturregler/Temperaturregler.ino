@@ -40,12 +40,16 @@ int stabCounter = 0;
 boolean rechedFinalState = false;
 boolean fastTempControll = false;
 boolean globalStart = false;
+int currentSequence = 0;
+float currentSetPoint = 0.0;
+unsigned long changeTime = 0;
+boolean requestSequenceChange = true;
 
 
 
 unsigned long endTime = 0;
 float tempTemp = 0.0;
-boolean endtimeHasBeenSet = false;
+boolean changeTimeHasBeenSet = false;
 boolean startLcdTempPrinting = false;
 boolean startWithGivenParametersRequest = false;
 boolean changeRegulator = false;
@@ -103,10 +107,44 @@ void setMaxTemp()
 
 }
 
+void handleSequences()
+{
+  Serial.println("error in handle");
+  switch (currentSequence)  
+  {
+    case 0:
+    changeTime = getStepTime(currentSequence);
+    currentSetPoint = getStepTemp(currentSequence);
+    
+    break;
+    case 1:
+    changeTime = getStepTime(currentSequence);
+    currentSetPoint = getStepTemp(currentSequence);
+    break;
+    case 2:
+    changeTime = getStepTime(currentSequence);
+    currentSetPoint = getStepTemp(currentSequence);
+    break;
+    case 3:
+    changeTime = getStepTime(currentSequence);
+    currentSetPoint = getStepTemp(currentSequence);
+    break;
+    case 4:
+    changeTime = getStepTime(currentSequence);
+    currentSetPoint = getStepTemp(currentSequence);
+    break;
+    case 5:
+    changeTime = getStepTime(currentSequence);
+    currentSetPoint = getStepTemp(currentSequence);
+    break;
+  }
 
+  Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
+}
 
 boolean requestRegulatorChange()
 {
+  
   return changeRegulator;
 }
 
@@ -144,14 +182,15 @@ void antiDeadLock()
 
 void secCounter()
 {
+  
   if (millis() >= (previousTime) && globalStart == true)
   {
     previousTime = previousTime + 1000;  // use 100000 for uS
     seconds = seconds + 1;
     requestTemp();
-    if ((seconds >= endTime) && endtimeHasBeenSet == true)
+    if ((seconds >= changeTime) && changeTimeHasBeenSet == true)
     {
-      current_main_state = globalShutDown;
+      changeTimeHasBeenSet = false;
     }
     if (temperatureIsStable == false && PIisOn == true)
     {
@@ -169,11 +208,18 @@ void secCounter()
 
     if (temperatureIsStable == true && rechedFinalState == true || fastTempControll == true)
     {
-      if (endtimeHasBeenSet == false)
+      if (changeTimeHasBeenSet == false && currentSequence <6)
       {
-        setEndTime(endTime + getSeconds());
-        endtimeHasBeenSet = true;
+        handleSequences();
+        changeTime = changeTime + getSeconds();
+        changeTimeHasBeenSet = true;
+        currentSequence += 1;
       }
+      else if(currentSequence >= 6)
+      {
+        current_main_state = globalShutDown;
+      }
+      
       rechedFinalState = false;
       fastTempControll = true;
       stabCounter = 0;
@@ -361,9 +407,10 @@ void loop()
       //Serial.println("PI Regler ist jetzt aktiv");
       break;
     case startWithGivenParameters:
+    
       secCounter();
       setStartVoltage();
-      setParameterProgrammatically(2.15 , 1660.25, 1071.13, 214.23, 2);
+      //setParameterProgrammatically(2.15 , 1660.25, 1071.13, 214.23, 2);
       setStartVoltageIPart(calculateStartVoltageForIpart());
       setCurrentState(running_PI);
       imediateCalcVoltage();

@@ -19,6 +19,8 @@ int hours = 0;
 int minutes = 0;
 int tempUser = 0;
 int tempUserDot = 0;
+boolean disableUp = false;
+boolean disableDown = false;
 void initDisplay()
 {
   lcd.begin(16, 2);
@@ -28,6 +30,16 @@ void initDisplay()
  
   
   
+}
+
+long getStepTime(int index)
+{
+  return stepTime[index];
+}
+
+float getStepTemp(int index)
+{
+  return stepTemp[index];
 }
 
 boolean getButtonRight()
@@ -124,7 +136,7 @@ void disPrintTime()
 {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Time to hold: ");
+  lcd.print("Time"+(String)(numberOfSteps+1) + ". to hold: ");
   lcd.setCursor(0, 1);
   timeString = ((String)hours) + " h : " + ((String)minutes) + " min";
   lcd.print(timeString);
@@ -134,7 +146,7 @@ void disPrintTemp()
 {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Temp. to hold: ");
+  lcd.print("Temp" +(String)(numberOfSteps+1) + ". to hold: ");
   lcd.setCursor(0, 1);
   timeString = ((String)tempUser) + "." + ((String)tempUserDot) + " deg.";
   lcd.print(timeString);
@@ -208,11 +220,15 @@ void chooseParameters()
       disPrint("No files", "Press Select");
       filesAvailableForSelct = false;
       displayedStartMessgae = true;
+      disableSelect = false;
+      disableUp = true;
+      disableDown = true;
+      
     }
   }
   else
   {
-    if (getButtonDown() && isStillPressing == false)
+    if (getButtonDown() && isStillPressing == false && disableDown == false)
     {
       
       if (noOfFiles < getNumberOfFiles()-1)
@@ -247,7 +263,7 @@ void chooseParameters()
       isStillPressing = true;
       //Serial.println("File " + (String)noOfFiles + " selcted");
     }
-    else if (getButtonUp() && isStillPressing == false )
+    else if (getButtonUp() && isStillPressing == false && disableUp == false)
     {
       
       if (noOfFiles > 0)
@@ -457,9 +473,7 @@ void getCookingTemp()
     requestFurtherStepsTemp(((float)tempUserDot / 100.0) + tempUser);
     tempUserDot = 0;
     tempUser = 40;
-//    current_main_state = notStarted_Main;
-//    requestGlobalStart();
-//    startLcdTempPrinting = true;
+
 
   }
 }
