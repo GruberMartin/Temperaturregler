@@ -18,6 +18,7 @@ String timeString = "";
 int hours = 0;
 int minutes = 0;
 int tempUser = 0;
+int presscounter = 0;
 int tempUserDot = 0;
 boolean disableUp = false;
 boolean disableDown = false;
@@ -222,8 +223,25 @@ void chooseParameters()
   {
     if (getButtonDown() && isStillPressing == false && disableDown == false)
     {
-      
-      if (noOfFiles < getNumberOfFiles()-1)
+      if(getNumberOfFiles() == 1)
+      {
+        if(presscounter < 1)
+        {
+          disableUp = false;
+          printErrorMsg = false;
+          presscounter += 1;
+        }
+        else
+        {
+          printErrorMsg = true;
+          disableDown = true;
+          disableUp = false;
+        }
+        
+      }
+      else
+      {    
+       if (noOfFiles < getNumberOfFiles()-1)
       {
 
         if(firstPress == false && printErrorMsg == false)
@@ -238,6 +256,7 @@ void chooseParameters()
       else
       {
         printErrorMsg = true;
+      }
       }
       if (printErrorMsg == false)
       {
@@ -257,6 +276,24 @@ void chooseParameters()
     }
     else if (getButtonUp() && isStillPressing == false && disableUp == false)
     {
+      if(getNumberOfFiles() == 1)
+      {
+        if(presscounter > 0)
+        {
+          printErrorMsg = false;
+          presscounter -= 1;
+          disableDown = false;
+        }
+        else
+        {
+          disableDown = false;
+          disableUp = true;
+          printErrorMsg = true;
+        }
+        
+      }
+      else
+      {  
       
       if (noOfFiles > 0)
       {
@@ -272,6 +309,7 @@ void chooseParameters()
       {
         printErrorMsg = true;
       }
+    }
       if (printErrorMsg == false)
       {
         disPrint("Choose a pan:", paramFileNames[noOfFiles]);

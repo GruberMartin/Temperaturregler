@@ -109,7 +109,7 @@ void setMaxTemp()
 
 void handleSequences()
 {
-  Serial.println("error in handle");
+  
   switch (currentSequence)  
   {
     case 0:
@@ -212,6 +212,7 @@ void secCounter()
       {
         handleSequences();
         changeTime = changeTime + getSeconds();
+        setSetPoint(currentSetPoint);
         changeTimeHasBeenSet = true;
         currentSequence += 1;
       }
