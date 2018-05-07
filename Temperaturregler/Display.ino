@@ -104,15 +104,7 @@ void requestFurtherStepsTemp(float tempCurrentStep)
 
   if(numberOfSteps == 6)
   {
-    for(int z = 0; z<6;z++)
-    {      
-      Serial.println("Time " + (String)z + " : " + (String)stepTime[z]);
-      Serial.println("Temp " + (String)z + " : " + (String)stepTemp[z]);
-    }
-    while(1)
-    {
       
-    }
     current_main_state = notStarted_Main;
     requestGlobalStart();
     startLcdTempPrinting = true;
@@ -299,12 +291,12 @@ void chooseParameters()
      
       if (filesAvailableForSelct)
       {
-        Serial.print("File ");
-        Serial.print(noOfFiles);
-        Serial.println(" selected");
+//        Serial.print("File ");
+//        Serial.print(noOfFiles);
+//        Serial.println(" selected");
         displayedStartMessgae = false;
         readFile(noOfFiles);
-        printPIParams();
+        //printPIParams();
         startWithGivenParametersRequest = true;
         setMainState(fastCookingModeTime);
         

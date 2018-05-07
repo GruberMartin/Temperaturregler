@@ -16,7 +16,7 @@ String tmp;
 int stringCounter = 1;
 int numberOfFiles = 0;
 
-//const int chipSelect = 53; // Braucht es das ? ----------------------------------------------------------------------------
+const int sdChip = 53; 
 
 
 int getNumberOfFiles()
@@ -27,7 +27,7 @@ int getNumberOfFiles()
 void savePIParameters()
 {
   pinMode(SS, OUTPUT);
-  if (!SD.begin(chipSelect)) {
+  if (!SD.begin(sdChip)) {
     Serial.println("Schreiben auf SD-Karte fehlgeschlagen");
     currentState = running_PI;
   }
@@ -76,7 +76,7 @@ int countNumberOfFiles()
 {
   
   pinMode(SS, OUTPUT);
-  if (!SD.begin(chipSelect)) {
+  if (!SD.begin(sdChip)) {
     Serial.println("Keine SD-Karte erkannt, countNumberOfFiles");
     filesAvailable = false;
   }
@@ -102,7 +102,7 @@ void readFile(int fileNumber)
 {
   
   pinMode(SS, OUTPUT);
-  if (!SD.begin(chipSelect)) {
+  if (!SD.begin(sdChip)) {
     //Serial.println("Lesen von SD-Karte fehlgeschlagen");
 
   }
