@@ -429,7 +429,7 @@ void loop()
     case startWithGivenParameters:
     
       secCounter();
-      setStartVoltage();
+      //setStartVoltage();
       //setParameterProgrammatically(2.15 , 1660.25, 1071.13, 214.23, 2);
       setStartVoltageIPart(calculateStartVoltageForIpart());
       setCurrentState(running_PI);

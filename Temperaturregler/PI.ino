@@ -301,10 +301,10 @@ float controlVoltage()
 
 
 
-      if (newVoltage > 1511.43)
+      if (voltageIold > 230.0)
       {
-        newVoltage = 1511.43;
-        voltageIold = 1511.43;
+        newVoltage = 230.0;
+        voltageIold = 230.0;
 
       }
       else if (newVoltage <= 0.0)
