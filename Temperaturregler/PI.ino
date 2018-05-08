@@ -179,6 +179,11 @@ PIstate getCurrentState()
   return currentState;
 }
 
+float getVoltageIpart()
+{
+  return voltageI;
+}
+
 float getError()
 {
   return (Sollwert - getValSens2());
@@ -287,8 +292,8 @@ float controlVoltage()
         requestTemp();
         newError = Sollwert - getValSens2();
         voltageP = Kpr * newError;
-        voltageI = voltageIold + ((2*Kpr) / Tn) * (T / 2) * newError + ((2*Kpr) / Tn) * (T / 2) * oldError;
-
+        voltageI = voltageIold + (Kpr / Tn) * (T / 2) * newError + (Kpr / Tn) * (T / 2) * oldError;
+        voltageIold = voltageI;
         newVoltage = voltageP + voltageI;
 
         setDonewCalc();

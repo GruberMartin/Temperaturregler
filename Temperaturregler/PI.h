@@ -31,6 +31,7 @@ boolean hasRechedFinalValue();
 void setParameterProgrammatically(float K, float Tr, float T1, float Ta, int orderSet);
 boolean checkParameters(float K, float Tr, float T1, float Ta, int orderSet);
 void printPIParams();
+float getVoltageIpart();
 
 
 #endif

@@ -303,7 +303,9 @@ void secCounter()
       }
     }
     printSensorVals();
-    Serial.println(seconds, DEC);
+    Serial.print(seconds, DEC);
+    Serial.print(" ");
+    Serial.println(getVoltageIpart());
     tenSecCounter = tenSecCounter + 1;
     sampleCounter = sampleCounter + 1;
 

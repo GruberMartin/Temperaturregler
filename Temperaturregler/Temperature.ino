@@ -27,7 +27,7 @@ void initTemperature()
 
   Serial.begin(250000);
   sensors.begin();
-  Serial.println("Wassertemperatur Umgebungstemperatur Zeit");
+  Serial.println("Wassertemperatur Umgebungstemperatur Zeit Ianteil");
   minTemp = getValSens1();
   startWaterTemp = getValSens2();  
 }
