@@ -80,16 +80,11 @@ void requestFurtherStepsTime(long timeCurrentStep)
 {
   if(numberOfSteps < 6)
   {
-    if(numberOfSteps == 0)
-    {
+    
     stepTime[numberOfSteps] = timeCurrentStep;
     
-    }
-    else
-    {
-    stepTime[numberOfSteps] = stepTime[numberOfSteps-1] + timeCurrentStep;
     
-    }
+   
   }
  
 }

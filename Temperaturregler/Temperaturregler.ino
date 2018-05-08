@@ -44,6 +44,7 @@ int currentSequence = 0;
 float currentSetPoint = 0.0;
 unsigned long changeTime = 0;
 boolean requestSequenceChange = true;
+boolean calculateRealchangeTime = false;
 
 
 
@@ -118,22 +119,27 @@ void handleSequences()
     
     break;
     case 1:
+     changeRegulator = false;
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
     break;
     case 2:
+     changeRegulator = false;
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
     break;
     case 3:
+     changeRegulator = false;
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
     break;
     case 4:
+     changeRegulator = false;
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
     break;
     case 5:
+     changeRegulator = false;
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
     break;
@@ -188,33 +194,43 @@ void secCounter()
     previousTime = previousTime + 1000;  // use 100000 for uS
     seconds = seconds + 1;
     requestTemp();
-    if ((seconds >= changeTime) && changeTimeHasBeenSet == true)
+    if ((seconds >= changeTime) && changeTimeHasBeenSet == true && calculateRealchangeTime == true)
     {
       changeTimeHasBeenSet = false;
+      calculateRealchangeTime = false;
+      
     }
     if (temperatureIsStable == false && PIisOn == true)
     {
       if (getError() == 0.0)
       {
         stabCounter = stabCounter + 1;
+        changeTime = changeTime + getSeconds();
+        calculateRealchangeTime = true;
       }
       if (stabCounter >= 1)
       {
         temperatureIsStable = true;
         rechedFinalState = true;
+        changeRegulator = true;
+        
       }
 
     }
 
-    if (temperatureIsStable == true && rechedFinalState == true || fastTempControll == true)
+    if (temperatureIsStable == true && rechedFinalState == true )
     {
       if (changeTimeHasBeenSet == false && currentSequence <6)
       {
         handleSequences();
-        changeTime = changeTime + getSeconds();
+        //changeTime = changeTime + getSeconds();
+        
+         
+        
         setSetPoint(currentSetPoint);
         changeTimeHasBeenSet = true;
         currentSequence += 1;
+        
       }
       else if(currentSequence >= 6)
       {
@@ -222,9 +238,10 @@ void secCounter()
       }
       
       rechedFinalState = false;
-      fastTempControll = true;
+      temperatureIsStable = false;
+      
       stabCounter = 0;
-      changeRegulator = true;
+     
       imediateCalcVoltage();
     }
 

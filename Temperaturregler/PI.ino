@@ -287,7 +287,7 @@ float controlVoltage()
         requestTemp();
         newError = Sollwert - getValSens2();
         voltageP = Kpr * newError;
-        voltageI = voltageIold + (Kpr / Tn) * (T / 2) * newError + (Kpr / Tn) * (T / 2) * oldError;
+        voltageI = voltageIold + ((2*Kpr) / Tn) * (T / 2) * newError + ((2*Kpr) / Tn) * (T / 2) * oldError;
 
         newVoltage = voltageP + voltageI;
 
