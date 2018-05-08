@@ -356,7 +356,7 @@ void waitForCookingMode()
   buttons = lcd.readButtons();
   if (displayedStartMessgae == false)
   {
-    disPrint("<- No Param.", "-> Given Param.");
+    disPrint("<- New pan", "-> Known pan");
     displayedStartMessgae = true;
   }
   else
@@ -364,7 +364,7 @@ void waitForCookingMode()
     if (getButtonLeft() && isStillPressing == false)
     {
       //Serial.println("Button Left pressed");
-      current_main_state = fastCookingModeTime;
+      current_main_state = getParameter;
       isStillPressing = true;
       displayedStartMessgae = false;
     }

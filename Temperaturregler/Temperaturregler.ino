@@ -410,9 +410,10 @@ void loop()
       }
       break;
     case getParameter:
+      setSetPoint(70.0);
       setStartVoltage();
       calculateFinalValue();
-      setVoltage(getStartVoltage());
+      //setVoltage(getStartVoltage());
       secCounter();
       writeTemppToArray();
       antiDeadLock();
