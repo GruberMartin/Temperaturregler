@@ -23,6 +23,7 @@ int presscounter = 0;
 int tempUserDot = 0;
 boolean disableUp = false;
 boolean disableDown = false;
+boolean gotOrderPIparams = false;
 void initDisplay()
 {
   lcd.begin(16, 2);
@@ -226,29 +227,62 @@ void waitForCookingMode()
   buttons = lcd.readButtons();
   if (displayedStartMessgae == false)
   {
-    disPrint("<- New pan", "-> Known pan");
-    displayedStartMessgae = true;
+    if (gotOrderPIparams == false)
+    {
+      disPrint("<- New pan", "-> Known pan");
+      displayedStartMessgae = true;
+    }
+    else
+    {
+      disPrint("<- New seq.", "-> Known seq.");
+      displayedStartMessgae = true;
+    }
   }
   else
   {
-    if (getButtonLeft() && isStillPressing == false)
+    if (gotOrderPIparams == false)
     {
-      //Serial.println("Button Left pressed");
-      current_main_state = getParameter;
-      isStillPressing = true;
-      displayedStartMessgae = false;
-    }
-    else if (getButtonRight() && isStillPressing == false)
-    {
+      if (getButtonLeft() && isStillPressing == false)
+      {
+        //Serial.println("Button Left pressed");
+        current_main_state = getParameter;
+        isStillPressing = true;
+        displayedStartMessgae = false;
+      }
+      else if (getButtonRight() && isStillPressing == false)
+      {
 
-      current_main_state = selectParamFiles;
-      isStillPressing = true;
-      displayedStartMessgae = false;
-    }
-    else if (buttons == 0)
-    {
+        current_main_state = selectParamFilesForPI;
+        isStillPressing = true;
+        displayedStartMessgae = false;
+      }
+      else if (buttons == 0)
+      {
 
-      isStillPressing = false;
+        isStillPressing = false;
+      }
+    }
+    else
+    {
+      if (getButtonLeft() && isStillPressing == false)
+      {
+        
+        current_main_state = fastCookingModeTime;
+        isStillPressing = true;
+        displayedStartMessgae = false;
+      }
+      else if (getButtonRight() && isStillPressing == false)
+      {
+
+        current_main_state = selectParamFilesForSeq;
+        isStillPressing = true;
+        displayedStartMessgae = false;
+      }
+      else if (buttons == 0)
+      {
+
+        isStillPressing = false;
+      }
     }
   }
 }
@@ -401,7 +435,8 @@ void chooseParameters()
         displayedStartMessgae = false;
         readFile(noOfFiles);
         startWithGivenParametersRequest = true;
-        setMainState(fastCookingModeTime);
+        gotOrderPIparams = true;
+        setMainState(getCookingMode);
 
       }
       // Falls keine Files vorhanden waren => Modus getParameter
@@ -410,7 +445,7 @@ void chooseParameters()
         displayedStartMessgae = false;
         setMainState(getParameter);
       }
-      
+
       isStillPressing = true;
 
     }

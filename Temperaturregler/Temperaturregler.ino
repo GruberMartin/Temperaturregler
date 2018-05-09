@@ -15,8 +15,7 @@
 #include "Temperature.h"
 #include "Display.h"
 #include "SD.h"
-#define schalter 8
-#define myPin 7
+
 
 unsigned long previousTime = 0;
 unsigned long seconds ;
@@ -74,15 +73,14 @@ typedef enum {
   getCookingMode,
   fastCookingModeTime,
   fastCookingModeTemp,
-  selectParamFiles,
+  selectParamFilesForPI,
   notStarted_Main,
-  started_Main,
   PI_on_Main,
   getParameter,
   gotParameter,
   startWithGivenParameters,
+  selectParamFilesForSeq,
   globalShutDown
-
 } main_states;
 
 main_states current_main_state = getUserInput;
@@ -93,9 +91,6 @@ void setup()
 {
   Serial.begin(250000);
   initDisplay();
-  pinMode(schalter, INPUT);
-  pinMode(myPin, OUTPUT);
-  digitalWrite(myPin, HIGH);
   initParameterDetermination();
   initPID();
   initTemperature();
@@ -379,13 +374,10 @@ void loop()
     case getUserInput:
       waitForStartSignal();
       break;
-
     case getCookingMode:
       waitForCookingMode();
-
-
       break;
-    case selectParamFiles:
+    case selectParamFilesForPI:
       chooseParameters();
       break;
     case fastCookingModeTime:
@@ -395,8 +387,6 @@ void loop()
       getCookingTemp();
       break;
     case notStarted_Main:
-      //setSetPoint(((float)tempUserDot / 100) + tempUser); ------------------------------------------------------------------------Hier müsssen dann die neue endzeit und der neue Sollwert eingegeben werden
-      //endTime = hours * 60 * 60 + minutes * 60;
       secCounter();
       if (startWithGivenParametersRequest == false)
       {
@@ -412,7 +402,6 @@ void loop()
       setSetPoint(70.0);
       setStartVoltage();
       calculateFinalValue();
-      //setVoltage(getStartVoltage());
       secCounter();
       writeTemppToArray();
       antiDeadLock();
@@ -422,27 +411,20 @@ void loop()
       printParameter();
       setCurrentState(start_PI);
       setStartVoltageIPart(calculateStartVoltageForIpart());
-      //printPIParams();
       current_main_state = PI_on_Main;
-      //Serial.println("PI Regler ist jetzt aktiv");
       break;
     case startWithGivenParameters:
-      //handleSequences();
       secCounter();
-      //setStartVoltage();
-      //setParameterProgrammatically(2.15 , 1660.25, 1071.13, 214.23, 2);
       setSetPoint(getStepTemp(currentSequence));
-      //      if(getError() >= 0)
-      //      {
-      //      Serial.print("Error = ");
-      //      Serial.println(getError());
       setStartVoltageIPart(calculateStartVoltageForIpart());
       //      }
       setCurrentState(running_PI);
       imediateCalcVoltage();
       current_main_state = PI_on_Main;
-      //Serial.println("PI Regler ist jetzt aktiv");
       break;
+    case selectParamFilesForSeq:
+    Serial.println("Jetzt könnten die Abfolgen ausgewählt werden");
+    break;
     case PI_on_Main:
       secCounter();
       PIisOn = true;
