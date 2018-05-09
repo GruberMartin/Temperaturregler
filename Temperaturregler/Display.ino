@@ -11,6 +11,7 @@ boolean filesAvailableForSelct = false;
 boolean disableSelect = true;
 boolean firstPress = true;
 boolean numberOfFilesCounted = false;
+boolean finsihMessageHasBeenDisplayed = false;
 boolean printErrorMsg = false;
 int numberOfSteps = 0;
 long stepTime [6] =  {0, 0, 0, 0, 0, 0};
@@ -205,6 +206,15 @@ void disPrintRegualtorActivated(float actualTemp)
   lcd.setCursor(0, 0);
 }
 
+void disPrintFinishMessgae()
+{
+  if(finsihMessageHasBeenDisplayed == false)
+  {
+    disPrint("Finish",":)");
+    finsihMessageHasBeenDisplayed = true;
+  }
+}
+
 void disPrintSeqFile()
 {
   for(int y = 0; y<6; y++)
@@ -292,7 +302,7 @@ void waitForCookingMode()
       }
       else if (getButtonRight() && isStillPressing == false)
       {
-
+        requestGlobalStart();
         current_main_state = selectParamFilesForSeq;
         isStillPressing = true;
         displayedStartMessgae = false;

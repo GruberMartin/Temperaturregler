@@ -400,12 +400,12 @@ void loop()
         if(startWithGivenSeqRequest == true)
         {
         current_main_state = startWithGivenParameters;
-        disPrintSeqFile();
-        printPIParams();
-        while(1)
-        {
-          
-        }
+//        disPrintSeqFile();
+//        printPIParams();
+//        while(1)
+//        {
+//          
+//        }
         
         
         }
@@ -449,6 +449,7 @@ void loop()
       break;
     case globalShutDown:
       turnOffHeating();
+      disPrintFinishMessgae();
       break;
   }
 
