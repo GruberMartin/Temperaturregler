@@ -152,6 +152,10 @@ void handleSequences()
     setSetPoint(currentSetPoint);
     break;
   }
+  if(changeTime == 0)
+  {
+    current_main_state = globalShutDown;
+  }
 
   Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
 }
@@ -212,7 +216,7 @@ void secCounter()
     }
     if (temperatureIsStable == false && PIisOn == true)
     {
-      if (getError() == 0.0)
+      if (getError() <= 0.0)
       {
         stabCounter = stabCounter + 1;
         
@@ -263,7 +267,7 @@ void secCounter()
       
       stabCounter = 0;
      
-      imediateCalcVoltage();
+      //imediateCalcVoltage();
     }
 
     if (antiDeadLockActivated == true && PIisOn == false)
@@ -456,8 +460,8 @@ void loop()
       setSetPoint(getStepTemp(currentSequence));
       if(getError() >= 0)
       {
-      Serial.print("Error = ");
-      Serial.println(getError());
+//      Serial.print("Error = ");
+//      Serial.println(getError());
       setStartVoltageIPart(calculateStartVoltageForIpart());
       }
       setCurrentState(running_PI);
