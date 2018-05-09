@@ -19,4 +19,8 @@ void initDisplay();
 void requestFurtherStepsTime(long timeCurrentStep);
 long getStepTime(int index);
 float getStepTemp(int index);
+void chooseParameters(int whichFile);
+void setStempTime(int index, int value);
+void setStepTemp(int index, float temp);
+void disPrintSeqFile();
 #endif

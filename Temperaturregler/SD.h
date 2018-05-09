@@ -4,4 +4,5 @@ void savePIParameters();
 int countNumberOfFiles();
 void readFile(int fileNumber);
 int getNumberOfFiles();
+void readSeqFile(int fileNumber);
 #endif

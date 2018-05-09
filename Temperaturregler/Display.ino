@@ -45,6 +45,11 @@ long getStepTime(int index)
   return stepTime[index];
 }
 
+void setStempTime(int index, long value)
+{
+  stepTime[index] = value;
+}
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 float getStepTemp(int index)
@@ -52,6 +57,10 @@ float getStepTemp(int index)
   return stepTemp[index];
 }
 
+void setStepTemp(int index, float temp)
+{
+  stepTemp[index] = temp;
+}
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 boolean getButtonRight()
@@ -130,7 +139,7 @@ void requestFurtherStepsTemp(float tempCurrentStep)
   if (numberOfSteps == 6)
   {
 
-    current_main_state = notStarted_Main;
+    saveSeqParameters();
     requestGlobalStart();
     startLcdTempPrinting = true;
   }
@@ -196,6 +205,14 @@ void disPrintRegualtorActivated(float actualTemp)
   lcd.setCursor(0, 0);
 }
 
+void disPrintSeqFile()
+{
+  for(int y = 0; y<6; y++)
+  {
+    Serial.println("Time" +(String)(y) + ": " + (String)stepTime[y] + ", Temp" + (String)(y) + ": " + (String)stepTemp[y]);
+  }
+}
+
 //###################################################################################################################################################################################################################################
 //###############################################################################################   Methoden Menu   #################################################################################################################
 //###################################################################################################################################################################################################################################
@@ -236,6 +253,7 @@ void waitForCookingMode()
     {
       disPrint("<- New seq.", "-> Known seq.");
       displayedStartMessgae = true;
+      numberOfFilesCounted = false;
     }
   }
   else
@@ -245,6 +263,7 @@ void waitForCookingMode()
       if (getButtonLeft() && isStillPressing == false)
       {
         //Serial.println("Button Left pressed");
+        requestGlobalStart();
         current_main_state = getParameter;
         isStillPressing = true;
         displayedStartMessgae = false;
@@ -266,7 +285,7 @@ void waitForCookingMode()
     {
       if (getButtonLeft() && isStillPressing == false)
       {
-        
+
         current_main_state = fastCookingModeTime;
         isStillPressing = true;
         displayedStartMessgae = false;
@@ -289,20 +308,36 @@ void waitForCookingMode()
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void chooseParameters()
+void chooseParameters(int whichFile)
 {
   // Bestimmen wie viele files vorhanden sind
   if (numberOfFilesCounted == false)
   {
-    countNumberOfFiles();
-    numberOfFilesCounted = true;
+    if (whichFile == 0)
+    {
+      noOfFiles = 0;
+      countNumberOfPiFiles();
+    }
+    else
+    {
+      noOfFiles = 0;
+      countNumberOfSeqFiles();
+    }
+    numberOfFilesCounted = true; 
   }
   buttons = lcd.readButtons();
   if (displayedStartMessgae == false)
   {
     if (getNumberOfFiles() > 0)
     {
-      disPrint("Choose a pan:", "Press down");
+      if (whichFile == 0)
+      {
+        disPrint("Choose a pan:", "Press down");
+      }
+      else
+      {
+        disPrint("Choose a seq:", "Press down");
+      }
       filesAvailableForSelct = true;
       displayedStartMessgae = true;
     }
@@ -362,8 +397,14 @@ void chooseParameters()
       // Entscheiden was angezeigt werden soll
       if (printErrorMsg == false)
       {
-
-        disPrint("Choose a pan:", paramFileNames[noOfFiles]);
+        if (whichFile == 0)
+        {
+          disPrint("Choose a pan:", paramFileNames[noOfFiles]);
+        }
+        else
+        {
+          disPrint("Choose a seq.:", seqFileNames[noOfFiles]);
+        }
         disableSelect = false;
 
       }
@@ -416,7 +457,14 @@ void chooseParameters()
       // Entscheiden was angezeigt werden soll
       if (printErrorMsg == false)
       {
-        disPrint("Choose a pan:", paramFileNames[noOfFiles]);
+        if (whichFile == 0)
+        {
+          disPrint("Choose a pan:", paramFileNames[noOfFiles]);
+        }
+        else
+        {
+          disPrint("Choose a seq.:", seqFileNames[noOfFiles]);
+        }
         disableSelect = false;
       }
       else if (printErrorMsg == true)
@@ -432,18 +480,54 @@ void chooseParameters()
       // Wenn file vorhanden sind, mit ausgewählten Parametern starten => Abfolgen erfassen oder auswählen
       if (filesAvailableForSelct)
       {
-        displayedStartMessgae = false;
-        readFile(noOfFiles);
-        startWithGivenParametersRequest = true;
-        gotOrderPIparams = true;
-        setMainState(getCookingMode);
+        if (whichFile == 0)
+        {
+          displayedStartMessgae = false;
+          readFile(noOfFiles);
+          startWithGivenParametersRequest = true;
+          gotOrderPIparams = true;
+          setMainState(getCookingMode);
+          presscounter = 0;
+          filesAvailableForSelct = false;
+          numberOfFilesCounted = false;
+          noOfFiles = 0;
+          disableSelect = true;
+          firstPress = true;
+          printErrorMsg = false;
+          disableUp = false;
+          disableDown = false;
+        }
+        else
+        {
+          displayedStartMessgae = false;
+          readSeqFile(noOfFiles);
+          startWithGivenSeqRequest = true;
+          setMainState(notStarted_Main);
+        }
 
       }
       // Falls keine Files vorhanden waren => Modus getParameter
       else
       {
+        if (whichFile == 0)
+        {
         displayedStartMessgae = false;
         setMainState(getParameter);
+        presscounter = 0;
+          filesAvailableForSelct = false;
+          numberOfFilesCounted = false;
+          noOfFiles = 0;
+          disableSelect = true;
+          firstPress = true;
+          printErrorMsg = false;
+          disableUp = false;
+          disableDown = false;
+        }
+        else
+        {
+        displayedStartMessgae = false;
+        setMainState(fastCookingModeTime);
+        }
       }
 
       isStillPressing = true;
@@ -460,8 +544,12 @@ void chooseParameters()
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+void chooseSequence()
+{
 
+}
 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void getCookingTime()
 {

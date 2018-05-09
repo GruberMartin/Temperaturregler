@@ -4,17 +4,21 @@
 #include "PI.h"
 #include <SPI.h>
 #include <SD.h>
+#include "Display.h"
 
 
 File myFile;
 String filename;
-boolean writingSuccessfully = false;
-boolean readingSuccessfully = false;
+boolean writingPiParamSuccessfully = false;
+boolean readingPiParamSuccessfully = false;
+boolean writingSeqParamSuccessfully = false;
+boolean readingSeqParamSuccessfully = false;
 boolean filesAvailable = false;
 String fileContent;
 String tmp;
 int stringCounter = 1;
 int numberOfFiles = 0;
+int seqNowCount = 0;
 
 const int sdChip = 53; 
 
@@ -28,11 +32,11 @@ void savePIParameters()
 {
   pinMode(SS, OUTPUT);
   if (!SD.begin(sdChip)) {
-    Serial.println("Schreiben auf SD-Karte fehlgeschlagen");
+    //Serial.println("Schreiben auf SD-Karte fehlgeschlagen");
     currentState = running_PI;
   }
 
-  for (int i = 0; (i < 40) && (writingSuccessfully == false); i++)
+  for (int i = 0; (i < 40) && (writingPiParamSuccessfully == false); i++)
   {
     filename = String(String(i) + ".txt");
     if (!SD.exists(filename))
@@ -59,31 +63,97 @@ void savePIParameters()
           myFile.print(getSetPoint());*/
         // close the file:
         myFile.close();
-        writingSuccessfully = true;
+        writingPiParamSuccessfully = true;
         currentState = running_PI;
       }
     }
 
   }
-  if (writingSuccessfully == false)
+  if (writingPiParamSuccessfully == false)
   {
     setCurrentState(running_PI);
   }
 
 }
 
-int countNumberOfFiles()
+
+void saveSeqParameters()
+{
+
+  pinMode(SS, OUTPUT);
+  if (!SD.begin(sdChip)) {
+    //Serial.println("Schreiben auf SD-Karte fehlgeschlagen");
+    current_main_state = fastCookingModeTime;
+  }
+
+  for (int i = 0; (i < 40) && (writingSeqParamSuccessfully == false); i++)
+  {
+    filename = "seq" + String(String(i) + ".txt");
+    if (!SD.exists(filename))
+    {
+      myFile = SD.open(filename, FILE_WRITE);
+      if (myFile) {
+        for(int z = 0; z<6;z++)
+        {
+           myFile.print(getStepTime(z));
+           myFile.print(", ");
+           myFile.print(getStepTemp(z));
+           myFile.print(", ");
+        }
+        myFile.close();
+        writingSeqParamSuccessfully = true;
+        //currentState = running_PI;
+        current_main_state = startWithGivenParameters;
+      }
+    }
+
+  }
+  if (writingSeqParamSuccessfully == false)
+  {
+   
+    current_main_state = fastCookingModeTime;
+    Serial.println("Wrtiting to seq file failed");
+  }
+  
+}
+
+int countNumberOfPiFiles()
 {
   
   pinMode(SS, OUTPUT);
   if (!SD.begin(sdChip)) {
-    Serial.println("Keine SD-Karte erkannt, countNumberOfFiles");
+    //Serial.println("Keine SD-Karte erkannt, countNumberOfPiFiles");
     filesAvailable = false;
   }
 
   for (int i = 0; (i < 40); i++)
   {
     filename = String(String(i) + ".txt");
+    if (SD.exists(filename))
+    {
+      numberOfFiles = numberOfFiles + 1;
+      
+    }
+  }
+//  Serial.print(numberOfFiles);
+//  Serial.println(" Files verfuegbar");
+  return numberOfFiles;
+
+}
+
+int countNumberOfSeqFiles()
+{
+  
+  pinMode(SS, OUTPUT);
+  if (!SD.begin(sdChip)) {
+    //Serial.println("Keine SD-Karte erkannt, countNumberOfSeqFiles");
+    filesAvailable = false;
+    numberOfFiles = 0;
+  }
+  numberOfFiles = 0;
+  for (int i = 0; (i < 40); i++)
+  {
+    filename = "seq" + String(String(i) + ".txt");
     if (SD.exists(filename))
     {
       numberOfFiles = numberOfFiles + 1;
@@ -162,7 +232,7 @@ void readFile(int fileNumber)
         }
       }
       // close the file:
-      readingSuccessfully = true;
+      readingPiParamSuccessfully = true;
       myFile.close();
     } else {
       // if the file didn't open, print an error:
@@ -171,4 +241,102 @@ void readFile(int fileNumber)
   }
 
 }
+
+void readSeqFile(int fileNumber)
+{
+  stringCounter = 1;
+  fileContent = "";
+  tmp = "";
+  pinMode(SS, OUTPUT);
+  if (!SD.begin(sdChip)) {
+    //Serial.println("Lesen von SD-Karte fehlgeschlagen");
+
+  }
+
+
+  filename = "seq" + String(String(fileNumber) + ".txt");
+  if (SD.exists(filename))
+  {
+    myFile = SD.open(filename);
+    if (myFile) {
+      //Serial.println(filename + " :");
+
+      // read from the file until there's nothing else in it:
+      while (myFile.available()) {
+        //Serial.write();
+        tmp = (char)myFile.read();
+        if (tmp != ",")
+        {
+          fileContent = fileContent + tmp;
+
+        }
+        else
+        {
+
+
+          switch (stringCounter)
+          {
+            case 1:
+              setStempTime(seqNowCount,fileContent.toInt());
+              break;
+            case 2:
+              setStepTemp(seqNowCount,fileContent.toFloat());
+              seqNowCount +=1;
+              break;
+            case 3:
+              setStempTime(seqNowCount,fileContent.toInt());
+              break;
+            case 4:
+              setStepTemp(seqNowCount,fileContent.toFloat());
+              seqNowCount +=1;
+              break;
+              case 5:
+              setStempTime(seqNowCount,fileContent.toInt());
+              break;
+            case 6:
+              setStepTemp(seqNowCount,fileContent.toFloat());
+              seqNowCount +=1;
+              break;
+              case 7:
+              setStempTime(seqNowCount,fileContent.toInt());
+              break;
+            case 8:
+              setStepTemp(seqNowCount,fileContent.toFloat());
+              seqNowCount +=1;
+              break;
+              case 9:
+              setStempTime(seqNowCount,fileContent.toInt());
+              break;
+            case 10:
+              setStepTemp(seqNowCount,fileContent.toFloat());
+              seqNowCount +=1;
+              break;
+              case 11:
+              setStempTime(seqNowCount,fileContent.toInt());
+              break;
+            case 12:
+              setStepTemp(seqNowCount,fileContent.toFloat());
+              seqNowCount +=1;
+              break;
+            default:
+              break;
+
+
+          }
+          fileContent = "";
+          stringCounter += 1;
+
+        }
+      }
+      // close the file:
+      readingSeqParamSuccessfully = true;
+      myFile.close();
+    } else {
+      // if the file didn't open, print an error:
+      Serial.println("Lesen von SD-Karte fehlgeschlagen");
+    }
+  }
+
+}
+
 

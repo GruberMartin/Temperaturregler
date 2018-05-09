@@ -55,6 +55,7 @@ boolean changeTimeHasBeenSet = false;
 boolean startLcdTempPrinting = false;
 boolean startWithGivenParametersRequest = false;
 boolean changeRegulator = false;
+boolean startWithGivenSeqRequest = false;
 
 
 
@@ -204,6 +205,7 @@ void requestGlobalStart()
 {
   globalStart = true;
   previousTime = millis();
+  startLcdTempPrinting = true;
 }
 
 void setEndTime(unsigned long endT)
@@ -378,7 +380,7 @@ void loop()
       waitForCookingMode();
       break;
     case selectParamFilesForPI:
-      chooseParameters();
+      chooseParameters(0);
       break;
     case fastCookingModeTime:
       getCookingTime();
@@ -395,7 +397,22 @@ void loop()
       }
       else
       {
+        if(startWithGivenSeqRequest == true)
+        {
         current_main_state = startWithGivenParameters;
+        disPrintSeqFile();
+        printPIParams();
+        while(1)
+        {
+          
+        }
+        
+        
+        }
+        else
+        {
+          current_main_state = fastCookingModeTime;
+        }
       }
       break;
     case getParameter:
@@ -411,7 +428,7 @@ void loop()
       printParameter();
       setCurrentState(start_PI);
       setStartVoltageIPart(calculateStartVoltageForIpart());
-      current_main_state = PI_on_Main;
+      current_main_state = globalShutDown;
       break;
     case startWithGivenParameters:
       secCounter();
@@ -423,7 +440,7 @@ void loop()
       current_main_state = PI_on_Main;
       break;
     case selectParamFilesForSeq:
-    Serial.println("Jetzt könnten die Abfolgen ausgewählt werden");
+    chooseParameters(1);
     break;
     case PI_on_Main:
       secCounter();
