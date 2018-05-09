@@ -303,28 +303,28 @@ float controlVoltage()
 
       if (voltageIold > 230.0)
       {
-        newVoltage = 230.0;
+        
         voltageIold = 230.0;
 
       }
-      else if (newVoltage <= 0.0)
+      else if (voltageIold <= 0.0)
       {
-        newVoltage = 0.0;
+        voltageIold = 0.0;
 
 
       }
 
-      if (requestRegulatorChange() == true)
-      {
-        if (newError >=  0.25)
-        {
-          newVoltage = 1511.43;
-        }
-        else if (newError <= 0.0)
-        {
-          newVoltage = 0;
-        }
-      }
+//      if (requestRegulatorChange() == true)
+//      {
+//        if (newError >=  0.25)
+//        {
+//          newVoltage = 1511.43;
+//        }
+//        else if (newError <= 0.0)
+//        {
+//          newVoltage = 0;
+//        }
+//      }
 
 
 
