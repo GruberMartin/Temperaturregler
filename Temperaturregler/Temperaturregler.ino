@@ -110,6 +110,7 @@ void handleNextSequnece()
 {
   if (sequencesStarted == false)
   {
+    Serial.println("Schritt 0 wurde gestartet");
     handleSequences();
     sequencesStarted = true;
   }
@@ -119,12 +120,13 @@ void handleNextSequnece()
     handleSequences();
     nextSequenceHasBenSet = true;
     timeForNextStep = changeTime + getSeconds();
+    Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
     currentSequence += 1;
   }
   if (nextSequenceHasBenSet == true && getSeconds() >= timeForNextStep)
   {
     handleSequences();
-    Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
+    //Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
     nextSequenceHasBenSet = false;
     imediateCalcVoltage();
   }
@@ -433,7 +435,7 @@ void loop()
     case startWithGivenParameters:
       secCounter();
       setSetPoint(getStepTemp(currentSequence));
-      setStartVoltageIPart(calculateStartVoltageForIpart());
+      //setStartVoltageIPart(calculateStartVoltageForIpart());
       //      }
       setCurrentState(running_PI);
       imediateCalcVoltage();
