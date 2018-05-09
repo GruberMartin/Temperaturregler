@@ -228,12 +228,15 @@ void secCounter()
          
         
         //setSetPoint(currentSetPoint);
+        
         changeTimeHasBeenSet = true;
+        
         currentSequence += 1;
         changeTime = changeTime + getSeconds();
         calculateRealchangeTime = true;
         Serial.print("Change Time = ");
         Serial.println(changeTime);
+        
         }
         if( changeTime == 0)
         {
