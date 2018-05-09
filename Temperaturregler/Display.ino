@@ -5,6 +5,7 @@ boolean isStillPressing = false;
 boolean setTempUser = true;
 boolean setHours = true;
 String paramFileNames[6] = {"pan 1", "pan 2", "pan 3", "pan 4", "pan 5", "pan 6"};
+String seqFileNames[6] = {"seq 1", "seq 2", "seq 3", "seq 4", "seq 5", "seq 6"};
 int noOfFiles = 0;
 boolean filesAvailableForSelct = false;
 boolean disableSelect = true;
@@ -12,8 +13,8 @@ boolean firstPress = true;
 boolean numberOfFilesCounted = false;
 boolean printErrorMsg = false;
 int numberOfSteps = 0;
-long stepTime [6] =  {0,0,0,0,0,0};
-float stepTemp [6] =  {40.0,40.0,40.0,40.0,40.0,40.0};
+long stepTime [6] =  {0, 0, 0, 0, 0, 0};
+float stepTemp [6] =  {40.0, 40.0, 40.0, 40.0, 40.0, 40.0};
 String timeString = "";
 int hours = 0;
 int minutes = 0;
@@ -28,87 +29,116 @@ void initDisplay()
   lcd.setBacklight(WHITE);
   tempUser = 40;//((int)getValSens1());
   tempUserDot = 0;//((getValSens1() * 100) - (tempUser * 100));
- 
-  
-  
+
+
+
 }
+
+
+//###################################################################################################################################################################################################################################
+//###############################################################################################   Getter und Setter Methoden   ####################################################################################################
+//###################################################################################################################################################################################################################################
 
 long getStepTime(int index)
 {
   return stepTime[index];
 }
 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 float getStepTemp(int index)
 {
   return stepTemp[index];
 }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 boolean getButtonRight()
 {
   buttons = lcd.readButtons();
   return (buttons & BUTTON_RIGHT);
 }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 boolean getButtonLeft()
 {
   buttons = lcd.readButtons();
   return (buttons & BUTTON_LEFT);
 }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 boolean getButtonUp()
 {
   buttons = lcd.readButtons();
   return (buttons & BUTTON_UP);
 }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 boolean getButtonDown()
 {
   buttons = lcd.readButtons();
   return (buttons & BUTTON_DOWN);
 }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 boolean getButtonSelect()
 {
   buttons = lcd.readButtons();
   return (buttons & BUTTON_SELECT);
 }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 boolean getButtonNoone()
 {
   buttons = lcd.readButtons();
   return (buttons == 0);
 }
 
+//###################################################################################################################################################################################################################################
+//###############################################################################################  Methoden um nächste Schritte zu bestimmen  #######################################################################################
+//###################################################################################################################################################################################################################################
 
 
 void requestFurtherStepsTime(long timeCurrentStep)
 {
-  if(numberOfSteps < 6)
+  if (numberOfSteps < 6)
   {
-    
+
     stepTime[numberOfSteps] = timeCurrentStep;
-    
-    
-   
+
+
+
   }
- 
+
 }
 
 void requestFurtherStepsTemp(float tempCurrentStep)
 {
-  if(numberOfSteps < 6)
-  {    
+  if (numberOfSteps < 6)
+  {
     stepTemp[numberOfSteps] = tempCurrentStep;
-    current_main_state = fastCookingModeTime;  
-    numberOfSteps = numberOfSteps + 1;  
+    current_main_state = fastCookingModeTime;
+    numberOfSteps = numberOfSteps + 1;
   }
 
-  if(numberOfSteps == 6)
+  if (numberOfSteps == 6)
   {
-      
+
     current_main_state = notStarted_Main;
     requestGlobalStart();
     startLcdTempPrinting = true;
   }
- 
+
 }
 
-
+//###################################################################################################################################################################################################################################
+//###############################################################################################   Methoden Display Print   ########################################################################################################
+//###################################################################################################################################################################################################################################
 
 void disPrint(String firstLine, String secondLine)
 {
@@ -124,7 +154,7 @@ void disPrintTime()
 {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Time"+(String)(numberOfSteps+1) + ". to hold: ");
+  lcd.print("Time" + (String)(numberOfSteps + 1) + ". to hold: ");
   lcd.setCursor(0, 1);
   timeString = ((String)hours) + " h : " + ((String)minutes) + " min";
   lcd.print(timeString);
@@ -134,7 +164,7 @@ void disPrintTemp()
 {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Temp" +(String)(numberOfSteps+1) + ". to hold: ");
+  lcd.print("Temp" + (String)(numberOfSteps + 1) + ". to hold: ");
   lcd.setCursor(0, 1);
   timeString = ((String)tempUser) + "." + ((String)tempUserDot) + " deg.";
   lcd.print(timeString);
@@ -165,6 +195,9 @@ void disPrintRegualtorActivated(float actualTemp)
   lcd.setCursor(0, 0);
 }
 
+//###################################################################################################################################################################################################################################
+//###############################################################################################   Methoden Menu   #################################################################################################################
+//###################################################################################################################################################################################################################################
 
 
 void waitForStartSignal()
@@ -185,171 +218,8 @@ void waitForStartSignal()
   }
 }
 
-void chooseParameters()
-{
-  if(numberOfFilesCounted == false)
-  {
-  countNumberOfFiles();
-  numberOfFilesCounted = true;
-  }
-  buttons = lcd.readButtons();
-  if (displayedStartMessgae == false)
-  {
-    if (getNumberOfFiles() > 0)
-    {
-      //Serial.println((String)getNumberOfFiles() + " Files to choose");
-      disPrint("Choose a pan:", "Press down");
-      filesAvailableForSelct = true;
-      displayedStartMessgae = true;
-    }
-    else
-    {
-      
-      disPrint("No files", "Press Select");
-      filesAvailableForSelct = false;
-      displayedStartMessgae = true;
-      disableSelect = false;
-      disableUp = true;
-      disableDown = true;
-      
-    }
-  }
-  else
-  {
-    if (getButtonDown() && isStillPressing == false && disableDown == false)
-    {
-      if(getNumberOfFiles() == 1)
-      {
-        if(presscounter < 1)
-        {
-          disableUp = false;
-          printErrorMsg = false;
-          presscounter += 1;
-        }
-        else
-        {
-          printErrorMsg = true;
-          disableDown = true;
-          disableUp = false;
-        }
-        
-      }
-      else
-      {    
-       if (noOfFiles < getNumberOfFiles()-1)
-      {
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-        if(firstPress == false && printErrorMsg == false)
-        {
-        noOfFiles = noOfFiles + 1;   
-         //Serial.println("noOfFiles wird um 1 erhoeht"); 
-        }    
-        
-        firstPress = false;
-        printErrorMsg = false;
-      }
-      else
-      {
-        printErrorMsg = true;
-      }
-      }
-      if (printErrorMsg == false)
-      {
-        
-        disPrint("Choose a pan:", paramFileNames[noOfFiles]);
-        disableSelect = false;
-        
-      }
-      else if(printErrorMsg == true)
-      {
-        
-        disPrint("No more files", "Press up");
-        disableSelect = true;
-      }
-      isStillPressing = true;
-      //Serial.println("File " + (String)noOfFiles + " selcted");
-    }
-    else if (getButtonUp() && isStillPressing == false && disableUp == false)
-    {
-      if(getNumberOfFiles() == 1)
-      {
-        if(presscounter > 0)
-        {
-          printErrorMsg = false;
-          presscounter -= 1;
-          disableDown = false;
-        }
-        else
-        {
-          disableDown = false;
-          disableUp = true;
-          printErrorMsg = true;
-        }
-        
-      }
-      else
-      {  
-      
-      if (noOfFiles > 0)
-      {
-        if(printErrorMsg == false)
-        {
-        noOfFiles = noOfFiles - 1;
-        //Serial.println("noOfFiles wird um 1 verkleinert");
-        }
-        
-        printErrorMsg = false;
-      }
-      else
-      {
-        printErrorMsg = true;
-      }
-    }
-      if (printErrorMsg == false)
-      {
-        disPrint("Choose a pan:", paramFileNames[noOfFiles]);
-        disableSelect = false;
-      }
-      else if(printErrorMsg == true)
-      {
-        disPrint("No more files", "Press down");
-        disableSelect = true;
-      }
-      isStillPressing = true;
-      //Serial.println("File " + (String)noOfFiles + " selcted");
-
-    }
-    else if (getButtonSelect() && isStillPressing == false && disableSelect == false)
-    {
-     
-      if (filesAvailableForSelct)
-      {
-//        Serial.print("File ");
-//        Serial.print(noOfFiles);
-//        Serial.println(" selected");
-        displayedStartMessgae = false;
-        readFile(noOfFiles);
-        //printPIParams();
-        startWithGivenParametersRequest = true;
-        setMainState(fastCookingModeTime);
-        
-      }
-      else
-      {
-        displayedStartMessgae = false;
-        setMainState(fastCookingModeTime);
-      }
-      //-----------------------------------------------------------------------------------------------
-      isStillPressing = true;
-      
-    }
-    else if (buttons == 0)
-    {
-
-      isStillPressing = false;
-    }
-  }
-}
 
 void waitForCookingMode()
 {
@@ -370,9 +240,7 @@ void waitForCookingMode()
     }
     else if (getButtonRight() && isStillPressing == false)
     {
-      /*
-        current_main_state = fastCookingModeTime;
-        startWithGivenParametersRequest = true;*/
+
       current_main_state = selectParamFiles;
       isStillPressing = true;
       displayedStartMessgae = false;
@@ -384,6 +252,181 @@ void waitForCookingMode()
     }
   }
 }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+void chooseParameters()
+{
+  // Bestimmen wie viele files vorhanden sind
+  if (numberOfFilesCounted == false)
+  {
+    countNumberOfFiles();
+    numberOfFilesCounted = true;
+  }
+  buttons = lcd.readButtons();
+  if (displayedStartMessgae == false)
+  {
+    if (getNumberOfFiles() > 0)
+    {
+      disPrint("Choose a pan:", "Press down");
+      filesAvailableForSelct = true;
+      displayedStartMessgae = true;
+    }
+    else
+    {
+
+      disPrint("No files", "Press Select");
+      filesAvailableForSelct = false;
+      displayedStartMessgae = true;
+      disableSelect = false;
+      disableUp = true;
+      disableDown = true;
+
+    }
+  }
+  else
+  {
+    // Aktionen für taste nach unten
+    // Falls nur 1 File vorhanden ist
+    if (getButtonDown() && isStillPressing == false && disableDown == false)
+    {
+      if (getNumberOfFiles() == 1)
+      {
+        if (presscounter < 1)
+        {
+          disableUp = false;
+          printErrorMsg = false;
+          presscounter += 1;
+        }
+        else
+        {
+          printErrorMsg = true;
+          disableDown = true;
+          disableUp = false;
+        }
+
+      }
+      // Falls mehrere Files vorhanden sind
+      else
+      {
+        if (noOfFiles < getNumberOfFiles() - 1)
+        {
+
+          if (firstPress == false && printErrorMsg == false)
+          {
+            noOfFiles = noOfFiles + 1;
+          }
+
+          firstPress = false;
+          printErrorMsg = false;
+        }
+        else
+        {
+          printErrorMsg = true;
+        }
+      }
+      // Entscheiden was angezeigt werden soll
+      if (printErrorMsg == false)
+      {
+
+        disPrint("Choose a pan:", paramFileNames[noOfFiles]);
+        disableSelect = false;
+
+      }
+      else if (printErrorMsg == true)
+      {
+
+        disPrint("No more files", "Press up");
+        disableSelect = true;
+      }
+      isStillPressing = true;
+    }
+    // Aktionene für Button nach unten
+    else if (getButtonUp() && isStillPressing == false && disableUp == false)
+    {
+      // Wenn nur 1 file vorhanden ist
+      if (getNumberOfFiles() == 1)
+      {
+        if (presscounter > 0)
+        {
+          printErrorMsg = false;
+          presscounter -= 1;
+          disableDown = false;
+        }
+        else
+        {
+          disableDown = false;
+          disableUp = true;
+          printErrorMsg = true;
+        }
+
+      }
+      // Wenn es mehr als 1 file gibt
+      else
+      {
+
+        if (noOfFiles > 0)
+        {
+          if (printErrorMsg == false)
+          {
+            noOfFiles = noOfFiles - 1;
+          }
+
+          printErrorMsg = false;
+        }
+        else
+        {
+          printErrorMsg = true;
+        }
+      }
+      // Entscheiden was angezeigt werden soll
+      if (printErrorMsg == false)
+      {
+        disPrint("Choose a pan:", paramFileNames[noOfFiles]);
+        disableSelect = false;
+      }
+      else if (printErrorMsg == true)
+      {
+        disPrint("No more files", "Press down");
+        disableSelect = true;
+      }
+      isStillPressing = true;
+    }
+    // Aktionen für Button select
+    else if (getButtonSelect() && isStillPressing == false && disableSelect == false)
+    {
+      // Wenn file vorhanden sind, mit ausgewählten Parametern starten => Abfolgen erfassen oder auswählen
+      if (filesAvailableForSelct)
+      {
+        displayedStartMessgae = false;
+        readFile(noOfFiles);
+        startWithGivenParametersRequest = true;
+        setMainState(fastCookingModeTime);
+
+      }
+      // Falls keine Files vorhanden waren => Modus getParameter
+      else
+      {
+        displayedStartMessgae = false;
+        setMainState(getParameter);
+      }
+      
+      isStillPressing = true;
+
+    }
+    else if (buttons == 0)
+    {
+
+      isStillPressing = false;
+    }
+  }
+}
+
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 void getCookingTime()
 {
@@ -443,6 +486,10 @@ void getCookingTime()
   }
 }
 
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 void getCookingTemp()
 {
   if (displayedStartMessgae == false)
@@ -491,8 +538,8 @@ void getCookingTemp()
   }
   else if (getButtonSelect() && isStillPressing == false)
   {
-    
-    
+
+
     isStillPressing = true;
     displayedStartMessgae = false;
     requestFurtherStepsTemp(((float)tempUserDot / 100.0) + tempUser);

@@ -40,7 +40,11 @@ float calculateStartVoltage()
 
 float calculateStartVoltageForIpart()
 {
-  voltageToSet = ((getSetPoint() - getstartWaterTemp()) / getKps());
+  voltageToSet =  ((getstartWaterTemp()- getValSens1()) / getKps());
+  if(voltageToSet < 0)
+  {
+    voltageToSet = 0.0;
+  }
   return voltageToSet;
 }
 

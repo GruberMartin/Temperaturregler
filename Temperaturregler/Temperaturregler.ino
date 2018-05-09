@@ -116,32 +116,40 @@ void handleSequences()
     case 0:
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
+    setSetPoint(currentSetPoint);
+    Serial.print("SetPoint = ");
+    Serial.println(currentSetPoint);
     
     break;
     case 1:
-     changeRegulator = false;
+    changeRegulator = false;
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
+    setSetPoint(currentSetPoint);
     break;
     case 2:
      changeRegulator = false;
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
+    setSetPoint(currentSetPoint);
     break;
     case 3:
      changeRegulator = false;
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
+    setSetPoint(currentSetPoint);
     break;
     case 4:
      changeRegulator = false;
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
+    setSetPoint(currentSetPoint);
     break;
     case 5:
      changeRegulator = false;
     changeTime = getStepTime(currentSequence);
     currentSetPoint = getStepTemp(currentSequence);
+    setSetPoint(currentSetPoint);
     break;
   }
 
@@ -153,6 +161,8 @@ boolean requestRegulatorChange()
   
   return changeRegulator;
 }
+
+
 
 
 
@@ -205,8 +215,26 @@ void secCounter()
       if (getError() == 0.0)
       {
         stabCounter = stabCounter + 1;
+        
+        if(calculateRealchangeTime == false)
+        {
+          handleSequences();
+        //changeTime = changeTime + getSeconds();
+        
+         
+        
+        //setSetPoint(currentSetPoint);
+        changeTimeHasBeenSet = true;
+        currentSequence += 1;
         changeTime = changeTime + getSeconds();
         calculateRealchangeTime = true;
+        Serial.print("Change Time = ");
+        Serial.println(changeTime);
+        }
+        if( changeTime == 0)
+        {
+          current_main_state = globalShutDown;
+        }
       }
       if (stabCounter >= 1)
       {
@@ -222,14 +250,7 @@ void secCounter()
     {
       if (changeTimeHasBeenSet == false && currentSequence <6)
       {
-        handleSequences();
-        //changeTime = changeTime + getSeconds();
         
-         
-        
-        setSetPoint(currentSetPoint);
-        changeTimeHasBeenSet = true;
-        currentSequence += 1;
         
       }
       else if(currentSequence >= 6)
@@ -428,11 +449,17 @@ void loop()
       //Serial.println("PI Regler ist jetzt aktiv");
       break;
     case startWithGivenParameters:
-    
+      //handleSequences();
       secCounter();
       //setStartVoltage();
       //setParameterProgrammatically(2.15 , 1660.25, 1071.13, 214.23, 2);
+      setSetPoint(getStepTemp(currentSequence));
+      if(getError() >= 0)
+      {
+      Serial.print("Error = ");
+      Serial.println(getError());
       setStartVoltageIPart(calculateStartVoltageForIpart());
+      }
       setCurrentState(running_PI);
       imediateCalcVoltage();
       current_main_state = PI_on_Main;
