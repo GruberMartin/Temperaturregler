@@ -149,7 +149,7 @@ void readFile(int fileNumber)
               setKps(fileContent.toFloat());
               break;
             case 7:
-              setStartVoltageIPart(fileContent.toFloat());
+              //setStartVoltageIPart(fileContent.toFloat());
               break;
             default:
               break;

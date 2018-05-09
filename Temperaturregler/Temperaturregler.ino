@@ -45,7 +45,9 @@ float currentSetPoint = 0.0;
 unsigned long changeTime = 0;
 boolean requestSequenceChange = true;
 boolean calculateRealchangeTime = false;
-
+boolean nextSequenceHasBenSet = false;
+boolean sequencesStarted = false;
+long timeForNextStep = 0;
 
 
 unsigned long endTime = 0;
@@ -108,61 +110,85 @@ void setMaxTemp()
 
 }
 
+void handleNextSequnece()
+{
+  if (sequencesStarted == false)
+  {
+    handleSequences();
+    sequencesStarted = true;
+  }
+
+  if (getError() == 0.0 && nextSequenceHasBenSet == false)
+  {
+    handleSequences();
+    nextSequenceHasBenSet = true;
+    timeForNextStep = changeTime + getSeconds();
+    currentSequence += 1;
+  }
+  if (nextSequenceHasBenSet == true && getSeconds() >= timeForNextStep)
+  {
+    handleSequences();
+    Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
+    nextSequenceHasBenSet = false;
+    imediateCalcVoltage();
+  }
+
+}
+
 void handleSequences()
 {
-  
-  switch (currentSequence)  
+
+  switch (currentSequence)
   {
     case 0:
-    changeTime = getStepTime(currentSequence);
-    currentSetPoint = getStepTemp(currentSequence);
-    setSetPoint(currentSetPoint);
-    Serial.print("SetPoint = ");
-    Serial.println(currentSetPoint);
-    
-    break;
+      changeTime = getStepTime(currentSequence);
+      currentSetPoint = getStepTemp(currentSequence);
+      setSetPoint(currentSetPoint);
+
+
+      break;
     case 1:
-    changeRegulator = false;
-    changeTime = getStepTime(currentSequence);
-    currentSetPoint = getStepTemp(currentSequence);
-    setSetPoint(currentSetPoint);
-    break;
+
+      changeTime = getStepTime(currentSequence);
+      currentSetPoint = getStepTemp(currentSequence);
+      setSetPoint(currentSetPoint);
+      break;
     case 2:
-     changeRegulator = false;
-    changeTime = getStepTime(currentSequence);
-    currentSetPoint = getStepTemp(currentSequence);
-    setSetPoint(currentSetPoint);
-    break;
+
+      changeTime = getStepTime(currentSequence);
+      currentSetPoint = getStepTemp(currentSequence);
+      setSetPoint(currentSetPoint);
+      break;
     case 3:
-     changeRegulator = false;
-    changeTime = getStepTime(currentSequence);
-    currentSetPoint = getStepTemp(currentSequence);
-    setSetPoint(currentSetPoint);
-    break;
+
+      changeTime = getStepTime(currentSequence);
+      currentSetPoint = getStepTemp(currentSequence);
+      setSetPoint(currentSetPoint);
+      break;
     case 4:
-     changeRegulator = false;
-    changeTime = getStepTime(currentSequence);
-    currentSetPoint = getStepTemp(currentSequence);
-    setSetPoint(currentSetPoint);
-    break;
+
+      changeTime = getStepTime(currentSequence);
+      currentSetPoint = getStepTemp(currentSequence);
+      setSetPoint(currentSetPoint);
+      break;
     case 5:
-     changeRegulator = false;
-    changeTime = getStepTime(currentSequence);
-    currentSetPoint = getStepTemp(currentSequence);
-    setSetPoint(currentSetPoint);
-    break;
+
+      changeTime = getStepTime(currentSequence);
+      currentSetPoint = getStepTemp(currentSequence);
+      setSetPoint(currentSetPoint);
+      break;
   }
-  if(changeTime == 0)
+  if (changeTime == 0)
   {
     current_main_state = globalShutDown;
   }
 
-  Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
+
 }
 
 boolean requestRegulatorChange()
 {
-  
+
   return changeRegulator;
 }
 
@@ -202,76 +228,21 @@ void antiDeadLock()
 
 void secCounter()
 {
-  
+
   if (millis() >= (previousTime) && globalStart == true)
   {
     previousTime = previousTime + 1000;  // use 100000 for uS
     seconds = seconds + 1;
     requestTemp();
-    if ((seconds >= changeTime) && changeTimeHasBeenSet == true && calculateRealchangeTime == true)
+
+    if (PIisOn == true && startWithGivenParametersRequest == true)
     {
-      changeTimeHasBeenSet = false;
-      calculateRealchangeTime = false;
-      
-    }
-    if (temperatureIsStable == false && PIisOn == true)
-    {
-      if (getError() <= 0.0)
-      {
-        stabCounter = stabCounter + 1;
-        
-        if(calculateRealchangeTime == false)
-        {
-          handleSequences();
-        //changeTime = changeTime + getSeconds();
-        
-         
-        
-        //setSetPoint(currentSetPoint);
-        
-        changeTimeHasBeenSet = true;
-        
-        currentSequence += 1;
-        changeTime = changeTime + getSeconds();
-        calculateRealchangeTime = true;
-        Serial.print("Change Time = ");
-        Serial.println(changeTime);
-        
-        }
-        if( changeTime == 0)
-        {
-          current_main_state = globalShutDown;
-        }
-      }
-      if (stabCounter >= 1)
-      {
-        temperatureIsStable = true;
-        rechedFinalState = true;
-        changeRegulator = true;
-        
-      }
+
+      handleNextSequnece();
 
     }
 
-    if (temperatureIsStable == true && rechedFinalState == true )
-    {
-      if (changeTimeHasBeenSet == false && currentSequence <6)
-      {
-        
-        
-      }
-      else if(currentSequence >= 6)
-      {
-        current_main_state = globalShutDown;
-      }
-      
-      rechedFinalState = false;
-      temperatureIsStable = false;
-      
-      stabCounter = 0;
-     
-      //imediateCalcVoltage();
-    }
+
 
     if (antiDeadLockActivated == true && PIisOn == false)
     {
@@ -411,10 +382,10 @@ void loop()
 
     case getCookingMode:
       waitForCookingMode();
-    
+
 
       break;
-      case selectParamFiles:
+    case selectParamFiles:
       chooseParameters();
       break;
     case fastCookingModeTime:
@@ -461,12 +432,12 @@ void loop()
       //setStartVoltage();
       //setParameterProgrammatically(2.15 , 1660.25, 1071.13, 214.23, 2);
       setSetPoint(getStepTemp(currentSequence));
-      if(getError() >= 0)
-      {
-//      Serial.print("Error = ");
-//      Serial.println(getError());
+      //      if(getError() >= 0)
+      //      {
+      //      Serial.print("Error = ");
+      //      Serial.println(getError());
       setStartVoltageIPart(calculateStartVoltageForIpart());
-      }
+      //      }
       setCurrentState(running_PI);
       imediateCalcVoltage();
       current_main_state = PI_on_Main;
