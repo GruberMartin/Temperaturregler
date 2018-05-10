@@ -120,11 +120,12 @@ void handleNextSequnece()
     handleSequences();
     nextSequenceHasBenSet = true;
     timeForNextStep = changeTime + getSeconds();
-    Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
+    Serial.println("Schritt " + (String)currentSequence + " bis: " + (String)timeForNextStep + " mit Temp: " + (String)currentSetPoint);
     currentSequence += 1;
   }
   if (nextSequenceHasBenSet == true && getSeconds() >= timeForNextStep)
   {
+    Serial.println("Start with step nr. " + (String)currentSequence);
     handleSequences();
     //Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
     nextSequenceHasBenSet = false;
@@ -303,7 +304,11 @@ void secCounter()
     printSensorVals();
     Serial.print(seconds, DEC);
     Serial.print(" ");
-    Serial.println(getVoltageIpart());
+    Serial.print(getPpart());
+    Serial.print(" ");
+    Serial.print(getVoltageIpart());
+     Serial.print(" ");
+    Serial.println(getSetPoint());
     tenSecCounter = tenSecCounter + 1;
     sampleCounter = sampleCounter + 1;
 
@@ -399,17 +404,17 @@ void loop()
       }
       else
       {
-        if(startWithGivenSeqRequest == true)
+        if (startWithGivenSeqRequest == true)
         {
-        current_main_state = startWithGivenParameters;
-//        disPrintSeqFile();
-//        printPIParams();
-//        while(1)
-//        {
-//          
-//        }
-        
-        
+          current_main_state = startWithGivenParameters;
+          //        disPrintSeqFile();
+          //        printPIParams();
+          //        while(1)
+          //        {
+          //
+          //        }
+
+
         }
         else
         {
@@ -442,8 +447,8 @@ void loop()
       current_main_state = PI_on_Main;
       break;
     case selectParamFilesForSeq:
-    chooseParameters(1);
-    break;
+      chooseParameters(1);
+      break;
     case PI_on_Main:
       secCounter();
       PIisOn = true;

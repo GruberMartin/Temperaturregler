@@ -32,6 +32,6 @@ void setParameterProgrammatically(float K, float Tr, float T1, float Ta, int ord
 boolean checkParameters(float K, float Tr, float T1, float Ta, int orderSet);
 void printPIParams();
 float getVoltageIpart();
-
+float getPpart();
 
 #endif
