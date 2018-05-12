@@ -48,6 +48,7 @@ boolean nextSequenceHasBenSet = false;
 boolean sequencesStarted = false;
 long timeForNextStep = 0;
 boolean firstTempPrint = true;
+boolean agitatorState = false;
 
 
 unsigned long endTime = 0;
@@ -76,6 +77,7 @@ typedef enum {
   getCookingMode,
   fastCookingModeTime,
   fastCookingModeTemp,
+  getAgitatorParam,
   selectParamFilesForPI,
   notStarted_Main,
   PI_on_Main,
@@ -106,6 +108,11 @@ void setMaxTemp()
 {
   maxTemp = 0.6 * getFinalValue();
 
+}
+
+boolean getAgitatorState()
+{
+  return agitatorState;
 }
 
 void handleNextSequnece()
@@ -147,6 +154,7 @@ void handleSequences()
     case 0:
       changeTime = getStepTime(currentSequence);
       currentSetPoint = getStepTemp(currentSequence);
+      agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
 
 
@@ -155,30 +163,35 @@ void handleSequences()
 
       changeTime = getStepTime(currentSequence);
       currentSetPoint = getStepTemp(currentSequence);
+      agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
       break;
     case 2:
 
       changeTime = getStepTime(currentSequence);
       currentSetPoint = getStepTemp(currentSequence);
+      agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
       break;
     case 3:
 
       changeTime = getStepTime(currentSequence);
       currentSetPoint = getStepTemp(currentSequence);
+      agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
       break;
     case 4:
 
       changeTime = getStepTime(currentSequence);
       currentSetPoint = getStepTemp(currentSequence);
+      agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
       break;
     case 5:
 
       changeTime = getStepTime(currentSequence);
       currentSetPoint = getStepTemp(currentSequence);
+      agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
       break;
   }
@@ -299,30 +312,30 @@ void secCounter()
       tempTemp = getValSens2();
       if (PIisOn == false)
       {
-        if(firstTempPrint == true || setPointHasChanged == true)
+        if (firstTempPrint == true || setPointHasChanged == true)
         {
-        disPrintActualTemp(tempTemp);
-        firstTempPrint = false;
-        setPointHasChanged = false;
+          disPrintActualTemp(tempTemp);
+          firstTempPrint = false;
+          setPointHasChanged = false;
         }
         else
         {
-        lcd.setCursor(0,1);
-        lcd.print(tempTemp);
+          lcd.setCursor(0, 1);
+          lcd.print(tempTemp);
         }
       }
       else
       {
-        if(firstTempPrint == true || setPointHasChanged == true)
+        if (firstTempPrint == true || setPointHasChanged == true)
         {
-        disPrintRegualtorActivated(tempTemp);
-        firstTempPrint = false;
-        setPointHasChanged = false;
+          disPrintRegualtorActivated(tempTemp);
+          firstTempPrint = false;
+          setPointHasChanged = false;
         }
         else
         {
-        lcd.setCursor(0,1);
-        lcd.print(tempTemp);
+          lcd.setCursor(0, 1);
+          lcd.print(tempTemp);
         }
       }
     }
@@ -332,7 +345,7 @@ void secCounter()
     Serial.print(getPpart());
     Serial.print(" ");
     Serial.print(getVoltageIpart());
-     Serial.print(" ");
+    Serial.print(" ");
     Serial.println(getSetPoint());
     twelveSecCounter = twelveSecCounter + 1;
     sampleCounter = sampleCounter + 1;
@@ -474,6 +487,9 @@ void loop()
     case selectParamFilesForSeq:
       chooseParameters(1);
       break;
+    case getAgitatorParam:
+      getInputForAgitator();
+      break;
     case PI_on_Main:
       secCounter();
       PIisOn = true;
@@ -481,6 +497,7 @@ void loop()
       break;
     case globalShutDown:
       turnOffHeating();
+      turnOffAgitator();
       disPrintFinishMessgae();
       break;
   }

@@ -3,6 +3,7 @@
 #include "PI.h"
 #include "Dynamic_Parameter_determination.h"
 #define heatPin  10
+#define agitataorPin 9
 
 int maxCount = 20000;
 unsigned long previousTimeNew = 0;
@@ -13,12 +14,14 @@ int onTimeHasBeenSet = 0;
 void initVoltageControll() {
   pinMode(heatPin, OUTPUT);
   digitalWrite(heatPin, LOW);
+  pinMode(agitataorPin, OUTPUT);
+  digitalWrite(agitataorPin, LOW);
 
 }
 
 boolean getHeatPinState()
 {
-  if(digitalRead(heatPin)== LOW)
+  if (digitalRead(heatPin) == LOW)
   {
     return false;
   }
@@ -43,7 +46,24 @@ void turnOffHeating()
   digitalWrite(heatPin, LOW);
 }
 
+void turnOffAgitator()
+{
+  digitalWrite(agitataorPin, LOW);
+}
+
 void setVoltage(float voltage) {
+
+
+  if (getAgitatorState() == true)
+  {
+    digitalWrite(agitataorPin, HIGH);
+  }
+  else
+  {
+    digitalWrite(agitataorPin, LOW);
+  }
+
+
   // genearte PWM 1% = 20ms  100% = 20'000ms = 230V
   setOnTime(voltage);
   //Serial.print(getFinalValue());

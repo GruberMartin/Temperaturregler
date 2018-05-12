@@ -5,4 +5,5 @@ int countNumberOfFiles();
 void readFile(int fileNumber);
 int getNumberOfFiles();
 void readSeqFile(int fileNumber);
+void readAgitatorFile(int fileNumber);
 #endif

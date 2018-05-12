@@ -16,7 +16,7 @@ boolean printErrorMsg = false;
 int numberOfSteps = 0;
 long stepTime [6] =  {0, 0, 0, 0, 0, 0};
 float stepTemp [6] =  {40.0, 40.0, 40.0, 40.0, 40.0, 40.0};
-boolean mixer[6];
+boolean agitator[6];
 String timeString = "";
 int hours = 0;
 int minutes = 0;
@@ -49,6 +49,7 @@ int newLog10dt = 0;
 int oldLog10dt = 0;
 boolean changeLanguage = false;
 int langChangeCounter = 0;
+int agitatorCounter = 0;
 
 
 
@@ -103,78 +104,80 @@ String noFilesStr;
 String tooManyFilesStr;
 String removeFilesStr;
 String toHoldStr;
-String mixerStr;
-String mixerAns;
-//Change Strings 
+String agitatorStr;
+String agitatorAnsStr;
+//Change Strings
 
 
 void changeLanguageRequest()
 {
 
-  
-if(changeLanguage == false)
-{
 
-for(int panCnt = 0; panCnt < 6; panCnt++)
-{
-  paramFileNames[panCnt] = "Pfanne " + (String)(panCnt+1);  
-}
-for(int panCnt = 0; panCnt < 6; panCnt++)
-{
-  seqFileNames[panCnt] = "Abfolge " + (String)(panCnt+1);  
-}
-pressSelect = "Druecke Select";
-changeLangHint = "Lange fuer EN";
-newPanStr = "<- Neue Pfanne" ;
-knownPanStr = "-> Bekannte Pfan.";
-newSeqStr = "<- Neu Abfolge";
-knownSeqStr = "-> Bekannte Abf.";
-timeWord = "Zeit";
-tempWord = "Temperatur";
-chooseAPanStr = "Waehle eine Pfa.";
-chooseAseqStr = "Waehle eine Abf.";
-regActivatedStr = "Regler aktiviert";
-noMoreFilesStr = "Keine weiteren";
-finishStr = "Fertig";
-pressStr = "Druecke";
-actTempStr = "Aktuelle Temper.";
-noFilesStr = "Keine Files";
-tooManyFilesStr = "Zu viele Files";
-removeFilesStr = "Entferne einige";
-toHoldStr = "";
-mixerStr = "Ruehrwerk an ?";
-mixerAns = "<- JA,  -> NEIN";
-}
-else
-{
-  for(int panCnt = 0; panCnt < 6; panCnt++)
-{
-  paramFileNames[panCnt] = "pan " + (String)(panCnt+1);  
-}
-for(int panCnt = 0; panCnt < 6; panCnt++)
-{
-  seqFileNames[panCnt] = "sequence " + (String)(panCnt+1);  
-}
-  pressSelect = "Press Select";
-  changeLangHint = "Long for DE";
-  newPanStr = "<- New pan";
-  knownPanStr = "-> Konwn pan";
-  newSeqStr = "<- New sequence";
-  knownSeqStr = "-> Known sequen.";
-  timeWord = "Time";
-  tempWord = "Temp";
-  chooseAPanStr = "Choose a pan";
-  chooseAseqStr = "Choose a seque.";
-  regActivatedStr = "Regulator activ.";
-  noMoreFilesStr = "No more files";
-  finishStr = "Finish";
-  pressStr = "Press";
-  actTempStr = "Temp. now";
-  noFilesStr = "No Files";
-  tooManyFilesStr = "To many Files";
-  removeFilesStr = "Remove some";
-  toHoldStr = "";
-}
+  if (changeLanguage == false)
+  {
+
+    for (int panCnt = 0; panCnt < 6; panCnt++)
+    {
+      paramFileNames[panCnt] = "Pfanne " + (String)(panCnt + 1);
+    }
+    for (int panCnt = 0; panCnt < 6; panCnt++)
+    {
+      seqFileNames[panCnt] = "Abfolge " + (String)(panCnt + 1);
+    }
+    pressSelect = "Druecke Select";
+    changeLangHint = "Lange fuer EN";
+    newPanStr = "<- Neue Pfanne" ;
+    knownPanStr = "-> Bekannte Pfan.";
+    newSeqStr = "<- Neu Abfolge";
+    knownSeqStr = "-> Bekannte Abf.";
+    timeWord = "Zeit";
+    tempWord = "Temperatur";
+    chooseAPanStr = "Waehle eine Pfa.";
+    chooseAseqStr = "Waehle eine Abf.";
+    regActivatedStr = "Regler aktiviert";
+    noMoreFilesStr = "Keine weiteren";
+    finishStr = "Fertig";
+    pressStr = "Druecke";
+    actTempStr = "Aktuelle Temper.";
+    noFilesStr = "Keine Files";
+    tooManyFilesStr = "Zu viele Files";
+    removeFilesStr = "Entferne einige";
+    toHoldStr = "";
+    agitatorStr = "Ruehrwerk an ?";
+    agitatorAnsStr = "<- JA,  -> NEIN";
+  }
+  else
+  {
+    for (int panCnt = 0; panCnt < 6; panCnt++)
+    {
+      paramFileNames[panCnt] = "pan " + (String)(panCnt + 1);
+    }
+    for (int panCnt = 0; panCnt < 6; panCnt++)
+    {
+      seqFileNames[panCnt] = "sequence " + (String)(panCnt + 1);
+    }
+    pressSelect = "Press Select";
+    changeLangHint = "Long for DE";
+    newPanStr = "<- New pan";
+    knownPanStr = "-> Konwn pan";
+    newSeqStr = "<- New sequence";
+    knownSeqStr = "-> Known sequen.";
+    timeWord = "Time";
+    tempWord = "Temp";
+    chooseAPanStr = "Choose a pan";
+    chooseAseqStr = "Choose a seque.";
+    regActivatedStr = "Regulator activ.";
+    noMoreFilesStr = "No more files";
+    finishStr = "Finish";
+    pressStr = "Press";
+    actTempStr = "Temp. now";
+    noFilesStr = "No Files";
+    tooManyFilesStr = "To many Files";
+    removeFilesStr = "Remove some";
+    toHoldStr = "";
+    agitatorStr = "Agitator on ?";
+    agitatorAnsStr = "<- YES,  -> NO";
+  }
 }
 
 
@@ -199,6 +202,17 @@ void initDisplay()
 //###################################################################################################################################################################################################################################
 //###############################################################################################   Getter und Setter Methoden   ####################################################################################################
 //###################################################################################################################################################################################################################################
+
+
+boolean getAgitatorAns(int index)
+{
+  return agitator[index];
+}
+
+void setAgitatorAns(int index, boolean value)
+{
+  agitator[index] = value;
+}
 
 long getStepTime(int index)
 {
@@ -300,6 +314,7 @@ void requestFurtherStepsTemp(float tempCurrentStep)
   {
 
     saveSeqParameters();
+    saveAgitatorParameters();
     requestGlobalStart();
     startLcdTempPrinting = true;
   }
@@ -469,7 +484,7 @@ void disPrintTime()
 {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print(timeWord +" "+ (String)(numberOfSteps + 1) + toHoldStr);
+  lcd.print(timeWord + " " + (String)(numberOfSteps + 1) + toHoldStr);
   lcd.setCursor(0, 1);
   timeString = ((String)hours) + " h : "  + ((String)minutes) + " min";
   lcd.print(timeString);
@@ -479,7 +494,7 @@ void disPrintTemp()
 {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print(tempWord+" " + (String)(numberOfSteps + 1) + toHoldStr);
+  lcd.print(tempWord + " " + (String)(numberOfSteps + 1) + toHoldStr);
   lcd.setCursor(0, 1);
   timeString = ((String)tempUser) + "." + ((String)tempUserDot + " ");
   lcd.print(timeString);
@@ -555,24 +570,24 @@ void waitForStartSignal()
     }
   }
   else {
-  
-    while(getButtonSelect() == true)
+
+    while (getButtonSelect() == true)
     {
-     
+
       langChangeCounter += 1;
-      
+
       delay(50);
-      if(langChangeCounter >= 10 && changeLanguage == false)
-    {
-      changeLanguage = true;
-      changeLanguageRequest();
-      break;
+      if (langChangeCounter >= 10 && changeLanguage == false)
+      {
+        changeLanguage = true;
+        changeLanguageRequest();
+        break;
+      }
     }
-    }
-    
-    
+
+
     current_main_state = getCookingMode;
-    
+
 
     displayedStartMessgae = false;
   }
@@ -588,7 +603,7 @@ void waitForCookingMode()
   {
     if (gotOrderPIparams == false)
     {
-      disPrint(newPanStr,knownPanStr);
+      disPrint(newPanStr, knownPanStr);
       displayedStartMessgae = true;
     }
     else
@@ -861,6 +876,7 @@ void chooseParameters(int whichFile)
         {
           displayedStartMessgae = false;
           readSeqFile(noOfFiles);
+          readAgitatorFile(noOfFiles);
           startWithGivenSeqRequest = true;
           setMainState(notStarted_Main);
         }
@@ -905,7 +921,34 @@ void chooseParameters(int whichFile)
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+void getInputForAgitator()
+{
+  if (displayedStartMessgae == false)
+  {
+    disPrint(agitatorStr, agitatorAnsStr);
+    displayedStartMessgae = true;
+  }
+  if (getButtonRight() && isStillPressing == false) {
+    agitator[agitatorCounter] = false;
+    agitatorCounter += 1;
 
+    current_main_state = fastCookingModeTemp;
+    isStillPressing = true;
+    displayedStartMessgae = false;
+  }
+  else if (getButtonLeft() && isStillPressing == false) {
+    agitator[agitatorCounter] = true;
+    agitatorCounter += 1;
+    current_main_state = fastCookingModeTemp;
+    isStillPressing = true;
+    displayedStartMessgae = false;
+  }
+  else if (getButtonNoone())
+  {
+    isStillPressing = false;
+  }
+
+}
 
 void getCookingTime()
 {
@@ -970,7 +1013,7 @@ void getCookingTime()
     requestFurtherStepsTime(hours * 60.0 * 60.0 + minutes * 60.0);
     hours = 0;
     minutes = 0;
-    current_main_state = fastCookingModeTemp;
+    current_main_state = getAgitatorParam;
     isStillPressing = true;
     displayedStartMessgae = false;
 

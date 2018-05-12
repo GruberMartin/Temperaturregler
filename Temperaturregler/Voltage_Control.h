@@ -5,4 +5,5 @@ void initVoltageControll();
 void turnOffHeating();
 
 boolean getHeatPinState();
+void turnOffAgitator();
 #endif

@@ -23,4 +23,6 @@ void chooseParameters(int whichFile);
 void setStempTime(int index, int value);
 void setStepTemp(int index, float temp);
 void disPrintSeqFile();
+boolean getAgitatorAns(int index);
+void setAgitatorAns(int index, boolean value);
 #endif
