@@ -125,7 +125,7 @@ void handleNextSequnece()
   }
   if (nextSequenceHasBenSet == true && getSeconds() >= timeForNextStep)
   {
-    Serial.println("Start with step nr. " + (String)currentSequence);
+    //Serial.println("Start with step nr. " + (String)currentSequence);
     handleSequences();
     //Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
     nextSequenceHasBenSet = false;
