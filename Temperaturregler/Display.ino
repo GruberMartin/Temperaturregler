@@ -4,8 +4,8 @@
 boolean isStillPressing = false;
 boolean setTempUser = true;
 boolean setHours = true;
-String paramFileNames[6] = {"pan 1", "pan 2", "pan 3", "pan 4", "pan 5", "pan 6"};
-String seqFileNames[6] = {"seq 1", "seq 2", "seq 3", "seq 4", "seq 5", "seq 6"};
+String paramFileNames[6];
+String seqFileNames[6];
 int noOfFiles = 0;
 boolean filesAvailableForSelct = false;
 boolean disableSelect = true;
@@ -47,6 +47,8 @@ String tempString;
 int newLog10dt = 0;
 int oldLog10dt = 0;
 boolean changeLanguage = false;
+int langChangeCounter = 0;
+
 
 
 //###################################################################################################################################################################################################################################
@@ -77,6 +79,100 @@ byte degree[8] =
 byte clearOneSegment[8] = {
   0, 0, 0, 0, 0, 0, 0
 };
+
+
+// String set
+String pressSelect;
+String changeLangHint;
+String newPanStr;
+String knownPanStr;
+String newSeqStr;
+String knownSeqStr;
+String tempNowStr;
+String timeWord;
+String tempWord;
+String chooseAPanStr;
+String chooseAseqStr;
+String regActivatedStr;
+String noMoreFilesStr;
+String finishStr;
+String pressStr;
+String actTempStr;
+String noFilesStr;
+String tooManyFilesStr;
+String removeFilesStr;
+String toHoldStr;
+//Change Strings 
+
+
+void changeLanguageRequest()
+{
+
+  
+if(changeLanguage == false)
+{
+
+for(int panCnt = 0; panCnt < 6; panCnt++)
+{
+  paramFileNames[panCnt] = "Pfanne " + (String)(panCnt+1);  
+}
+for(int panCnt = 0; panCnt < 6; panCnt++)
+{
+  seqFileNames[panCnt] = "Abfolge " + (String)(panCnt+1);  
+}
+pressSelect = "Druecke Select";
+changeLangHint = "Lange fuer EN";
+newPanStr = "<- Neue Pfanne" ;
+knownPanStr = "-> Bekannte Pfan.";
+newSeqStr = "<- Neu Abfolge";
+knownSeqStr = "-> Bekannte Abf.";
+timeWord = "Zeit";
+tempWord = "Temperatur";
+chooseAPanStr = "Waehle eine Pfa.";
+chooseAseqStr = "Waehle eine Abf.";
+regActivatedStr = "Regler aktiviert";
+noMoreFilesStr = "Keine weiteren";
+finishStr = "Fertig";
+pressStr = "Druecke";
+actTempStr = "Aktuelle Temper.";
+noFilesStr = "Keine Files";
+tooManyFilesStr = "Zu viele Files";
+removeFilesStr = "Entferne einige";
+toHoldStr = "";
+}
+else
+{
+  for(int panCnt = 0; panCnt < 6; panCnt++)
+{
+  paramFileNames[panCnt] = "pan " + (String)(panCnt+1);  
+}
+for(int panCnt = 0; panCnt < 6; panCnt++)
+{
+  seqFileNames[panCnt] = "sequence " + (String)(panCnt+1);  
+}
+  pressSelect = "Press Select";
+  changeLangHint = "Long for DE";
+  newPanStr = "<- New pan";
+  knownPanStr = "-> Konwn pan";
+  newSeqStr = "<- New sequence";
+  knownSeqStr = "-> Known sequen.";
+  timeWord = "Time";
+  tempWord = "Temp";
+  chooseAPanStr = "Choose a pan";
+  chooseAseqStr = "Choose a seque.";
+  regActivatedStr = "Regulator activ.";
+  noMoreFilesStr = "No more files";
+  finishStr = "Finish";
+  pressStr = "Press";
+  actTempStr = "Temp. now";
+  noFilesStr = "No Files";
+  tooManyFilesStr = "To many Files";
+  removeFilesStr = "Remove some";
+  toHoldStr = "";
+}
+}
+
+
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void initDisplay()
 {
@@ -368,7 +464,7 @@ void disPrintTime()
 {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Time" + (String)(numberOfSteps + 1) + ". to hold: ");
+  lcd.print(timeWord +" "+ (String)(numberOfSteps + 1) + toHoldStr);
   lcd.setCursor(0, 1);
   timeString = ((String)hours) + " h : "  + ((String)minutes) + " min";
   lcd.print(timeString);
@@ -378,7 +474,7 @@ void disPrintTemp()
 {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Temp" + (String)(numberOfSteps + 1) + ". to hold: ");
+  lcd.print(tempWord+" " + (String)(numberOfSteps + 1) + toHoldStr);
   lcd.setCursor(0, 1);
   timeString = ((String)tempUser) + "." + ((String)tempUserDot + " ");
   lcd.print(timeString);
@@ -393,7 +489,7 @@ void disPrintActualTemp(float actualTemp)
 {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Temp. now: ");
+  lcd.print(actTempStr);
   lcd.setCursor(0, 1);
   timeString = ((String)actualTemp) + " -> " + (String)getSetPoint();
   lcd.print(timeString);
@@ -408,7 +504,7 @@ void disPrintRegualtorActivated(float actualTemp)
 {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Reg. activated: ");
+  lcd.print(regActivatedStr);
   lcd.setCursor(0, 1);
   timeString = ((String)actualTemp) + " -> " + (String)getSetPoint();
   lcd.print(timeString);
@@ -422,7 +518,7 @@ void disPrintFinishMessgae()
 {
   if (finsihMessageHasBeenDisplayed == false)
   {
-    disPrint("Finish", ":)");
+    disPrint(finishStr, ":)");
     finsihMessageHasBeenDisplayed = true;
   }
 }
@@ -432,7 +528,7 @@ void disPrintSeqFile()
 {
   for (int y = 0; y < 6; y++)
   {
-    Serial.println("Time" + (String)(y) + ": " + (String)stepTime[y] + ", Temp" + (String)(y) + ": " + (String)stepTemp[y]);
+    Serial.println(timeWord + (String)(y) + ": " + (String)stepTime[y] + ", " + tempWord + (String)(y) + ": " + (String)stepTemp[y]);
   }
 }
 
@@ -443,17 +539,36 @@ void disPrintSeqFile()
 
 void waitForStartSignal()
 {
+  changeLanguageRequest();
   buttons = lcd.readButtons();
   if (!(buttons & BUTTON_SELECT))
   {
     if (displayedStartMessgae == false)
     {
-      disPrint("Press Select", "");
+      disPrint(pressSelect, changeLangHint);
       displayedStartMessgae = true;
     }
   }
   else {
+  
+    Serial.print("Pressing");
+    while(getButtonSelect() == true)
+    {
+      Serial.print(".");
+      langChangeCounter += 1;
+      Serial.println(langChangeCounter);
+      delay(50);
+      if(langChangeCounter >= 10 && changeLanguage == false)
+    {
+      changeLanguage = true;
+      changeLanguageRequest();
+      break;
+    }
+    }
+    
+    
     current_main_state = getCookingMode;
+    
 
     displayedStartMessgae = false;
   }
@@ -469,12 +584,12 @@ void waitForCookingMode()
   {
     if (gotOrderPIparams == false)
     {
-      disPrint("<- New pan", "-> Known pan");
+      disPrint(newPanStr,knownPanStr);
       displayedStartMessgae = true;
     }
     else
     {
-      disPrint("<- New seq.", "-> Known seq.");
+      disPrint(newSeqStr, knownSeqStr);
       displayedStartMessgae = true;
       numberOfFilesCounted = false;
     }
@@ -488,7 +603,7 @@ void waitForCookingMode()
 
         if (countNumberOfPiFiles() >= 6)
         {
-          disPrint("To many Files", "Remove some");
+          disPrint(tooManyFilesStr, removeFilesStr);
           while (1)
           {
 
@@ -520,7 +635,7 @@ void waitForCookingMode()
 
         if (countNumberOfSeqFiles() >= 6)
         {
-          disPrint("To many Files", "Remove some");
+          disPrint(tooManyFilesStr, removeFilesStr);
           while (1)
           {
 
@@ -573,11 +688,11 @@ void chooseParameters(int whichFile)
     {
       if (whichFile == 0)
       {
-        disPrintWithSpecialChar("Choose a pan:", "Press", 2, 1);
+        disPrintWithSpecialChar(chooseAPanStr, pressStr, 2, 1);
       }
       else
       {
-        disPrintWithSpecialChar("Choose a seq:", "Press", 2, 1);
+        disPrintWithSpecialChar(chooseAseqStr, pressStr, 2, 1);
       }
       filesAvailableForSelct = true;
       displayedStartMessgae = true;
@@ -585,7 +700,7 @@ void chooseParameters(int whichFile)
     else
     {
 
-      disPrint("No files", "Press Select");
+      disPrint(noFilesStr, pressSelect);
       filesAvailableForSelct = false;
       displayedStartMessgae = true;
       disableSelect = false;
@@ -640,11 +755,11 @@ void chooseParameters(int whichFile)
       {
         if (whichFile == 0)
         {
-          disPrint("Choose a pan:", paramFileNames[noOfFiles]);
+          disPrint(chooseAPanStr, paramFileNames[noOfFiles]);
         }
         else
         {
-          disPrint("Choose a seq.:", seqFileNames[noOfFiles]);
+          disPrint(chooseAseqStr, seqFileNames[noOfFiles]);
         }
         disableSelect = false;
 
@@ -652,7 +767,7 @@ void chooseParameters(int whichFile)
       else if (printErrorMsg == true)
       {
 
-        disPrintWithSpecialChar("No more files", "Press", 2, 0);
+        disPrintWithSpecialChar(noMoreFilesStr, pressStr, 2, 0);
         disableSelect = true;
       }
       isStillPressing = true;
@@ -700,17 +815,17 @@ void chooseParameters(int whichFile)
       {
         if (whichFile == 0)
         {
-          disPrint("Choose a pan:", paramFileNames[noOfFiles]);
+          disPrint(chooseAPanStr, paramFileNames[noOfFiles]);
         }
         else
         {
-          disPrint("Choose a seq.:", seqFileNames[noOfFiles]);
+          disPrint(chooseAseqStr, seqFileNames[noOfFiles]);
         }
         disableSelect = false;
       }
       else if (printErrorMsg == true)
       {
-        disPrintWithSpecialChar("No more files", "Press", 2, 1);
+        disPrintWithSpecialChar(noMoreFilesStr, pressStr, 2, 1);
         disableSelect = true;
       }
       isStillPressing = true;
@@ -763,6 +878,7 @@ void chooseParameters(int whichFile)
           printErrorMsg = false;
           disableUp = false;
           disableDown = false;
+          requestGlobalStart();
         }
         else
         {
