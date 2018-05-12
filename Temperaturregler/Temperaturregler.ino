@@ -19,7 +19,7 @@
 
 unsigned long previousTime = 0;
 unsigned long seconds ;
-int tenSecCounter = 0;
+int twelveSecCounter = 0;
 int voltageHasBeenSet = 0;
 float startVoltage = 0.0;
 boolean PIisOn = false;
@@ -202,9 +202,9 @@ boolean requestRegulatorChange()
 
 void writeTemppToArray()
 {
-  if (tenSecCounter == 10)
+  if (twelveSecCounter == 12)
   {
-    tenSecCounter = 0;
+    twelveSecCounter = 0;
     writeTemperature(getValSens2());
   }
 }
@@ -334,7 +334,7 @@ void secCounter()
     Serial.print(getVoltageIpart());
      Serial.print(" ");
     Serial.println(getSetPoint());
-    tenSecCounter = tenSecCounter + 1;
+    twelveSecCounter = twelveSecCounter + 1;
     sampleCounter = sampleCounter + 1;
 
 

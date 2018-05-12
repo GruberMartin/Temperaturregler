@@ -16,6 +16,7 @@ boolean printErrorMsg = false;
 int numberOfSteps = 0;
 long stepTime [6] =  {0, 0, 0, 0, 0, 0};
 float stepTemp [6] =  {40.0, 40.0, 40.0, 40.0, 40.0, 40.0};
+boolean mixer[6];
 String timeString = "";
 int hours = 0;
 int minutes = 0;
@@ -102,6 +103,8 @@ String noFilesStr;
 String tooManyFilesStr;
 String removeFilesStr;
 String toHoldStr;
+String mixerStr;
+String mixerAns;
 //Change Strings 
 
 
@@ -139,6 +142,8 @@ noFilesStr = "Keine Files";
 tooManyFilesStr = "Zu viele Files";
 removeFilesStr = "Entferne einige";
 toHoldStr = "";
+mixerStr = "Ruehrwerk an ?";
+mixerAns = "<- JA,  -> NEIN";
 }
 else
 {
@@ -900,12 +905,7 @@ void chooseParameters(int whichFile)
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void chooseSequence()
-{
 
-}
-
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void getCookingTime()
 {

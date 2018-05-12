@@ -3,7 +3,7 @@
 #include "Temperature.h"
 #include "PI.h"
 
-float tempVal [901];
+float tempVal [801];
 int arrayIndex = 0;
 float tmpMax = 0;
 float Kp = 0;
@@ -100,7 +100,7 @@ boolean finish()
 void writeTemperature(float val)
 {
 
-  if (arrayIndex <= 900)
+  if (arrayIndex <= 800)
   {
     tempVal[arrayIndex] = val;
     arrayIndex = arrayIndex + 1;
@@ -162,7 +162,7 @@ void printParameter()
       }
     }
 
-    T1 = (1.0 / 3.0) * ((it10 * 7 / 0.531812) + (it50 * 7 / 1.678347) + (it90 * 7 / 3.889720));
+    T1 = (1.0 / 3.0) * ((it10 * 12 / 0.531812) + (it50 * 12 / 1.678347) + (it90 * 12 / 3.889720));
     for (int i = 0; i < arrayIndex; i++)
     {
       tempVal[i] = 0;
