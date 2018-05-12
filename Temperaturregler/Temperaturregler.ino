@@ -129,6 +129,7 @@ void handleNextSequnece()
   {
     //setPointHasChanged = true;
     handleSequences();
+    
     nextSequenceHasBenSet = true;
     timeForNextStep = changeTime + getSeconds();
     Serial.println("Schritt " + (String)currentSequence + " bis: " + (String)timeForNextStep + " mit Temp: " + (String)currentSetPoint);
@@ -415,6 +416,7 @@ void loop()
 
 
   current_main_state = getMainState();
+  
 
   switch (current_main_state)
   {
@@ -461,10 +463,12 @@ void loop()
       }
       break;
     case getParameter:
+    
       setSetPoint(70.0);
       setStartVoltage();
       calculateFinalValue();
       secCounter();
+      setVoltage(getStartVoltage());
       writeTemppToArray();
       antiDeadLock();
       break;

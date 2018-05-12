@@ -69,7 +69,7 @@ void setVoltage(float voltage) {
   //Serial.print(getFinalValue());
   //secCounter();
 
-
+  
   if (onTime < 20)
   {
     onTime = 0;
@@ -85,12 +85,10 @@ void setVoltage(float voltage) {
   if (onTime >= counter && onTime != 0 && false == hardStop())
   {
     digitalWrite(heatPin, HIGH);
-    //Serial.println(counter);
   }
   else if (counter < maxCount)
   {
     digitalWrite(heatPin, LOW);
-    //Serial.println("Hiezung aus");
   }
 
   else
