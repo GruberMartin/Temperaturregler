@@ -25,13 +25,70 @@ int tempUserDot = 0;
 boolean disableUp = false;
 boolean disableDown = false;
 boolean gotOrderPIparams = false;
+boolean blinky = false;
+int testNumber = 0;
+int blinkCounter =  0;
+String hourString;
+String minutesString;
+boolean updateDisplay = false;
+int newLog10h = 0; // To know when to update display Text Time
+int oldLog10h = 0;
+int newLog10m = 0;
+int oldLog10m = 0;
+String extraSting = "";
+int minPos = 6;
+boolean hoursInvisible = false;
+boolean minutesInvisible = false;
+boolean longPress = false;
+boolean tempInvisible = false;
+boolean dotTempInvisible = false;
+String dotTempString;
+String tempString;
+int newLog10dt = 0;
+int oldLog10dt = 0;
+
+
+//###################################################################################################################################################################################################################################
+//###############################################################################################   Eigene Sonderzeichen   ####################################################################################################
+//###################################################################################################################################################################################################################################
+
+byte arrowDown[8] = {
+  4, 4, 4, 4, 21, 14, 4
+};
+
+byte arrowUp[8] = {
+  4, 14, 21, 4, 4, 4, 4
+};
+
+byte arrowRight[8] = {
+  0, 4, 2, 31, 2, 4, 0
+};
+
+byte arrowLeft[8] = {
+  0, 4, 8, 31, 8, 4, 0
+};
+
+byte degree[8] =
+{
+  7, 5, 7, 0, 0, 0, 0
+};
+
+byte clearOneSegment[8] = {
+  0, 0, 0, 0, 0, 0, 0
+};
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void initDisplay()
 {
   lcd.begin(16, 2);
   lcd.setBacklight(WHITE);
   tempUser = 40;//((int)getValSens1());
   tempUserDot = 0;//((getValSens1() * 100) - (tempUser * 100));
-
+  lcd.createChar(0, arrowUp);
+  lcd.createChar(1, arrowDown);
+  lcd.createChar(2, arrowLeft);
+  lcd.createChar(3, arrowRight);
+  lcd.createChar(4, degree);
+  lcd.createChar(5, clearOneSegment);
 
 
 }
@@ -161,13 +218,158 @@ void disPrint(String firstLine, String secondLine)
   lcd.setCursor(0, 0);
 }
 
+void disPrintWithSpecialChar(String firstLine, String secondLine ,int posSpecialChar , int specialChar)
+{
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print(firstLine);
+  if(posSpecialChar == 1)
+  {
+    lcd.print(" ");
+    lcd.write(specialChar);
+  }
+  lcd.setCursor(0, 1);
+  lcd.print(secondLine);
+  if(posSpecialChar == 2)
+  {
+    lcd.print(" ");
+    lcd.write(specialChar);
+  }
+  lcd.setCursor(0, 0);
+}
+
+void disBlinkHours()
+{
+  hourString = (String) hours;
+  lcd.setCursor(0, 1);
+
+
+  if (blinkCounter < 20)
+  {
+    hourString = (String) hours;
+    blinkCounter += 1;
+    hoursInvisible = false;
+
+  }
+  else if (blinkCounter < 40)
+  {
+    if (longPress == false)
+    {
+      hourString = "  ";
+    }
+    hoursInvisible = true;
+    blinkCounter += 1;
+
+  }
+  else
+  {
+    blinkCounter = 0;
+  }
+  lcd.print(hourString);
+
+}
+
+void disBlinkMinutes()
+{
+
+  minutesString = (String) minutes;
+  lcd.setCursor(minPos, 1);
+  if (blinkCounter < 20)
+  {
+    minutesString = (String) minutes ;
+    blinkCounter += 1;
+    minutesInvisible = false;
+
+  }
+  else if (blinkCounter < 40)
+  {
+    if (longPress == false)
+    {
+      minutesString = "  ";
+    }
+    minutesInvisible = true;
+    blinkCounter += 1;
+
+  }
+  else
+  {
+    blinkCounter = 0;
+  }
+  lcd.print(minutesString);
+
+}
+
+void disBlinkTemp()
+{
+  tempString = (String) tempUser;
+  lcd.setCursor(0, 1);
+
+
+  if (blinkCounter < 20)
+  {
+    tempString = (String) tempUser;
+    blinkCounter += 1;
+    tempInvisible = false;
+
+  }
+  else if (blinkCounter < 40)
+  {
+    if (longPress == false)
+    {
+      tempString = "  ";
+    }
+    tempInvisible = true;
+    blinkCounter += 1;
+
+  }
+  else
+  {
+    blinkCounter = 0;
+  }
+  lcd.print(tempString);
+}
+
+
+void disBlinkDotTemp()
+{
+  dotTempString = (String) tempUserDot;
+  lcd.setCursor(3, 1);
+
+
+  if (blinkCounter < 20)
+  {
+    dotTempString = (String) tempUserDot;
+    blinkCounter += 1;
+    dotTempInvisible = false;
+
+  }
+  else if (blinkCounter < 40)
+  {
+    if (longPress == false)
+    {
+      dotTempString = "  ";
+    }
+    dotTempInvisible = true;
+    blinkCounter += 1;
+
+  }
+  else
+  {
+    blinkCounter = 0;
+  }
+  lcd.print(dotTempString);
+
+}
+
+
+
 void disPrintTime()
 {
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print("Time" + (String)(numberOfSteps + 1) + ". to hold: ");
   lcd.setCursor(0, 1);
-  timeString = ((String)hours) + " h : " + ((String)minutes) + " min";
+  timeString = ((String)hours) + " h : "  + ((String)minutes) + " min";
   lcd.print(timeString);
   lcd.setCursor(0, 0);
 }
@@ -177,8 +379,10 @@ void disPrintTemp()
   lcd.setCursor(0, 0);
   lcd.print("Temp" + (String)(numberOfSteps + 1) + ". to hold: ");
   lcd.setCursor(0, 1);
-  timeString = ((String)tempUser) + "." + ((String)tempUserDot) + " deg.";
+  timeString = ((String)tempUser) + "." + ((String)tempUserDot + " ");
   lcd.print(timeString);
+  lcd.write(4);
+  lcd.print("C");
   lcd.setCursor(0, 0);
 }
 
@@ -190,10 +394,14 @@ void disPrintActualTemp(float actualTemp)
   lcd.setCursor(0, 0);
   lcd.print("Temp. now: ");
   lcd.setCursor(0, 1);
-  timeString = ((String)actualTemp) + " deg.";
+  timeString = ((String)actualTemp) + " -> " + (String)getSetPoint();
   lcd.print(timeString);
+  lcd.write(4);
+  lcd.print("C");
   lcd.setCursor(0, 0);
 }
+
+
 
 void disPrintRegualtorActivated(float actualTemp)
 {
@@ -201,25 +409,29 @@ void disPrintRegualtorActivated(float actualTemp)
   lcd.setCursor(0, 0);
   lcd.print("Reg. activated: ");
   lcd.setCursor(0, 1);
-  timeString = ((String)actualTemp) + " deg.";
+  timeString = ((String)actualTemp) + " -> " + (String)getSetPoint();
   lcd.print(timeString);
+  lcd.write(4);
+  lcd.print("C");
+  
   lcd.setCursor(0, 0);
 }
 
 void disPrintFinishMessgae()
 {
-  if(finsihMessageHasBeenDisplayed == false)
+  if (finsihMessageHasBeenDisplayed == false)
   {
-    disPrint("Finish",":)");
+    disPrint("Finish", ":)");
     finsihMessageHasBeenDisplayed = true;
   }
 }
 
+// mus geändert werden, ist keine Methode die auf das Display schreibt
 void disPrintSeqFile()
 {
-  for(int y = 0; y<6; y++)
+  for (int y = 0; y < 6; y++)
   {
-    Serial.println("Time" +(String)(y) + ": " + (String)stepTime[y] + ", Temp" + (String)(y) + ": " + (String)stepTemp[y]);
+    Serial.println("Time" + (String)(y) + ": " + (String)stepTime[y] + ", Temp" + (String)(y) + ": " + (String)stepTemp[y]);
   }
 }
 
@@ -333,7 +545,7 @@ void chooseParameters(int whichFile)
       noOfFiles = 0;
       countNumberOfSeqFiles();
     }
-    numberOfFilesCounted = true; 
+    numberOfFilesCounted = true;
   }
   buttons = lcd.readButtons();
   if (displayedStartMessgae == false)
@@ -342,11 +554,11 @@ void chooseParameters(int whichFile)
     {
       if (whichFile == 0)
       {
-        disPrint("Choose a pan:", "Press down");
+        disPrintWithSpecialChar("Choose a pan:", "Press",2,1);
       }
       else
       {
-        disPrint("Choose a seq:", "Press down");
+        disPrintWithSpecialChar("Choose a seq:", "Press",2,1);
       }
       filesAvailableForSelct = true;
       displayedStartMessgae = true;
@@ -421,7 +633,7 @@ void chooseParameters(int whichFile)
       else if (printErrorMsg == true)
       {
 
-        disPrint("No more files", "Press up");
+        disPrintWithSpecialChar("No more files", "Press",2,0);
         disableSelect = true;
       }
       isStillPressing = true;
@@ -479,7 +691,7 @@ void chooseParameters(int whichFile)
       }
       else if (printErrorMsg == true)
       {
-        disPrint("No more files", "Press down");
+        disPrintWithSpecialChar("No more files", "Press",2,1);
         disableSelect = true;
       }
       isStillPressing = true;
@@ -521,9 +733,9 @@ void chooseParameters(int whichFile)
       {
         if (whichFile == 0)
         {
-        displayedStartMessgae = false;
-        setMainState(getParameter);
-        presscounter = 0;
+          displayedStartMessgae = false;
+          setMainState(getParameter);
+          presscounter = 0;
           filesAvailableForSelct = false;
           numberOfFilesCounted = false;
           noOfFiles = 0;
@@ -535,8 +747,8 @@ void chooseParameters(int whichFile)
         }
         else
         {
-        displayedStartMessgae = false;
-        setMainState(fastCookingModeTime);
+          displayedStartMessgae = false;
+          setMainState(fastCookingModeTime);
         }
       }
 
@@ -563,6 +775,10 @@ void chooseSequence()
 
 void getCookingTime()
 {
+  newLog10h = (int) log10(hours);
+  newLog10m = (int) log10(minutes);
+
+
   if (displayedStartMessgae == false)
   {
     displayedStartMessgae = true;
@@ -581,32 +797,39 @@ void getCookingTime()
   else if (getButtonNoone())
   {
     isStillPressing = false;
+    longPress = false;
   }
 
   if (setHours == true && getButtonUp() && isStillPressing == false)
   {
+
+
     hours = hours + 1;
-    disPrintTime();
-    //isStillPressing = true;
+    //disPrintTime();
+    longPress = true;
+    delay(300);
 
   }
-  else if (setHours == false && getButtonUp() && isStillPressing == false && minutes < 60)
+  else if (setHours == false && getButtonUp() && isStillPressing == false && minutes < 59)
   {
     minutes = minutes + 1;
-    disPrintTime();
-    //isStillPressing = true;
+    //disPrintTime();
+    longPress = true;
+    delay(150);
   }
   else if (setHours == true && getButtonDown() && isStillPressing == false && hours > 0)
   {
     hours = hours - 1;
-    disPrintTime();
-    //isStillPressing = true;
+    //disPrintTime();
+    longPress = true;
+    delay(300);
   }
   else if (setHours == false && getButtonDown() && isStillPressing == false && minutes > 0)
   {
     minutes = minutes - 1;
-    disPrintTime();
-    //isStillPressing = true;
+    // disPrintTime();
+    longPress = true;
+    delay(150);
   }
   else if (getButtonSelect() && isStillPressing == false)
   {
@@ -616,7 +839,48 @@ void getCookingTime()
     current_main_state = fastCookingModeTemp;
     isStillPressing = true;
     displayedStartMessgae = false;
+
   }
+
+  if (setHours == true)
+  {
+    if (minutesInvisible == true)
+    {
+      disPrintTime();
+      minutesInvisible = false;
+    }
+    disBlinkHours();
+  }
+  else
+  {
+    if (hoursInvisible == true)
+    {
+      disPrintTime();
+      hoursInvisible = false;
+    }
+    disBlinkMinutes();
+  }
+
+  if (newLog10h != oldLog10h)
+  {
+    if (newLog10h > oldLog10h)
+    {
+      minPos +=  newLog10h;
+    }
+    else
+    {
+      minPos -=  1;
+    }
+    oldLog10h = newLog10h;
+    disPrintTime();
+
+  }
+  if (newLog10m != oldLog10m)
+  {
+    oldLog10m = newLog10m;
+    disPrintTime();
+  }
+
 }
 
 
@@ -625,8 +889,10 @@ void getCookingTime()
 
 void getCookingTemp()
 {
+  newLog10dt = (int)log10(tempUserDot);
   if (displayedStartMessgae == false)
   {
+
     displayedStartMessgae = true;
     disPrintTemp();
   }
@@ -643,31 +909,32 @@ void getCookingTemp()
   else if (getButtonNoone())
   {
     isStillPressing = false;
+    longPress = false;
   }
 
-  if (setTempUser == true && getButtonUp() && isStillPressing == false)
+  if (setTempUser == true && getButtonUp() && isStillPressing == false && tempUser < 99)
   {
     tempUser = tempUser + 1;
-    disPrintTemp();
-    //isStillPressing = true;
+    longPress = true;
+    delay(150);
   }
   else if (setTempUser == false && getButtonUp() && isStillPressing == false && tempUserDot < 75)
   {
     tempUserDot = tempUserDot + 25;
-    disPrintTemp();
-    isStillPressing = true;
+    longPress = true;
+    delay(300);
   }
-  else if (setTempUser == true && getButtonDown() && isStillPressing == false)
+  else if (setTempUser == true && getButtonDown() && isStillPressing == false && tempUser > getstartWaterTemp())
   {
     tempUser = tempUser - 1;
-    disPrintTemp();
-    //isStillPressing = true;
+    longPress = true;
+    delay(150);
   }
   else if (setTempUser == false && getButtonDown() && isStillPressing == false && tempUserDot >= 25)
   {
     tempUserDot = tempUserDot - 25;
-    disPrintTemp();
-    isStillPressing = true;
+    longPress = true;
+    delay(300);
   }
   else if (getButtonSelect() && isStillPressing == false)
   {
@@ -681,5 +948,36 @@ void getCookingTemp()
 
 
   }
+
+
+  if (setTempUser == true)
+  {
+    if (dotTempInvisible == true)
+    {
+      disPrintTemp();
+      dotTempInvisible = false;
+    }
+    disBlinkTemp();
+  }
+  else if (setTempUser == false)
+  {
+    if (tempInvisible == true)
+    {
+      disPrintTemp();
+      tempInvisible = false;
+    }
+    disBlinkDotTemp();
+  }
+
+  if (newLog10dt != oldLog10dt)
+  {
+    oldLog10dt = newLog10dt;
+    disPrintTemp();
+  }
+
+
+
+
+
 }
 
