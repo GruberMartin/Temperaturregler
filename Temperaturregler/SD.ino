@@ -36,7 +36,7 @@ void savePIParameters()
     currentState = running_PI;
   }
 
-  for (int i = 0; (i < 40) && (writingPiParamSuccessfully == false); i++)
+  for (int i = 0; (i < 5) && (writingPiParamSuccessfully == false); i++)
   {
     filename = String(String(i) + ".txt");
     if (!SD.exists(filename))
@@ -86,7 +86,7 @@ void saveSeqParameters()
     current_main_state = fastCookingModeTime;
   }
 
-  for (int i = 0; (i < 40) && (writingSeqParamSuccessfully == false); i++)
+  for (int i = 0; (i < 5) && (writingSeqParamSuccessfully == false); i++)
   {
     filename = "seq" + String(String(i) + ".txt");
     if (!SD.exists(filename))

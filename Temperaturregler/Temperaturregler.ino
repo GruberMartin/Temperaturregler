@@ -47,6 +47,7 @@ boolean calculateRealchangeTime = false;
 boolean nextSequenceHasBenSet = false;
 boolean sequencesStarted = false;
 long timeForNextStep = 0;
+boolean firstTempPrint = true;
 
 
 unsigned long endTime = 0;
@@ -56,6 +57,7 @@ boolean startLcdTempPrinting = false;
 boolean startWithGivenParametersRequest = false;
 boolean changeRegulator = false;
 boolean startWithGivenSeqRequest = false;
+boolean setPointHasChanged = false;
 
 
 
@@ -112,11 +114,13 @@ void handleNextSequnece()
   {
     Serial.println("Schritt 0 wurde gestartet");
     handleSequences();
+    setPointHasChanged = true;
     sequencesStarted = true;
   }
 
   if (getError() == 0.0 && nextSequenceHasBenSet == false)
   {
+    //setPointHasChanged = true;
     handleSequences();
     nextSequenceHasBenSet = true;
     timeForNextStep = changeTime + getSeconds();
@@ -125,6 +129,7 @@ void handleNextSequnece()
   }
   if (nextSequenceHasBenSet == true && getSeconds() >= timeForNextStep)
   {
+    setPointHasChanged = true;
     //Serial.println("Start with step nr. " + (String)currentSequence);
     handleSequences();
     //Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
@@ -289,16 +294,36 @@ void secCounter()
 
     }
 
-    if ((tempTemp != getValSens2()) && startLcdTempPrinting == true)
+    if ((tempTemp != getValSens2()) && startLcdTempPrinting == true || firstTempPrint == true && startLcdTempPrinting == true || setPointHasChanged == true && startLcdTempPrinting == true )
     {
       tempTemp = getValSens2();
       if (PIisOn == false)
       {
+        if(firstTempPrint == true || setPointHasChanged == true)
+        {
         disPrintActualTemp(tempTemp);
+        firstTempPrint = false;
+        setPointHasChanged = false;
+        }
+        else
+        {
+        lcd.setCursor(0,1);
+        lcd.print(tempTemp);
+        }
       }
       else
       {
+        if(firstTempPrint == true || setPointHasChanged == true)
+        {
         disPrintRegualtorActivated(tempTemp);
+        firstTempPrint = false;
+        setPointHasChanged = false;
+        }
+        else
+        {
+        lcd.setCursor(0,1);
+        lcd.print(tempTemp);
+        }
       }
     }
     printSensorVals();
