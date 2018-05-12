@@ -551,12 +551,11 @@ void waitForStartSignal()
   }
   else {
   
-    Serial.print("Pressing");
     while(getButtonSelect() == true)
     {
-      Serial.print(".");
+     
       langChangeCounter += 1;
-      Serial.println(langChangeCounter);
+      
       delay(50);
       if(langChangeCounter >= 10 && changeLanguage == false)
     {
