@@ -219,19 +219,19 @@ void disPrint(String firstLine, String secondLine)
   lcd.setCursor(0, 0);
 }
 
-void disPrintWithSpecialChar(String firstLine, String secondLine ,int posSpecialChar , int specialChar)
+void disPrintWithSpecialChar(String firstLine, String secondLine , int posSpecialChar , int specialChar)
 {
   lcd.clear();
   lcd.setCursor(0, 0);
   lcd.print(firstLine);
-  if(posSpecialChar == 1)
+  if (posSpecialChar == 1)
   {
     lcd.print(" ");
     lcd.write(specialChar);
   }
   lcd.setCursor(0, 1);
   lcd.print(secondLine);
-  if(posSpecialChar == 2)
+  if (posSpecialChar == 2)
   {
     lcd.print(" ");
     lcd.write(specialChar);
@@ -414,7 +414,7 @@ void disPrintRegualtorActivated(float actualTemp)
   lcd.print(timeString);
   lcd.write(4);
   lcd.print("C");
-  
+
   lcd.setCursor(0, 0);
 }
 
@@ -485,6 +485,15 @@ void waitForCookingMode()
     {
       if (getButtonLeft() && isStillPressing == false)
       {
+
+        if (countNumberOfPiFiles() >= 6)
+        {
+          disPrint("To many Files", "Remove some");
+          while (1)
+          {
+
+          }
+        }
         //Serial.println("Button Left pressed");
         requestGlobalStart();
         current_main_state = getParameter;
@@ -508,6 +517,15 @@ void waitForCookingMode()
     {
       if (getButtonLeft() && isStillPressing == false)
       {
+
+        if (countNumberOfSeqFiles() >= 6)
+        {
+          disPrint("To many Files", "Remove some");
+          while (1)
+          {
+
+          }
+        }
 
         current_main_state = fastCookingModeTime;
         isStillPressing = true;
@@ -555,11 +573,11 @@ void chooseParameters(int whichFile)
     {
       if (whichFile == 0)
       {
-        disPrintWithSpecialChar("Choose a pan:", "Press",2,1);
+        disPrintWithSpecialChar("Choose a pan:", "Press", 2, 1);
       }
       else
       {
-        disPrintWithSpecialChar("Choose a seq:", "Press",2,1);
+        disPrintWithSpecialChar("Choose a seq:", "Press", 2, 1);
       }
       filesAvailableForSelct = true;
       displayedStartMessgae = true;
@@ -634,7 +652,7 @@ void chooseParameters(int whichFile)
       else if (printErrorMsg == true)
       {
 
-        disPrintWithSpecialChar("No more files", "Press",2,0);
+        disPrintWithSpecialChar("No more files", "Press", 2, 0);
         disableSelect = true;
       }
       isStillPressing = true;
@@ -692,7 +710,7 @@ void chooseParameters(int whichFile)
       }
       else if (printErrorMsg == true)
       {
-        disPrintWithSpecialChar("No more files", "Press",2,1);
+        disPrintWithSpecialChar("No more files", "Press", 2, 1);
         disableSelect = true;
       }
       isStillPressing = true;
