@@ -122,7 +122,7 @@ void printParameter()
       }
     }
 
-    Kp = (tmpMax - getValSens1()) / (getStartVoltage());
+    Kp = (tmpMax - tempVal[0]) / (getStartVoltage());
     Vt10 = 0.1 * (tmpMax - tempVal[0]);
     Vt50 = 0.5 * (tmpMax - tempVal[0]);
     Vt90 = 0.9 * (tmpMax - tempVal[0]);

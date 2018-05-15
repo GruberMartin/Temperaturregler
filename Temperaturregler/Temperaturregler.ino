@@ -477,7 +477,8 @@ void loop()
       printParameter();
       setCurrentState(start_PI);
       setStartVoltageIPart(calculateStartVoltageForIpart());
-      current_main_state = globalShutDown;
+      
+      current_main_state = PI_on_Main;
       break;
     case startWithGivenParameters:
       secCounter();

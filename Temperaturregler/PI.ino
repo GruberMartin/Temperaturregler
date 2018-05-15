@@ -148,19 +148,19 @@ void setCurrentState(PIstate stateToSet)
 
 void printPIParams()
 {
-  Serial.print("Kpr = ");
+  Serial.print("Kpr ");
   Serial.println(Kpr);
-  Serial.print("Tn = ");
+  Serial.print("Tn ");
   Serial.println(Tn);
-  Serial.print("Tm = ");
+  Serial.print("Tm ");
   Serial.println(Tm);
-  Serial.print("T = ");
+  Serial.print("T ");
   Serial.println(T);
-  Serial.print("n = ");
+  Serial.print("n ");
   Serial.println(getN());
-  Serial.print("Start Voltage= ");
-  Serial.println(getStartVoltageIPart());
-  Serial.print("Kp = ");
+  Serial.print("Voltage ");
+  Serial.println(getStartVoltage());
+  Serial.print("Kp ");
   Serial.println(getKps());
 
 }
@@ -288,8 +288,9 @@ float controlVoltage()
     case savePI_Parameter:
 
       savePIParameters();
-      imediateCalcVoltage();
-
+      printPIParams();
+      current_main_state = globalShutDown;
+      
       break;
 
     case running_PI:
