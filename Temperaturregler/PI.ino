@@ -27,7 +27,7 @@ int n = 0;
 float voltageP = 0.0;
 float voltageI = 0.0;
 float voltageIold = 0.0; // gerade geändert
-float scalFactor = 0.8;
+float scalFactor = 0.85;
 boolean newCalc = false;
 boolean fastStopRequested = false;
 //const int chipSelect = 10;
@@ -299,7 +299,7 @@ float controlVoltage()
 
         requestTemp();
         newError = Sollwert - getValSens2();
-        voltageP = Kpr  * newError;
+        voltageP = Kpr   * newError;
         voltageI = voltageIold + ((Kpr * scalFactor) / Tn) * (T / 2) * newError + ((Kpr * scalFactor) / Tn) * (T / 2) * oldError;
         voltageIold = voltageI;
         newVoltage = voltageP + voltageI;

@@ -17,9 +17,10 @@
 #include "SD.h"
 
 
+
 unsigned long previousTime = 0;
 unsigned long seconds ;
-int twelveSecCounter = 0;
+int paramSecCounter = 0;
 int voltageHasBeenSet = 0;
 float startVoltage = 0.0;
 boolean PIisOn = false;
@@ -49,6 +50,7 @@ boolean sequencesStarted = false;
 long timeForNextStep = 0;
 boolean firstTempPrint = true;
 boolean agitatorState = false;
+int toCount = 7; // gibt an in welchen Abständen die Parameter gespeichert werden bei der Aufnahme der Sprungantwort
 
 
 unsigned long endTime = 0;
@@ -216,9 +218,9 @@ boolean requestRegulatorChange()
 
 void writeTemppToArray()
 {
-  if (twelveSecCounter == 12)
+  if (paramSecCounter == toCount)
   {
-    twelveSecCounter = 0;
+    paramSecCounter = 0;
     writeTemperature(getValSens2());
   }
 }
@@ -283,7 +285,7 @@ void secCounter()
     }
 
 
-    if (deadLockCounter >= 300 && PIisOn == false)
+    if (deadLockCounter >= 500 && PIisOn == false)
     {
       antiDeadLockActivated = false;
       setMainState(gotParameter);
@@ -348,7 +350,7 @@ void secCounter()
     Serial.print(getVoltageIpart());
     Serial.print(" ");
     Serial.println(getSetPoint());
-    twelveSecCounter = twelveSecCounter + 1;
+    paramSecCounter = paramSecCounter + 1;
     sampleCounter = sampleCounter + 1;
 
 

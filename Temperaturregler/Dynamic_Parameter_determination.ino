@@ -133,7 +133,7 @@ void printParameter()
     {
 
 
-      if (abs(tempVal[i] - tempVal[0] - Vt10) < t10tmp)
+      if (abs(tempVal[i] - tempVal[0] - Vt10) <= t10tmp)
       {
 
         t10tmp = abs(tempVal[i] - tempVal[0] - Vt10);
@@ -144,7 +144,7 @@ void printParameter()
 
     for (int i = 1; i < arrayIndex; i++)
     {
-      if (abs(tempVal[i] - tempVal[0] - Vt50) < t50tmp)
+      if (abs(tempVal[i] - tempVal[0] - Vt50) <= t50tmp)
       {
         t50tmp = abs(tempVal[i] - tempVal[0] - Vt50);
         //Serial.println(t50tmp);
@@ -154,7 +154,7 @@ void printParameter()
 
     for (int i = 1; i < arrayIndex; i++)
     {
-      if (abs(tempVal[i] - tempVal[0] - Vt90) < t90tmp)
+      if (abs(tempVal[i] - tempVal[0] - Vt90) <= t90tmp)
       {
         t90tmp = abs(tempVal[i] - tempVal[0] - Vt90);
         //Serial.println(t90tmp);
@@ -162,7 +162,7 @@ void printParameter()
       }
     }
 
-    T1 = (1.0 / 3.0) * ((it10 * 12 / 0.531812) + (it50 * 12 / 1.678347) + (it90 * 12 / 3.889720));
+    T1 = (1.0 / 3.0) * ((it10 * toCount / 0.531812) + (it50 * toCount / 1.678347) + (it90 * toCount / 3.889720));
     for (int i = 0; i < arrayIndex; i++)
     {
       tempVal[i] = 0;
@@ -176,18 +176,18 @@ void printParameter()
 
 float getT10()
 {
-  return it10 * 10;
+  return it10 * toCount;
 }
 
 
 float getT50()
 {
-  return it50 * 10;
+  return it50 * toCount;
 }
 
 float getT90()
 {
-  return it90 * 10;
+  return it90 * toCount;
 }
 
 
