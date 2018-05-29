@@ -50,7 +50,7 @@ boolean sequencesStarted = false;
 long timeForNextStep = 0;
 boolean firstTempPrint = true;
 boolean agitatorState = false;
-int toCount = 7; // gibt an in welchen Abständen die Parameter gespeichert werden bei der Aufnahme der Sprungantwort
+int toCount = 15; // gibt an in welchen Abständen die Parameter gespeichert werden bei der Aufnahme der Sprungantwort
 
 
 unsigned long endTime = 0;
@@ -285,7 +285,7 @@ void secCounter()
     }
 
 
-    if (deadLockCounter >= 500 && PIisOn == false)
+    if (deadLockCounter >= 1000 && PIisOn == false)
     {
       antiDeadLockActivated = false;
       setMainState(gotParameter);
@@ -449,12 +449,12 @@ void loop()
         if (startWithGivenSeqRequest == true)
         {
           current_main_state = startWithGivenParameters;
-          //        disPrintSeqFile();
-          //        printPIParams();
-          //        while(1)
-          //        {
-          //
-          //        }
+//                  disPrintSeqFile();
+//                  printPIParams();
+//                  while(1)
+//                  {
+//          
+//                  }
 
 
         }
@@ -498,6 +498,7 @@ void loop()
       getInputForAgitator();
       break;
     case PI_on_Main:
+      
       secCounter();
       PIisOn = true;
       controlVoltage();

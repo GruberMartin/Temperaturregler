@@ -125,9 +125,9 @@ void changeLanguageRequest()
       seqFileNames[panCnt] = "Abfolge " + (String)(panCnt + 1);
     }
     pressSelect = "Druecke Select";
-    changeLangHint = "Lange fuer EN";
+    changeLangHint = "";//"Lange fuer EN";
     newPanStr = "<- Neue Pfanne" ;
-    knownPanStr = "-> Bekannte Pfan.";
+    knownPanStr = "-> Bekannte Pfa.";
     newSeqStr = "<- Neu Abfolge";
     knownSeqStr = "-> Bekannte Abf.";
     timeWord = "Zeit";
@@ -538,7 +538,7 @@ void disPrintFinishMessgae()
 {
   if (finsihMessageHasBeenDisplayed == false)
   {
-    disPrint(finishStr, ":)");
+    disPrint(finishStr, "");
     finsihMessageHasBeenDisplayed = true;
   }
 }

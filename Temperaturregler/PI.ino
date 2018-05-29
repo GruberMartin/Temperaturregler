@@ -27,7 +27,8 @@ int n = 0;
 float voltageP = 0.0;
 float voltageI = 0.0;
 float voltageIold = 0.0; // gerade geändert
-float scalFactor = 0.85;
+float scalFactor = 1.0;
+float scalFactor2 = 1.05;
 boolean newCalc = false;
 boolean fastStopRequested = false;
 //const int chipSelect = 10;
@@ -299,17 +300,23 @@ float controlVoltage()
 
         requestTemp();
         newError = Sollwert - getValSens2();
-        voltageP = Kpr   * newError;
-        voltageI = voltageIold + ((Kpr * scalFactor) / Tn) * (T / 2) * newError + ((Kpr * scalFactor) / Tn) * (T / 2) * oldError;
-        voltageIold = voltageI;
-        newVoltage = voltageP + voltageI;
+        voltageP = Kpr    *  newError;
+        voltageI = voltageIold + ((Kpr * scalFactor   ) / Tn) * (T / 2) * newError + ((Kpr * scalFactor ) / Tn) * (T / 2) * oldError;
 
-        setDonewCalc();
+        if (voltageI > ((1.0/getKps())*((Sollwert*1.05)-getValSens1())))
+      {
+
+        voltageI = (1.0/getKps())*((Sollwert*1.05)-getValSens1());
+
+      }
+      else if (voltageI <= 0.0)
+      {
+        voltageI = 0.0;
+
+
       }
 
-
-
-      if (voltageI > 230.0)
+  if (voltageI >= 230.0)
       {
 
         voltageI = 230.0;
@@ -321,6 +328,18 @@ float controlVoltage()
 
 
       }
+
+        
+        voltageIold = voltageI;
+        newVoltage = voltageP + voltageI;
+
+        setDonewCalc();
+      
+      }
+
+
+
+      
 
       if (newVoltage > 230.0)
       {
@@ -344,6 +363,8 @@ float controlVoltage()
       //        }
       //      }
 
+     
+      
 
 
       oldError = newError;
