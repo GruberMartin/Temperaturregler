@@ -37,6 +37,10 @@ boolean reachedFinalTemperature = false;
 float minIpart = 0.0;
 boolean minIpartHasBeenSet = false;
 boolean shutdownPI = false;
+boolean arw_Has_activated = false;
+boolean disableArw = false;
+boolean coorection_done = false;
+
 
 PIstate currentState = notStarted_PI;
 
@@ -103,6 +107,36 @@ void setParameterProgrammatically(float K, float Tr, float T1, float Ta, int ord
   T1 = Tm;
   T = Ta;
   n = orderSet;
+}
+
+boolean getARW_State()
+{
+  return disableArw;
+}
+
+void setARW_State(boolean arwToSet)
+{
+  disableArw = arwToSet;
+}
+
+boolean getARWactivationState()
+{
+  return arw_Has_activated;
+}
+
+void setARWactivationState(boolean arwActivationToSet)
+{
+  arw_Has_activated = arwActivationToSet;
+}
+
+boolean getCorrectionState()
+{
+  return coorection_done;
+}
+
+void setCorrectionState(boolean correctionToSet)
+{
+  coorection_done = correctionToSet;
 }
 
 boolean checkParameters(float K, float Tr, float T1, float Ta, int orderSet)
@@ -303,68 +337,73 @@ float controlVoltage()
         voltageP = Kpr    *  newError;
         voltageI = voltageIold + ((Kpr * scalFactor   ) / Tn) * (T / 2) * newError + ((Kpr * scalFactor ) / Tn) * (T / 2) * oldError;
 
-        if (voltageI > ((1.0/getKps())*((Sollwert*1.05)-getValSens1())))
-      {
+       
+        
+        
+              if ((getValSens2() > getSetPoint()) && disableArw == false)
+            {
+      
+              if( arw_Has_activated == false)
+              {
+      
+                imediateCalcVoltage();
+                Serial.println("I-Anteil ausgeschlatet");
+              }
+              
+              arw_Has_activated = true;
+      
+              newVoltage = voltageP;
+              if (newVoltage > 230.0)
+            {
+              newVoltage = 230.0;
+            }
+      
+            if (newVoltage <= 0)
+            {
+              newVoltage = 0.0;
+            }
+              
+      
+            }
+            else
+            {
+              newVoltage = voltageP + voltageI;
+              if (newVoltage > 230.0)
+            {
+              newVoltage = 230.0;
+            }
+      
+            if (newVoltage <= 0)
+            {
+              newVoltage = 0.0;
+            }
+      
+            if(arw_Has_activated == true)
+            {
+              disableArw = true;
+              if(coorection_done == false)
+              {
+              voltageIold = ((1.0/getKps())*((Sollwert*1.0)-getValSens1()));
+              voltageI = voltageIold;
+      
+              imediateCalcVoltage();
+              Serial.println("I-Anteil korigiert");
+              
+              }
+              coorection_done = true;
+            }
+      
+      
+            }
 
-        voltageI = (1.0/getKps())*((Sollwert*1.05)-getValSens1());
-
-      }
-      else if (voltageI <= 0.0)
-      {
-        voltageI = 0.0;
-
-
-      }
-
-  if (voltageI >= 230.0)
-      {
-
-        voltageI = 230.0;
-
-      }
-      else if (voltageI <= 0.0)
-      {
-        voltageI = 0.0;
-
-
-      }
 
         
         voltageIold = voltageI;
-        newVoltage = voltageP + voltageI;
+        
 
         setDonewCalc();
       
       }
-
-
-
-      
-
-      if (newVoltage > 230.0)
-      {
-        newVoltage = 230.0;
-      }
-
-      if (newVoltage <= 0)
-      {
-        newVoltage = 0.0;
-      }
-
-      //      if (requestRegulatorChange() == true)
-      //      {
-      //        if (newError >=  0.25)
-      //        {
-      //          newVoltage = 1511.43;
-      //        }
-      //        else if (newError <= 0.0)
-      //        {
-      //          newVoltage = 0;
-      //        }
-      //      }
-
-     
-      
 
 
       oldError = newError;

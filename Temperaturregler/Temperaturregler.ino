@@ -135,6 +135,7 @@ void handleNextSequnece()
     nextSequenceHasBenSet = true;
     timeForNextStep = changeTime + getSeconds();
     Serial.println("Schritt " + (String)currentSequence + " bis: " + (String)timeForNextStep + " mit Temp: " + (String)currentSetPoint);
+    
     currentSequence += 1;
   }
   if (nextSequenceHasBenSet == true && getSeconds() >= timeForNextStep)
@@ -142,6 +143,9 @@ void handleNextSequnece()
     setPointHasChanged = true;
     //Serial.println("Start with step nr. " + (String)currentSequence);
     handleSequences();
+    setCorrectionState(false);
+      setARWactivationState(false);      
+      setARW_State(false);
     //Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
     nextSequenceHasBenSet = false;
     imediateCalcVoltage();
@@ -159,7 +163,7 @@ void handleSequences()
       currentSetPoint = getStepTemp(currentSequence);
       agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
-
+      
 
       break;
     case 1:
@@ -168,6 +172,7 @@ void handleSequences()
       currentSetPoint = getStepTemp(currentSequence);
       agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
+      
       break;
     case 2:
 
@@ -175,6 +180,7 @@ void handleSequences()
       currentSetPoint = getStepTemp(currentSequence);
       agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
+
       break;
     case 3:
 
@@ -182,6 +188,7 @@ void handleSequences()
       currentSetPoint = getStepTemp(currentSequence);
       agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
+
       break;
     case 4:
 
@@ -189,6 +196,7 @@ void handleSequences()
       currentSetPoint = getStepTemp(currentSequence);
       agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
+
       break;
     case 5:
 
@@ -196,6 +204,7 @@ void handleSequences()
       currentSetPoint = getStepTemp(currentSequence);
       agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
+ 
       break;
   }
   if (changeTime == 0)
@@ -354,6 +363,23 @@ void secCounter()
     sampleCounter = sampleCounter + 1;
 
 
+    if((getARW_State() == false) && (getValSens2() > getSetPoint()))
+    {
+      if(getARWactivationState() == false)
+      {
+        
+        imediateCalcVoltage();
+      }
+    }
+    else 
+    {
+      if((getCorrectionState() == false) && getARWactivationState() == true)
+      {
+        imediateCalcVoltage();
+      }
+      
+    }
+
   }
 }
 
@@ -485,7 +511,7 @@ void loop()
     case startWithGivenParameters:
       secCounter();
       setSetPoint(getStepTemp(currentSequence));
-      //setStartVoltageIPart(calculateStartVoltageForIpart());
+      setStartVoltageIPart(calculateStartVoltageForIpart());
       //      }
       setCurrentState(running_PI);
       imediateCalcVoltage();

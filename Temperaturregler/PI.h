@@ -33,5 +33,11 @@ boolean checkParameters(float K, float Tr, float T1, float Ta, int orderSet);
 void printPIParams();
 float getVoltageIpart();
 float getPpart();
+boolean getCorrectionState();
+boolean getARW_State();
+boolean getARWactivationState();
+void setARW_State(boolean arwToSet);
+void setARWactivationState(boolean arwActivationToSet);
+void setCorrectionState(boolean correctionToSet);
 
 #endif
