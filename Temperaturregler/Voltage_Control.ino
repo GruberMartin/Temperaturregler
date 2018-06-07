@@ -69,7 +69,7 @@ void setVoltage(float voltage) {
   //Serial.print(getFinalValue());
   //secCounter();
 
-  
+
   if (onTime < 20)
   {
     onTime = 0;

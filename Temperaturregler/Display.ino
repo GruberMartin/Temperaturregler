@@ -1011,9 +1011,22 @@ void getCookingTime()
   else if (getButtonSelect() && isStillPressing == false)
   {
     requestFurtherStepsTime(hours * 60.0 * 60.0 + minutes * 60.0);
+
+    if (hours != 0 || minutes != 0)
+    {
+      current_main_state = getAgitatorParam;
+    }
+    else
+    {
+      current_main_state = startWithGivenParameters;
+      saveSeqParameters();
+      saveAgitatorParameters();
+      requestGlobalStart();
+      //disPrintSeqFile();
+
+    }
     hours = 0;
     minutes = 0;
-    current_main_state = getAgitatorParam;
     isStillPressing = true;
     displayedStartMessgae = false;
 

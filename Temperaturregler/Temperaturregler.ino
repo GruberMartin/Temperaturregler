@@ -61,6 +61,7 @@ boolean startWithGivenParametersRequest = false;
 boolean changeRegulator = false;
 boolean startWithGivenSeqRequest = false;
 boolean setPointHasChanged = false;
+boolean firstTime;
 
 
 
@@ -121,7 +122,7 @@ void handleNextSequnece()
 {
   if (sequencesStarted == false)
   {
-    Serial.println("Schritt 0 wurde gestartet");
+    //Serial.println("Schritt 0 wurde gestartet");
     handleSequences();
     setPointHasChanged = true;
     sequencesStarted = true;
@@ -131,11 +132,11 @@ void handleNextSequnece()
   {
     //setPointHasChanged = true;
     handleSequences();
-    
+
     nextSequenceHasBenSet = true;
     timeForNextStep = changeTime + getSeconds();
-    Serial.println("Schritt " + (String)currentSequence + " bis: " + (String)timeForNextStep + " mit Temp: " + (String)currentSetPoint);
-    
+    //Serial.println("Schritt " + (String)currentSequence + " bis: " + (String)timeForNextStep + " mit Temp: " + (String)currentSetPoint);
+
     currentSequence += 1;
   }
   if (nextSequenceHasBenSet == true && getSeconds() >= timeForNextStep)
@@ -144,8 +145,8 @@ void handleNextSequnece()
     //Serial.println("Start with step nr. " + (String)currentSequence);
     handleSequences();
     setCorrectionState(false);
-      setARWactivationState(false);      
-      setARW_State(false);
+    setARWactivationState(false);
+    setARW_State(false);
     //Serial.println("Schritt " + (String)currentSequence + " mit Dauer: " + (String)changeTime + " und Temp: " + (String)currentSetPoint);
     nextSequenceHasBenSet = false;
     imediateCalcVoltage();
@@ -163,7 +164,7 @@ void handleSequences()
       currentSetPoint = getStepTemp(currentSequence);
       agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
-      
+
 
       break;
     case 1:
@@ -172,7 +173,7 @@ void handleSequences()
       currentSetPoint = getStepTemp(currentSequence);
       agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
-      
+
       break;
     case 2:
 
@@ -204,7 +205,7 @@ void handleSequences()
       currentSetPoint = getStepTemp(currentSequence);
       agitatorState = getAgitatorAns(currentSequence);
       setSetPoint(currentSetPoint);
- 
+
       break;
   }
   if (changeTime == 0)
@@ -258,9 +259,13 @@ void antiDeadLock()
 
 void secCounter()
 {
-
+  if (firstTime == false)
+  {
+    previousTime = millis();
+  }
   if (millis() >= (previousTime) && globalStart == true)
   {
+    firstTime = true;
     previousTime = previousTime + 1000;  // use 100000 for uS
     seconds = seconds + 1;
     requestTemp();
@@ -363,21 +368,21 @@ void secCounter()
     sampleCounter = sampleCounter + 1;
 
 
-    if((getARW_State() == false) && (getValSens2() > getSetPoint()))
+    if ((getARW_State() == false) && (getValSens2() > getSetPoint()))
     {
-      if(getARWactivationState() == false)
+      if (getARWactivationState() == false)
       {
-        
+
         imediateCalcVoltage();
       }
     }
-    else 
+    else
     {
-      if((getCorrectionState() == false) && getARWactivationState() == true)
+      if ((getCorrectionState() == false) && getARWactivationState() == true)
       {
         imediateCalcVoltage();
       }
-      
+
     }
 
   }
@@ -444,7 +449,7 @@ void loop()
 
 
   current_main_state = getMainState();
-  
+
 
   switch (current_main_state)
   {
@@ -475,12 +480,12 @@ void loop()
         if (startWithGivenSeqRequest == true)
         {
           current_main_state = startWithGivenParameters;
-//                  disPrintSeqFile();
-//                  printPIParams();
-//                  while(1)
-//                  {
-//          
-//                  }
+          //                  disPrintSeqFile();
+          //                  printPIParams();
+          //                  while(1)
+          //                  {
+          //
+          //                  }
 
 
         }
@@ -491,7 +496,7 @@ void loop()
       }
       break;
     case getParameter:
-    
+
       setSetPoint(70.0);
       setStartVoltage();
       calculateFinalValue();
@@ -505,7 +510,7 @@ void loop()
       printParameter();
       setCurrentState(start_PI);
       setStartVoltageIPart(calculateStartVoltageForIpart());
-      
+
       current_main_state = PI_on_Main;
       break;
     case startWithGivenParameters:
@@ -524,7 +529,7 @@ void loop()
       getInputForAgitator();
       break;
     case PI_on_Main:
-      
+
       secCounter();
       PIisOn = true;
       controlVoltage();

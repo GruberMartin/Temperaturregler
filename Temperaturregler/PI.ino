@@ -325,7 +325,7 @@ float controlVoltage()
       savePIParameters();
       printPIParams();
       current_main_state = globalShutDown;
-      
+
       break;
 
     case running_PI:
@@ -337,72 +337,72 @@ float controlVoltage()
         voltageP = Kpr    *  newError;
         voltageI = voltageIold + ((Kpr * scalFactor   ) / Tn) * (T / 2) * newError + ((Kpr * scalFactor ) / Tn) * (T / 2) * oldError;
 
-       
-        
-        
-              if ((getValSens2() > getSetPoint()) && disableArw == false)
+
+
+
+        if ((getValSens2() > getSetPoint()) && disableArw == false)
+        {
+
+          if ( arw_Has_activated == false)
+          {
+
+            imediateCalcVoltage();
+            //Serial.println("I-Anteil ausgeschlatet");
+          }
+
+          arw_Has_activated = true;
+
+          newVoltage = voltageP;
+          if (newVoltage > 230.0)
+          {
+            newVoltage = 230.0;
+          }
+
+          if (newVoltage <= 0)
+          {
+            newVoltage = 0.0;
+          }
+
+
+        }
+        else
+        {
+          newVoltage = voltageP + voltageI;
+          if (newVoltage > 230.0)
+          {
+            newVoltage = 230.0;
+          }
+
+          if (newVoltage <= 0)
+          {
+            newVoltage = 0.0;
+          }
+
+          if (arw_Has_activated == true)
+          {
+            disableArw = true;
+            if (coorection_done == false)
             {
-      
-              if( arw_Has_activated == false)
-              {
-      
-                imediateCalcVoltage();
-                Serial.println("I-Anteil ausgeschlatet");
-              }
-              
-              arw_Has_activated = true;
-      
-              newVoltage = voltageP;
-              if (newVoltage > 230.0)
-            {
-              newVoltage = 230.0;
-            }
-      
-            if (newVoltage <= 0)
-            {
-              newVoltage = 0.0;
-            }
-              
-      
-            }
-            else
-            {
-              newVoltage = voltageP + voltageI;
-              if (newVoltage > 230.0)
-            {
-              newVoltage = 230.0;
-            }
-      
-            if (newVoltage <= 0)
-            {
-              newVoltage = 0.0;
-            }
-      
-            if(arw_Has_activated == true)
-            {
-              disableArw = true;
-              if(coorection_done == false)
-              {
-              voltageIold = ((1.0/getKps())*((Sollwert*1.0)-getValSens1()));
+              voltageIold = ((1.0 / getKps()) * ((Sollwert * 1.0) - getValSens1()));
               voltageI = voltageIold;
-      
+
               imediateCalcVoltage();
-              Serial.println("I-Anteil korigiert");
-              
-              }
-              coorection_done = true;
+              //Serial.println("I-Anteil korigiert");
+
             }
-      
-      
-            }
+            coorection_done = true;
+          }
 
 
-        
+        }
+
+
+
         voltageIold = voltageI;
-        
+
 
         setDonewCalc();
-      
+
       }
 
 

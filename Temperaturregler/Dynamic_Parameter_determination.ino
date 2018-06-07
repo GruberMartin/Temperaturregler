@@ -41,10 +41,10 @@ float calculateStartVoltage()
 float calculateStartVoltageForIpart()
 {
   voltageToSet =  ((getValSens2() - getValSens1()) / getKps());
-//  if (voltageToSet < 0)
-//  {
-//    voltageToSet = 0.0;
-//  }
+  //  if (voltageToSet < 0)
+  //  {
+  //    voltageToSet = 0.0;
+  //  }
   return voltageToSet;
 }
 
