@@ -39,5 +39,6 @@ boolean getARWactivationState();
 void setARW_State(boolean arwToSet);
 void setARWactivationState(boolean arwActivationToSet);
 void setCorrectionState(boolean correctionToSet);
-
+unsigned long getDelayTime();
+void setDelayTime();
 #endif

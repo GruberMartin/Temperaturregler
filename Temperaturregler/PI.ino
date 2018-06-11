@@ -32,6 +32,7 @@ float scalFactor2 = 1.05;
 boolean newCalc = false;
 boolean fastStopRequested = false;
 //const int chipSelect = 10;
+unsigned long delayTime; // Damit der ARW mit Verzögerung anspricht, damit der I-Anteil bei Messrauschen nicht zu früh korrigiert wird
 
 boolean reachedFinalTemperature = false;
 float minIpart = 0.0;
@@ -230,6 +231,17 @@ float getSetPoint()
   return Sollwert;
 }
 
+unsigned long getDelayTime()
+{
+  return delayTime;
+}
+
+void setDelayTime()
+{
+  delayTime = getSeconds() + 120;
+}
+
+
 float setSetPoint(float setPoint)
 {
   Sollwert = setPoint;
@@ -347,6 +359,8 @@ float controlVoltage()
           {
 
             imediateCalcVoltage();
+            setDelayTime();
+            //actTime = getSeconds();
             //Serial.println("I-Anteil ausgeschlatet");
           }
 
@@ -381,6 +395,8 @@ float controlVoltage()
           if (arw_Has_activated == true)
           {
             disableArw = true;
+             if((getValSens2() < getSetPoint()) && getDelayTime() < getSeconds())
+            {
             if (coorection_done == false)
             {
               voltageIold = ((1.0 / getKps()) * ((Sollwert * 1.0) - getValSens1()));
@@ -391,6 +407,7 @@ float controlVoltage()
 
             }
             coorection_done = true;
+            }
           }
 
 

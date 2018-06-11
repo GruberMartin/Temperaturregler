@@ -380,7 +380,11 @@ void secCounter()
     {
       if ((getCorrectionState() == false) && getARWactivationState() == true)
       {
+        if((getValSens2() < getSetPoint()) && getDelayTime() < getSeconds())
+        {
         imediateCalcVoltage();
+        }
+        
       }
 
     }
